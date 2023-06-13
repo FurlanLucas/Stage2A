@@ -33,7 +33,7 @@ colors = ['r','b','g','m'];  % Couleurs pour les graphes de << orders >> ;
 wmin = 1e-2;                 % [rad/s] Fréquence minimale pour le bode ;
 wmax = 1e3;                  % [rad/s] Fréquence maximale pour le bode ;
 wpoints = 1000;              % [rad/s] Nombre des fréquences ; 
-correc = 1e-8;              % [-] Paramètre de correction numérique ;
+correc = 1e-8;               % [-] Paramètre de correction numérique ;
 No = [1 3 6];                % [-] Nombre des solutions en y ;
 No_plot = 5;                 % [-]
 Mo = [1 3 6];                % [-] Nombre des solutions en z ; 
@@ -179,8 +179,8 @@ ylabel('Phase (deg)', Interpreter='latex', FontSize=17);
 xlabel("Fr\'{e}quences (rad/s)", Interpreter='latex', FontSize=17);
 fig.Position = [341 162 689 418];
 saveas(fig, figDir+"\1D_et_3D.png");
-sgtitle("R\'{e}ponse en fr\'{e}quence de $F(s)$", Interpreter='latex', ...
-    FontSize=21);
+sgtitle("R\'{e}ponse en fr\'{e}quence de $F_{3D}(s)$", ...
+    Interpreter='latex', FontSize=21);
 
 %% Pade approx pour le modèle 3D (avec pertes)
 
@@ -265,7 +265,7 @@ ylabel('Phase (deg)', Interpreter='latex', FontSize=17);
 xlabel("Fr\'{e}quences (rad/s)", Interpreter='latex', FontSize=17);
 fig.Position = [341 162 689 418];
 saveas(fig, figDir+"\padeApprox3D.png");
-sgtitle({"R\'{e}ponse en fr\'{e}quence de $F(s)$", ...
+sgtitle({"R\'{e}ponse en fr\'{e}quence de $F_{3D}(s)$", ...
     "avec l'approximation de pade"}, Interpreter='latex', ...
     FontSize=21);
 
