@@ -5,7 +5,7 @@ rho = 8010;             % [kg/m³] Masse volumique ;
 cp = 502;               % [J/kgK] Capacité thermique massique ;
 a = lambda/(rho*cp);    % [m^2/s] Diffusivité thermique ;
 e = 5e-3;               % [m] Epaisseur plaque ;
-h = 2;                  % [W/m²K] Coefficent de transfert thermique ;
+h = 200;                  % [W/m²K] Coefficent de transfert thermique ;
 Ly = 10;                % [m] Longeur en y ;
 Lz = 10;                % [m] Longeur en z ; 
 
