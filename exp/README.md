@@ -14,4 +14,4 @@ https://www.ni.com/fr-fr/support/downloads/tools-network/download/unpackaged.mod
 
 
 
-![alt text](https://github.com/[username]/[reponame]/blob/[branch]/image.jpg?raw=true)
+![alt text](https://github.com/FurlanLucas/Stage2A/blob/main/exp/TCPIP.bmp)
