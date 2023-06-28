@@ -10,7 +10,7 @@ Le dossier << labview main project >> contien tous les fichiers labview pour l'u
 
 1. Executer le installateur du driver PSI9000 USB ;
 2. Copiez et collez le dossier IF-XX avec tous ses fichier dans le dossier des packages Labview. Normalement, il est localisé dans le dossier que labView a été installé, par example : << C:Programmes(x86)\NationalInstruments\LabVIEW (version)\instr.lib >>.
-3. Executer le installateur du package NVISA. Il permetra de utiliser le package Modbus Master pour le protocolle TCP-IP. Cette partie peut prendre du temps.
+3. Télechargez et executez le installateur du package NVISA, disponible en << https://www.ni.com/fr-fr/support/downloads/drivers/download.ni-visa.html#480875 >>. Il permetra de utiliser le package Modbus Master pour le protocolle TCP-IP. Cette partie peut prendre du temps.
 4. Installer le Modbus avec le lien << https://www.ni.com/fr-fr/support/downloads/tools-network/download/unpackaged.modbus-master.374378.html >>. Il sera necessaire se connecter avec une compte d'utilisateur NI.
 
 Il faut aller 
@@ -19,6 +19,6 @@ Il faut aller
 
 ## En utilisant le logiciell
 
-![Alt text](mainVIp.png)
+![Alt text](https://github.com/FurlanLucas/Stage2A/blob/main/exp/fig/mainVIp.png)
 
-![alt text](https://github.com/FurlanLucas/Stage2A/blob/main/exp/TCPIP.bmp)
+![alt text](https://github.com/FurlanLucas/Stage2A/blob/main/exp/fig/TCPIP.bmp)
