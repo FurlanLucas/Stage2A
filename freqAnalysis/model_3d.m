@@ -27,7 +27,7 @@ Ly = 1;                   % [m] Longeur en y ;
 Lz = 1;                   % [m] Longeur en z ; 
 
 % Paramètres de la simulation et données
-figDir = 'fig';              % [-] Emplacement pour les figures générées ;
+figDir = 'outFig';              % [-] Emplacement pour les figures générées ;
 order = [1 3 6 11];          % Ordre pour l'approximation de Pade ;
 colors = ['r','b','g','m'];  % Couleurs pour les graphes de << orders >> ;
 wmin = 1e-2;                 % [rad/s] Fréquence minimale pour le bode ;
