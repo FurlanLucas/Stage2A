@@ -1,0 +1,11 @@
+Falls Sie den Inhalt der beiliegenden CHM-Hilfe-Datei nicht angezeigt bekommen, sperrt Ihr PC dieses Dokument noch.
+Es muß dann entweder einzeln oder generell entsperrt werden. Dies ist erforderlich, da das Dokument aus einer Netzwerkquelle kommt und 
+Windows solche Dateien aus Sicherheitsgründen sperrt.
+
+Leider ist es erforderlich, eine CHM-Datei als Hilfedatei für LabView-VIs zu verwenden, weil andere Dokumentformate wie z. B. PDF den direkten Einsprung in bestimmte Seiten nicht zulassen.
+Um den Inhalt der CHM-Datei anzuzeigen kann es ausreichen, diese auf ein lokales Laufwerk zu kopieren. Falls nicht, muß sie entsperrt werden.
+
+Suchen Sie für Anweisungen zum Entsperren im Internet nach "CHM ohne Inhalt" oder "CHM entsperren" oder besuchen Sie diese Webseiten:
+https://www.borncity.com/blog/2010/08/08/probleme-mit-der-anzeige-von-chm-dateien/
+
+Alternativmethode (englische Webseite): http://www.winxptutor.com/LMZUnlock.htm
