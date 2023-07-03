@@ -1,4 +1,3 @@
-clc; clear
 %% Entrées et définitions
 dirInputName = 'newData';
 dirOutputName = 'convertedData';
@@ -28,7 +27,7 @@ for i = 1:length(sysData)  % Cherche chaque système
                 .^2 * sysData(i).R / (pi * sysData(i).r^2);
 
             Ts = mean(dataRead.Temps(2:end) - dataRead.Temps(1:end-1));
-            dataExp = iddata(dataRead.y__C_, dataRead.u_V_, Ts*1e-3);
+            dataExp = iddata(dataRead.y__C_, dataRead.u_V_, Ts);
             
             % Autres informations
             dataExp.Name = sysData(i).name;
