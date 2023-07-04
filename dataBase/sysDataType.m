@@ -99,7 +99,7 @@ classdef sysDataType
             % pertes dans la resistance (tous la puissance sera transformée
             % en chaleur) et le résultat est normalisée par rapport à sa
             % surface.
-            phi = (V/(obj.R+obj.R_).^2)* obj.R / obj.S_res ;
+            phi = (V/(obj.R+obj.R_)).^2 * obj.R / obj.S_res ;
         end
 
     end
