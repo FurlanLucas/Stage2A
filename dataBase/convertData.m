@@ -1,5 +1,5 @@
 %% Entrées et définitions
-dirInputName = 'newData';
+dirInputName = 'rawData';
 dirOutputName = 'convertedData';
 sysInfo; % Prendre les variables refatives aux systèmes
 
