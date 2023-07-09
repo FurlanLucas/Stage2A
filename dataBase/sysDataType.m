@@ -16,8 +16,9 @@ classdef sysDataType
     %% Proprietées --------------------------------------------------------
     properties
         name = 'Empty';         % [-] Nom de l'analyse ;
+        geometry = 'None';      % [-] Type of the geometry ;
+        size = 0;               % [m] Lateral size of the thermocouple ;
         type = 'None';          % [-] Type de mesure realisé en entrée ;
-        mesure = 'None';        % [-] Type de mesure realisé en sortie ;
         R = 0;                  % [Ohm] Résistance choffante ;
         R_ = 0;                 % [Ohm] Résistance des cables ;
         S_res = 0;              % [m] Rayon de la resistance ;
