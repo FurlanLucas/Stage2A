@@ -18,6 +18,7 @@ for i = 1:length(sysData)  % Cherche chaque système
         if strcmp(sysData(i).name, nameDivided{1} + "_" + nameDivided{2})
             found_data = found_data + 1;
 
+            % Lit le fichier
             opts = delimitedTextImportOptions("Delimiter", '\t', ...
                 'VariableNames', {'t', 'y', 'v', 'phi'});
             dataRead = readtable(dirFileNames(j).folder + "\" + ...
@@ -28,10 +29,13 @@ for i = 1:length(sysData)  % Cherche chaque système
             phi = str2double(strrep(dataRead.phi(4:end,1), ',', '.'));            
             Ts = mean(t(2:end) - t(1:end-1));
             
+            % Transforme la sortie en variation de la sortie
+            y = sysData(i).setOutput(y - y(1));
+
             if strcmp(sysData(i).type, 'tension')
-                dataExp = iddata(y-y(1), sysData(i).toFlux(v), Ts);
+                dataExp = iddata(y, sysData(i).toFlux(v), Ts);
             else
-                dataExp = iddata(y-y(1), sysData(i).toFlux(phi), Ts);
+                dataExp = iddata(y, sysData(i).toFlux(phi), Ts);
                 dataExp.UserData = v;
             end            
             
