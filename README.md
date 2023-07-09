@@ -1,48 +1,41 @@
-# Caractérisation et identification de capteurs de flux en conditions extrêmes  
+# Characterization and identification of flow sensors in extreme conditions
 
-Travail présenté à l'ENSEIRB-MATMECA dans l'Institut National Polytechinique de Bordeaux comme stage de deuxiéme année, realisé au Laboratoire de l’Intégration du Matériau au Système (IMS) et au Institut de mécanique et d’ingénierie (I2M).
+Work presented at ENSEIRB-MATMECA in the Institut National Polytechinique de Bordeaux as a second-year internship, carried out at the Laboratory for the Integration of Material into the System (IMS) and at the Institute of Mechanics and Engineering (I2M).
 
-Auteur : Lucas Furlan
-Encadrants : Stéphane Victor, Jean-Luc Battaglia et Andrzej Kusiak.
+Author: Lucas Furlan
+Supervisors: Stéphane Victor, Jean-Luc Battaglia and Andrzej Kusiak.
 
 ## Labview thermal identification
 
-Celui est un programme Labview qui a été conçu pour commander l'entrée e l'acquisition de données appliqué à un système thermique. Il utilise une alimentation à haut rendement de la série EA-PSI 9200-25 et un enregistreur de données Sefram DAS 240. La communication avec le premier est faite à aide du protocole Modbus USB et le deuxième utilise le Modbus TCP-IP. Dans le cadre de l'implatation de cette interface, il est importante remarquer que un cable ethernet commun **ne peut pas être utilisé** : il faut un cable ethernet croisé ou un switch (ce qui a été utilisé).
+This is a Labview program that was designed to control the input and data acquisition applied to a thermal system. It uses a high efficiency power supply from the EA-PSI 9200-25 series and a Sefram DAS 240 data logger. Communication with the first is done using the Modbus USB protocol and the second uses the Modbus TCP-IP. As part of the implementation of this interface, it is important to note that a common ethernet cable **cannot be used**: you need a crossover ethernet cable or a switch (which was used).
 
-### Drivers et packages
+### Drivers and Packages
 
-Le dossier << labview main project >> contien tous les fichiers labview pour l'utilisation du programme. Par contre, il est absolutment nécessaire télecherger et installer les drivers et packages pour faire la communication avec les deux machines. Pour ce dernier, il faut suivre le procedure suivant :
+The "labview main project" folder contains all the labview files for the use of the program. On the other hand, it is absolutely necessary to download and install the drivers and packages to communicate with the two machines. For the latter, the following procedure must be followed:
 
-1. Executer le installateur du driver PSI9000 USB ;
-2. Copiez et collez le dossier IF-XX avec tous ses fichier dans le dossier des packages Labview. Normalement, il est localisé dans le même dossier que labView a été installé, par example : << C:Programmes(x86)\NationalInstruments\LabVIEW (version)\instr.lib >>.
-3. Télechargez et executez le installateur du package NVISA, disponible en << https://www.ni.com/fr-fr/support/downloads/drivers/download.ni-visa.html#480875 >>. Il permetra d'utiliser le package Modbus Master pour le protocolle TCP-IP. Cette partie peut prendre du temps.
-4. Installer le Modbus avec le JKI VI Package Manager (VIPM), en utilisant le lien << https://www.ni.com/fr-fr/support/downloads/tools-network/download/unpackaged.modbus-master.374378.html >>. Il sera necessaire se connecter avec une compte d'utilisateur NI.
+1. Run the PSI9000 USB driver installer;
+2. Copy and paste the IF-XX folder with all its files into the Labview packages folder. Normally it is located in the same folder that labView was installed, for example: << C:Programs(x86)\NationalInstruments\LabVIEW (version)\instr.lib >>.
+3. Download and run the NVISA package installer, available at << https://www.ni.com/fr-fr/support/downloads/drivers/download.ni-visa.html#480875 >>. It will allow the use of the Modbus Master package for the TCP-IP protocol. This part can take some time.
+4. Install the Modbus with the JKI VI Package Manager (VIPM), using the link << https://www.ni.com/fr-fr/support/downloads/tools-network/download/unpackaged.modbus-master .374378.html >>. It will be necessary to log in with an NI user account.
 
 
-### En utilisant le logiciell
+### Using the software
 
-Un fois que le programme va être executé, l'user doit voir dans l'écran la face avant du VI. Elle est constitué d'une partie de génération de données à gauche et d'aquisition de données à droite. Dans un premier temps, il faut régler la connecxion avec la alimentation : dans le champ << Numéro de la machine voulue >> il faut entrer le numéro de série de la machine connecté. Si vous ne savez pas ne numéro de série, il faut executer le code un fois (avec des autres paramètres non réglé) et note la troisième colune qui aparaître dans << Machines trouvées >>. 
+Once the program is going to be executed, the user should see the front face of the VI on the screen. It consists of a data generation part on the left and a data acquisition part on the right. First of all, you have to set up the connection with the power supply: in the field << Desired machine number >> you have to enter the serial number of the connected machine. If you don't know the serial number, you have to run the code once (with other parameters not set) and note the third column that appears in "Machines found".
 
 ![Alt text](https://github.com/FurlanLucas/Stage2A/blob/main/mdFig/mainVIp_markedS.png)
 
-La génération de données pseudo aléatoire (PRBS) peut être faite soit avec Labview il-même, en specifient les valeurs de fréquence et emplitude, soit avec la lecture d'un fichier CSV. Dans le dernier cas, il faut especifié le chemin pour le fichier voulu, sachant qu'il ne contiendra qu'un vector d'echantillons et l'information temporelle sera donné par la fréquence d'échantillonage. Pour générer le signal avec Labview, les caracteristiques suivantes doivent être especifiées :
+The generation of pseudo random data (PRBS) can be done either with Labview itself, by specifying the frequency and amplitude values, or with the reading of a CSV file. In the last case, it is necessary to specify the path for the desired file, knowing that it will only contain a vector of samples and the temporal information will be given by the sampling frequency. To generate the signal with Labview, the following characteristics must be specified:
 
-- Fréquence d'echantillonage : fréquence dans laquelle la source de alimentation va changer sa valeur en sortie ; 
-- Fréquence maximale : elle sera a fréquence maximale dans le signal crée. Dans une DSP, elle correspondra à la fréquence du lobe principal. Ella doit être toujours plus petite que la fréquence d'échantillonage décrite avant ;
-- Temps de simulation : temps total de simulation voulu. Le nombre d'échantillon sera donc égale à fréquence d´échantillonage*temps de simulation. Pour temps aussi longs, il faut peut être régler le histoire des graphes déroulantes ;
-- Amplitude maximale et amplitude minimale : ils vont être le niveau de tension maximale et le niveau de tension minimale generé par la source, sachant que le niveau minimale doit être toujours positive.
+- Sampling frequency: frequency in which the power source will change its output value;
+- Maximum frequency: it will be at the maximum frequency in the signal created. In a DSP, it will correspond to the frequency of the main lobe. It must always be smaller than the sampling frequency described before;
+- Simulation time: total desired simulation time. The number of samples will therefore be equal to sampling frequency*simulation time. For such long times, it may be necessary to adjust the history of the charts;
+- Maximum amplitude and minimum amplitude: they will be the maximum voltage level and the minimum voltage level generated by the source, knowing that the minimum level must always be positive.
 
-Un fois que les informations de la géneration de données ont été créer, il faut régles les informations de l'acquisition. Premierment, il faut trouver l'adresse IP du DAS 240 : il est necessaire aller dans << setup >> dans le menu du enrigestreur. L'adresse apairaîtra à gauche.
+Once the data generation information has been created, the acquisition information must be set. First, you have to find the IP address of the DAS 240: you have to go to "setup" in the menu of the recorder. The address will appear on the left.
 
 ![Alt text](https://github.com/FurlanLucas/Stage2A/blob/main/mdFig/TCPIP.bmp)
 
-Après, il faut entrer la fréquence d'échantillonage et aussi le nom de la analyse à être faite. Le données acquis seront enregistrés dans le doissier défaut << output >> et peut être aussi changé. Comme dernière partie, il faut dire la température de sécurité au-dessus dont la source d'alimentation será etendu dans << Température maximale >>.
+Next, you must enter the sampling frequency and also the name of the analysis to be made. The acquired data will be saved in the default "output" folder and can also be changed. As a last part, it is necessary to say the safety temperature above which the power source will be extended in "Maximum temperature".
 
-Lorsque le code va être executé, il faut attendre les deux leds vertes carrées qui vont s'allumer lorsque la source d'alimentation et le sistème d'acquisition ont être trouvé et sont bien connecté. Aprés, le logicielle générera la PRBS et le dernier LED vert (le circulaire) s'allumera. Si aucune message d'erreur a aparu et les trois LEDs sont allumés, l'utilisateur peut cliquer sur << COMMENCER >>.
-
-![Alt text](https://github.com/FurlanLucas/Stage2A/blob/main/mdFig/mainVIp_markedL.png)
-
-Lorsque le code a été lancé, pour l'arreter **il faut absolument cliquer sur << ARRÊTER >>** pour qu'il puisse arrêter la source de tension quelque soit la tension de sortie dans le moment. Avant de commancer la simulation, l'utilisateur peut voir le deux graphes qui sont présentes à gauche : le signal d'entrée chargé/généré et l'approximation de sa DSP avec la FFT.
-
-## freqAnalysis
-Do the frequency analysis for the transfert function F(s). Two different analysis are avaiable with 1D and 3D models. In both the Pade approximation for e^x and for some orders are shown and compared with respect to the non approximated solution.
+When the code is going to be executed, you have to wait for the two square green LEDs which will light up when the power source and the system are
