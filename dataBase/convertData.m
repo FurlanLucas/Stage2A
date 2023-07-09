@@ -5,28 +5,35 @@ sysInfo; % Prendre les variables refatives aux systèmes
 
 %% Main
 
-dirFileNames = dir(dirInputName + "\*.xlsx");
+dirFileNames = dir(dirInputName + "\*.txt");
 
 for i = 1:length(sysData)  % Cherche chaque système
     expData = iddata(); % Crée an iddata vide
 
     % Cherche dans le dossier
+    found_data = 0; 
     for j = 1:length(dirFileNames) 
 
         nameDivided = split(dirFileNames(j).name, '_');        
         if strcmp(sysData(i).name, nameDivided{1} + "_" + nameDivided{2})
-            
-            warning off; 
+            found_data = found_data + 1;
+
+            opts = delimitedTextImportOptions("Delimiter", '\t', ...
+                'VariableNames', {'t', 'y', 'v', 'phi'});
             dataRead = readtable(dirFileNames(j).folder + "\" + ...
-                dirFileNames(j).name); 
-            warning on;
-
-            % Convertion et adaptation des données
-            dataRead.y__C_ = dataRead.y__C_ - dataRead.y__C_(1);
-            dataRead.u_V_ = sysData(i).toFlux(dataRead.u_V_);
-
-            Ts = mean(dataRead.Temps(2:end) - dataRead.Temps(1:end-1));
-            dataExp = iddata(dataRead.y__C_, dataRead.u_V_, Ts);
+                dirFileNames(j).name, opts); 
+            t = str2double(strrep(dataRead.t(4:end,1), ',', '.'));
+            y = str2double(strrep(dataRead.y(4:end), ',', '.'));
+            v = str2double(strrep(dataRead.v(4:end,1), ',', '.'));
+            phi = str2double(strrep(dataRead.phi(4:end,1), ',', '.'));            
+            Ts = mean(t(2:end) - t(1:end-1));
+            
+            if strcmp(sysData(i).type, 'tension')
+                dataExp = iddata(y-y(1), sysData(i).toFlux(v), Ts);
+            else
+                dataExp = iddata(y-y(1), sysData(i).toFlux(phi), Ts);
+                dataExp.UserData = v;
+            end            
             
             % Autres informations auxilières
             dataExp.Name = sysData(i).name;
@@ -37,9 +44,10 @@ for i = 1:length(sysData)  % Cherche chaque système
             dataExp.TimeUnit = 'milliseconds';
             dataExp.ExperimentName = nameDivided{3}(1:4);
             dataExp.Tstart = 0;
+            dataExp.Notes = sysData(i);            
 
             % Enregistrement des données
-            if j == 1
+            if found_data == 1
                 expData = dataExp;
             else
                 expData = merge(expData, dataExp);
