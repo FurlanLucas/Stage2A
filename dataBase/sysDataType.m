@@ -138,6 +138,16 @@ classdef sysDataType
             end
         end
 
+        % Prendre la surface perpendiculaire du thermocouple
+        function S = takeArea(obj)
+            % Description 
+            if strcmp(obj.geometry, 'Cylinder')
+                S = pi*(obj.size^2);
+            elseif strcmp(obj.geometry, 'square')
+                S = obj.size^2;
+            end
+        end
+
     end
     % ---------------------------------------------------------------------
 

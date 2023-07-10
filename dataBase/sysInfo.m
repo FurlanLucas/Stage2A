@@ -10,7 +10,7 @@
 % de 7.86 uVm²/W.
 sysData(1) = sysDataType('sys1_polBas'); % [-] Nom de l'analyse ;
 sysData(1).geometry = 'Cylinder'; % [-] Type of the geometry ;
-sysData(1).size = 30e-3;          % [m] Lateral size of the thermocouple ;
+sysData(1).size = 37.5e-3;        % [m] Lateral size of the thermocouple ;
 sysData(1).type = 'both';         % [-] Type des données enregistrées ;
 sysData(1).R = 48.9;              % [Ohm] Résistance choffante ;
 sysData(1).R_ = 0.4;              % [Ohm] Résistance des cables ;
@@ -29,7 +29,7 @@ sysData(1).Ytr = 42;              % [uV/K] Coefficient du thermocouple ;
 % c'était celui avec un rayon de 20mm et un coeficient Vq de 3.32 uVm²/W.
 sysData(2) = sysDataType('sys2_polBas'); % [-] Nom de l'analyse ;
 sysData(2).geometry = 'Cylinder'; % [-] Type of the geometry ;
-sysData(2).size = 30e-3;          % [m] Lateral size of the thermocouple ;
+sysData(2).size = 37.5e-3;        % [m] Lateral size of the thermocouple ;
 sysData(2).type = 'both';         % [-] Type des données enregistrées ;
 sysData(2).R = 16;                % [Ohm] Résistance choffante ;
 sysData(2).R_ = 0.2;              % [Ohm] Résistance des cables ;
