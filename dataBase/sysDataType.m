@@ -143,7 +143,7 @@ classdef sysDataType
             % Description 
             if strcmp(obj.geometry, 'Cylinder')
                 S = pi*(obj.size^2);
-            elseif strcmp(obj.geometry, 'square')
+            elseif strcmp(obj.geometry, 'Parallelepiped')
                 S = obj.size^2;
             end
         end
