@@ -1,11 +1,12 @@
-function bodeOut = model_3d(dataIn, h, seriesOrder)
+function [bodeOut, Fs_pade] = model_3d_pade(dataIn, h, seriesOrder, ...
+    padeOrder)
     %% MODEL_1D
     %
     %   Analyse en 1D de la function transfert F(s) = phi(s)/theta(s). IL
     %   utilise les données qui sont disponibles dans dataIn, dedans le
     %   champs UserData (regardez aussi iddata).
 
-    %% Entrées et constantess
+    %% Entrées et constantes
 
     % Il verifie le type d'entrée
     if isa(dataIn, 'iddata')
@@ -48,6 +49,11 @@ function bodeOut = model_3d(dataIn, h, seriesOrder)
     % Position perpendiculaire
     y = Ly/2;
     z = Lz/2;
+
+    % Prendre l'ordre pour Taylor
+    if ~exist('padeOrder', 'var')
+        padeOrder = 10;
+    end
     
     % Paramètres de la simulation et données
     wmin = 1e-3;              % [rad/s] Fréquence minimale pour le bode ;
@@ -80,9 +86,13 @@ function bodeOut = model_3d(dataIn, h, seriesOrder)
     Mbeta = (1./(2*Lz*beta.^2)).*( Hz1 + (Hz1^2 + (beta*Lz).^2) .* ...
         (1 + Hz2./(Hz2^2 + (beta*Lz).^2)) );
 
+    %% Approximation de Pade pour le modèle (avec des pertes)
 
-    %% Modèle théorique de F(s) en 3D
-    Fs_3D = zeros(size(w));  % Vecteur avec des solutions
+    Fs_pade_ev = zeros(size(w));  % Vecteur avec des solutions
+    Fs_pade = 1; % Fonction de transfert;
+    A = [lambda_x/(2*e), hx2/2]; % Polinôme en xi
+    B = [-lambda_x/(2*e), hx2/2]; % Polinôme en xi
+    [Q,P] = padecoef(1, padeOrder); % Aprox. e^(x) = P(xi)/Q(xi)
 
     for n = 0:seriesOrder % Serie en y
         Y = cos(alpha(n+1)*y) + ...
@@ -91,12 +101,20 @@ function bodeOut = model_3d(dataIn, h, seriesOrder)
         for m = 0:seriesOrder % Serie en z
             Z = cos(beta(m+1)*z) + ...
                 (hz1/(lambda_z*beta(m+1)))*sin(beta(m+1)*z);
-    
-            % Résolution en 1D
-            gamma = sqrt(1j*w/a_x + alpha(n+1)^2 + beta(m+1)^2);
-            C = lambda_x*gamma.*sinh(e*gamma);
-            A = cosh(e*gamma);
-            Fs_th = 1./(C + A*hx2);
+
+            % Aproximation de la fonction de transfert F(xi) = N(xi)/D(xi)
+            N = conv(P,Q); 
+            D = conv(conv(P,P), A) + conv(conv(Q,Q), B);
+
+            % Passe à la variable de Laplace s = (a/e^2)xi
+            N = changeVariable(N(mod(fliplr(1:length(N)),2)==1), ...
+                [e^2/a_x (alpha(n+1)*e)^2 + (beta(m+1)*e)^2]);
+            D = changeVariable(D(mod(fliplr(1:length(D)),2)==1), ...
+                [e^2/a_x (alpha(n+1)*e)^2 + (beta(m+1)*e)^2]);
+            N = N/D(end); D = D/D(end); % Unicité de F(s) (d0 = 1)
+
+            % Diagramme de bode
+            Fs_eval = polyval(N,w*1j)./polyval(D,w*1j);
 
             % Calcule le facteur de correction de la serie int(Y)*int(Z)
             if alpha(n+1) == 0
@@ -115,18 +133,17 @@ function bodeOut = model_3d(dataIn, h, seriesOrder)
             end
 
             % Some les fonctions (serie en y et en z)
-            Fs_3D = Fs_3D + (Fs_th) * ...
+            Fs_pade_ev = Fs_pade_ev + Fs_eval * ...
+                (Y/Nalpha(n+1))*(Z/Mbeta(m+1))*int_Z*int_Y;
+            
+            % Fonction de transfert
+            Fs_pade = Fs_pade + tf(N,D) * ...
                 (Y/Nalpha(n+1))*(Z/Mbeta(m+1))*int_Z*int_Y;
         end
     end
 
-    % Diagramme de bode
-    mag_th = abs(Fs_3D);
-    phase_th = angle(Fs_3D);
-
     %% Résultats
     bodeOut.w = w;
-    bodeOut.mag = mag_th;
-    bodeOut.phase = phase_th;
-    
+    bodeOut.mag = abs(Fs_pade_ev);
+    bodeOut.phase = angle(Fs_pade_ev);    
 end

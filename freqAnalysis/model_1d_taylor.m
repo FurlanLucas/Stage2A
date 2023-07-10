@@ -1,4 +1,4 @@
-function bodeOut = model_1d(dataIn, h)
+function [bodeOut, Fs_taylor] = model_1d_taylor(dataIn, h, taylorOrder)
     %% MODEL_1D
     %
     %   Analyse en 1D de la function transfert F(s) = phi(s)/theta(s). IL
@@ -18,26 +18,43 @@ function bodeOut = model_1d(dataIn, h)
         e = dataIn.e;           % [m] Epaisseur plaque ;
     end
 
+    % Prendre l'ordre pour Taylor
+    if ~exist('taylorOrder', 'var')
+        taylorOrder = 10;
+    end
+    
     % Paramètres de la simulation et données
     wmin = 1e-3;              % [rad/s] Fréquence minimale pour le bode ;
     wmax = 1e2;               % [rad/s] Fréquence maximale pour le bode ;
     wpoints = 1000;           % [rad/s] Nombre des fréquences ;  
     w = logspace(log10(wmin), log10(wmax), wpoints); % Vecteur des fréq.
 
-    %% Modèle théorique de F(s) en 1D
+    %% Approximation de Taylor avec O(N) = O(D)
+
+    n = taylorOrder:-1:0;
+    A = [lambda/(2*e), h/2]; % Polinôme en xi
+    B = [-lambda/(2*e), h/2]; % Polinôme en xi
+    P = (1/2).^n ./ factorial(n); % Aproximation e^(x) = P(xi)/Q(xi)
+    Q = (-1/2).^n ./ factorial(n); % Aproximation e^(x) = P(xi)/Q(xi)
+
+    % Aproximation de la fonction de transfert F(xi) = N(xi)/D(xi)
+    N = conv(P,Q); 
+    D = conv(conv(P,P), A) + conv(conv(Q,Q), B);
+
+    % Passe à la variable de Laplace s = (a/e^2)xi
+    N = changeVariable(N(mod(fliplr(1:length(N)),2)==1), [e^2/a 0]);
+    D = changeVariable(D(mod(fliplr(1:length(D)),2)==1), [e^2/a 0]);
+    N = N/D(end); D = D/D(end); % Unicité de F(s) (d0 = 1)
     
-    % Résolution de l'équation en 1D pour les fréquences w
-    k = sqrt(w*1j/a); 
-    C = lambda*k.*sinh(e*k);
-    A = cosh(e*k);
-    
-    Fs_th = 1./(C + A*h); % Modèle théorique avec des pertes
-    mag_th = abs(Fs_th);
-    phase_th = angle(Fs_th);
+    % Diagramme de bode pour Taylor
+    F_approx_ev = polyval(N, w*1j)./polyval(D, w*1j);
+    mag_taylor = abs(F_approx_ev);
+    phase_taylor = angle(F_approx_ev);
 
     %% Résultats
     bodeOut.w = w;
-    bodeOut.mag = mag_th;
-    bodeOut.phase = phase_th;    
+    bodeOut.mag = mag_taylor;
+    bodeOut.phase = phase_taylor;
+    Fs_taylor = tf(N, D);
     
 end
