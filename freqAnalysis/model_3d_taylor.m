@@ -89,7 +89,7 @@ function [bodeOut, Fs_taylor] = model_3d_taylor(dataIn, h, seriesOrder, ...
     %% Approximation de Taylor pour le modèle (avec des pertes)
 
     Fs_taylor_ev = zeros(size(w));  % Vecteur avec des solutions
-    Fs_taylor = 1; % Fonction de transfert
+    Fs_taylor = cell(seriesOrder^2, 1); % Fonction de transfert
     norder = taylorOrder:-1:0;
 
     % approximation pour e^(x) = P(xi)/Q(xi)
@@ -98,6 +98,7 @@ function [bodeOut, Fs_taylor] = model_3d_taylor(dataIn, h, seriesOrder, ...
     A = [lambda_x/(2*e), hx2/2]; % Polinôme en xi
     B = [-lambda_x/(2*e), hx2/2]; % Polinôme en xi
 
+    pos = 1;
     for n = 0:seriesOrder % Serie en y
         Y = cos(alpha(n+1)*y) + ...
             (hy1/(lambda_y*alpha(n+1)))*sin(alpha(n+1)*y);
@@ -141,8 +142,9 @@ function [bodeOut, Fs_taylor] = model_3d_taylor(dataIn, h, seriesOrder, ...
                 (Y/Nalpha(n+1))*(Z/Mbeta(m+1))*int_Z*int_Y;
 
             % Fonction de transfert
-            Fs_taylor = Fs_taylor + tf(N,D) * ...
+            Fs_taylor{pos} = tf(N,D) * ...
                 (Y/Nalpha(n+1))*(Z/Mbeta(m+1))*int_Z*int_Y;
+            pos = pos+1;
         end
     end
 

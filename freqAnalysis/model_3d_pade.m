@@ -89,11 +89,12 @@ function [bodeOut, Fs_pade] = model_3d_pade(dataIn, h, seriesOrder, ...
     %% Approximation de Pade pour le modèle (avec des pertes)
 
     Fs_pade_ev = zeros(size(w));  % Vecteur avec des solutions
-    Fs_pade = 1; % Fonction de transfert;
+    Fs_pade = cell(seriesOrder^2, 1); % Fonction de transfert
     A = [lambda_x/(2*e), hx2/2]; % Polinôme en xi
     B = [-lambda_x/(2*e), hx2/2]; % Polinôme en xi
     [Q,P] = padecoef(1, padeOrder); % Aprox. e^(x) = P(xi)/Q(xi)
 
+    pos = 1;
     for n = 0:seriesOrder % Serie en y
         Y = cos(alpha(n+1)*y) + ...
             (hy1/(lambda_y*alpha(n+1)))*sin(alpha(n+1)*y);
@@ -137,8 +138,9 @@ function [bodeOut, Fs_pade] = model_3d_pade(dataIn, h, seriesOrder, ...
                 (Y/Nalpha(n+1))*(Z/Mbeta(m+1))*int_Z*int_Y;
             
             % Fonction de transfert
-            Fs_pade = Fs_pade + tf(N,D) * ...
+            Fs_pade{pos} = tf(N,D) * ...
                 (Y/Nalpha(n+1))*(Z/Mbeta(m+1))*int_Z*int_Y;
+            pos = pos+1;
         end
     end
 
