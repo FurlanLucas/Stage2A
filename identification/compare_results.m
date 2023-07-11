@@ -155,11 +155,11 @@ function compare_results(dataIn, varargin)
     plot(t/60, y1d_taylor, '--b',LineWidth=2, DisplayName="Taylor 1D");
     h(3) = plot(NaN, NaN, '--b', DisplayName="Taylor 1D", LineWidth=2);
     plot(t/60, y3d_pade, '-.g', LineWidth=2, DisplayName="Pade 3D");
-    h(4) = plot(NaN, NaN, '-.g', DisplayName="Pade 3D", LineWidth=2);
+    h(4) = plot(NaN, NaN, ':y', DisplayName="Diff. finite 1D",LineWidth=3);
     plot(t/60, y3d_taylor, '--m',LineWidth=2, DisplayName="Taylor 3D");
-    h(5) = plot(NaN, NaN, '--m', DisplayName="Taylor 3D", LineWidth=2);
+    h(5) = plot(NaN, NaN, '-.g', DisplayName="Pade 3D", LineWidth=2);
     plot(t_findif1d/60, y1d_findif1d, ':y', LineWidth=2);
-    h(6) = plot(NaN, NaN, ':y', DisplayName="Diff. finite", LineWidth=3);
+    h(6) = plot(NaN, NaN, '--m', DisplayName="Taylor 3D", LineWidth=2);
     xlabel("Temps (min)", Interpreter="latex", FontSize=17);
     ylabel("Temperature ($^\circ$C)", Interpreter="latex", FontSize=17);
     leg = legend(h,Location="southeast", Interpreter="latex", FontSize=17);
