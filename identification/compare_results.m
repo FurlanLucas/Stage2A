@@ -65,31 +65,32 @@ function compare_results(dataIn, varargin)
     padeOrder = 10;     % [-] Ordre de l'approximation de Pade ;
     seriesOrder = 10;   % [-] Ordre de la serie (nombre des elements) ;
     
-    % Prendre des entrées optionnelles
+    % Prendre les entrées optionnelles
     if ~isempty(varargin)
         for arg = 1:length(varargin)
-            switch varargin{arg}
-                case {"h"}
+            switch varargin{arg,1}
+                case ("h")
                     hx2 = varargin{arg, 2};
                     hy1 = varargin{arg, 2};
                     hy2 = varargin{arg, 2};
                     hz1 = varargin{arg, 2};
                     hz2 = varargin{arg, 2};
-                case {"hx2"}
+                    break;
+                case ("hx2")
                     hx2 = varargin{arg, 2};
-                case {"hy1"}
+                case ("hy1")
                     hy1 = varargin{arg, 2};
-                case {"hy2"}
+                case ("hy2")
                     hy2 = varargin{arg, 2};
-                case {"hz1"}
+                case ("hz1")
                     hz1 = varargin{arg, 2};
-                case {"hz2"}
+                case ("hz2")
                     hz2 = varargin{arg, 2};
-                case {"taylorOrder"}
+                case ("taylorOrder")
                     taylorOrder = varargin{arg, 2};
-                case {"padeOrder"}
+                case ("padeOrder")
                     padeOrder = varargin{arg, 2};
-                case {"seriesOrder"}
+                case ("seriesOrder")
                     seriesOrder = varargin{arg, 2};
             end
         end
@@ -135,7 +136,7 @@ function compare_results(dataIn, varargin)
 
     %% Figure pour la comparaison
 
-    fprintf("\tAffichage des résultats.\n");
+    fprintf("\tAffichage des résultats.\n\n");
 
     fig = figure; hold on;
     plot(t/60, dataIn.y, 'ok', LineWidth=0.1, MarkerFaceColor='k', ...
