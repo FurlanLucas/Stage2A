@@ -38,7 +38,7 @@ plot(results_1d2.w, results_1d2.phase*180/pi, '--r', ...
 ylabel("Phase (deg)",'Interpreter','latex','FontSize',15);
 xlabel("Fr\'{e}quence (rad/s)",'Interpreter','latex','FontSize',15);
 set(gca, 'XScale', 'log'); hold off; grid minor;
-saveas(fig, figDir + "\" + analysisName + "\compaire_h1d.eps");
+saveas(fig, figDir + "\" + analysisName + "\compaire_h1d.eps", 'epsc');
 sgtitle("Fonction $F(s)$ th\'{e}orique en 1D",'Interpreter','latex', ...
     'FontSize', 20);
 
@@ -51,25 +51,23 @@ for i=1:length(orders)
     results_1d = model_1d_pade(expData, h, orders(i));
     subplot(2,1,1);
     semilogx(results_1d.w, 20*log10(results_1d.mag), colors(i), ...
-        LineWidth=1.4);  
+        LineWidth=1.4, DisplayName="$N="+num2str(orders(i))+"$");  
     hold on; subplot(2,1,2); hold on;
     semilogx(results_1d.w, results_1d.phase*180/pi, colors(i), ...
-        LineWidth=1.4, DisplayName="$N="+num2str(orders(i))+"$");
+        LineWidth=1.4);
 end
-
-semilogx(results_1d_th.w, results_1d_th.phase*180/pi, 'k', ...
-        LineWidth=1.4, DisplayName="Th\'{e}orique");
-leg = legend('Position', [0.1474 0.5532 0.5082 0.1250], 'Interpreter', ...
-    'latex', 'FontSize', 15, 'NumColumns', 2); 
-leg.ItemTokenSize = [20, 18];
+semilogx(results_1d_th.w, results_1d_th.phase*180/pi, 'k', LineWidth=1.4);
 ylabel("Phase (deg)",'Interpreter','latex','FontSize',15);
 xlabel("Fr\'{e}quence (rad/s)",'Interpreter','latex','FontSize',15);
 set(gca, 'XScale', 'log'); grid minor;
 subplot(2,1,1); grid minor; set(gca, 'XScale', 'log');
 semilogx(results_1d_th.w, 20*log10(results_1d_th.mag), 'k', ...
-    LineWidth=1.4); 
+    LineWidth=1.4, DisplayName="Th\'{e}orique");  
+leg = legend(Location='southwest', Interpreter='latex', FontSize=15, ...
+    NumColumns=2); 
+leg.ItemTokenSize = [20, 18];
 ylabel("Module (dB)",'Interpreter','latex','FontSize',15);
-saveas(fig, figDir + "\" + analysisName + "\ordersPade_1d.eps");
+saveas(fig, figDir + "\" + analysisName + "\ordersPade_1d.eps", 'epsc');
 sgtitle({"Fonction $F(s)$ avec", "l'approximation de Pade en 1D"}, ...
     'Interpreter','latex', 'FontSize', 20);
 
@@ -80,24 +78,23 @@ for i=1:length(orders)
     results_1d = model_1d_taylor(expData, h, orders(i));
     subplot(2,1,1);
     semilogx(results_1d.w, 20*log10(results_1d.mag), colors(i), ...
-        LineWidth=1.4);  
+        LineWidth=1.4, DisplayName="$N="+num2str(orders(i))+"$");  
     hold on; subplot(2,1,2); hold on;
     semilogx(results_1d.w, results_1d.phase*180/pi, colors(i), ...
-        LineWidth=1.4, DisplayName="$N="+num2str(orders(i))+"$");
+        LineWidth=1.4);
 end
-semilogx(results_1d_th.w, results_1d_th.phase*180/pi, 'k', ...
-        LineWidth=1.4, DisplayName="Th\'{e}orique");
-leg = legend('Position', [0.1474 0.5532 0.5082 0.1250], 'Interpreter', ...
-    'latex', 'FontSize', 15, 'NumColumns', 2); 
-leg.ItemTokenSize = [20, 18];
+semilogx(results_1d_th.w, results_1d_th.phase*180/pi, 'k', LineWidth=1.4);
 ylabel("Phase (deg)",'Interpreter','latex','FontSize',15);
 xlabel("Fr\'{e}quence (rad/s)",'Interpreter','latex','FontSize',15);
 set(gca, 'XScale', 'log'); grid minor;
 subplot(2,1,1); grid minor; set(gca, 'XScale', 'log');
 semilogx(results_1d_th.w, 20*log10(results_1d_th.mag), 'k', ...
-    LineWidth=1.4);  
+    LineWidth=1.4, DisplayName="Th\'{e}orique");  
+leg = legend(Location='southwest', Interpreter='latex', FontSize=15, ...
+    NumColumns=2); 
+leg.ItemTokenSize = [20, 18];
 ylabel("Module (dB)",'Interpreter','latex','FontSize',15);
-saveas(fig, figDir + "\" + analysisName + "\ordersTaylor_1d.eps");
+saveas(fig, figDir + "\" + analysisName + "\ordersTaylor_1d.eps", 'epsc');
 sgtitle({"Fonction $F(s)$ avec", "l'approximation de Taylor en 1D"}, ...
     'Interpreter','latex', 'FontSize', 20);
 
@@ -122,7 +119,7 @@ plot(results_3d.w, results_3d.phase*180/pi, '--r', ...
 ylabel("Phase (deg)",'Interpreter','latex','FontSize',15);
 xlabel("Fr\'{e}quence (rad/s)",'Interpreter','latex','FontSize',15);
 set(gca, 'XScale', 'log'); hold off; grid minor;
-saveas(fig, figDir + "\" + analysisName + "\compaire_h3d.eps");
+saveas(fig, figDir + "\" + analysisName + "\compaire_h3d.eps", 'epsc');
 sgtitle({"Comparaison entre les", "mod\'{e}les 1D et 3D"}, ...
     'Interpreter', 'latex', 'FontSize', 20);
 
@@ -135,24 +132,23 @@ for i=1:length(orders)
     results_3d = model_3d_pade(expData, h*ones(1,5), 6, orders(i));
     subplot(2,1,1);
     semilogx(results_3d.w, 20*log10(results_3d.mag), colors(i), ...
-        LineWidth=1.4);  
+        LineWidth=1.4, DisplayName="$N="+num2str(orders(i))+"$");  
     hold on; subplot(2,1,2); hold on;
     semilogx(results_3d.w, results_3d.phase*180/pi, colors(i), ...
-        LineWidth=1.4, DisplayName="$N="+num2str(orders(i))+"$");
+        LineWidth=1.4);
 end
-semilogx(results_3d_th.w, results_3d_th.phase*180/pi, 'k', ...
-        LineWidth=1.4, DisplayName="Th\'{e}orique");
-leg = legend('Position', [0.1474 0.5532 0.5082 0.1250], 'Interpreter', ...
-    'latex', 'FontSize', 15, 'NumColumns', 2); 
-leg.ItemTokenSize = [20, 18];
+semilogx(results_3d_th.w, results_3d_th.phase*180/pi, 'k', LineWidth=1.4);
 ylabel("Phase (deg)",'Interpreter','latex','FontSize',15);
 xlabel("Fr\'{e}quence (rad/s)",'Interpreter','latex','FontSize',15);
 set(gca, 'XScale', 'log'); grid minor;
 subplot(2,1,1); grid minor; set(gca, 'XScale', 'log');
 semilogx(results_3d_th.w, 20*log10(results_3d_th.mag), 'k', ...
-    LineWidth=1.4);  
+    LineWidth=1.4, DisplayName="Th\'{e}orique");  
+leg = legend(Location='southwest', Interpreter='latex', FontSize=15, ...
+    NumColumns=2); 
+leg.ItemTokenSize = [20, 18];
 ylabel("Module (dB)",'Interpreter','latex','FontSize',15);
-saveas(fig, figDir + "\" + analysisName + "\ordersPade_3d.eps");
+saveas(fig, figDir + "\" + analysisName + "\ordersPade_3d.eps", 'epsc');
 sgtitle({"Fonction $F(s)$ avec", "l'approximation de Pade en 3D"}, ...
     'Interpreter','latex', 'FontSize', 20);
 
@@ -163,23 +159,22 @@ for i=1:length(orders)
     results_3d = model_3d_taylor(expData, h*ones(1,5), 6, orders(i));
     subplot(2,1,1);
     semilogx(results_3d.w, 20*log10(results_3d.mag), colors(i), ...
-        LineWidth=1.4);  
+        LineWidth=1.4, DisplayName="$N="+num2str(orders(i))+"$");  
     hold on; subplot(2,1,2); hold on;
     semilogx(results_3d.w, results_3d.phase*180/pi, colors(i), ...
-        LineWidth=1.4, DisplayName="$N="+num2str(orders(i))+"$");
+        LineWidth=1.4);
 end
-semilogx(results_3d_th.w, results_3d_th.phase*180/pi, 'k', ...
-        LineWidth=1.4, DisplayName="Th\'{e}orique");
-leg = legend('Position', [0.1474 0.5532 0.5082 0.1250], 'Interpreter', ...
-    'latex', 'FontSize', 15, 'NumColumns', 2); 
-leg.ItemTokenSize = [20, 18];
+semilogx(results_3d_th.w, results_3d_th.phase*180/pi, 'k', LineWidth=1.4);
 ylabel("Phase (deg)",'Interpreter','latex','FontSize',15);
 xlabel("Fr\'{e}quence (rad/s)",'Interpreter','latex','FontSize',15);
 set(gca, 'XScale', 'log'); grid minor;
 subplot(2,1,1); grid minor; set(gca, 'XScale', 'log');
 semilogx(results_3d_th.w, 20*log10(results_3d_th.mag), 'k', ...
-    LineWidth=1.4);  
+    LineWidth=1.4, DisplayName="Th\'{e}orique");  
+leg = legend(Location='southwest', Interpreter='latex', FontSize=15, ...
+    NumColumns=2); 
+leg.ItemTokenSize = [20, 18];
 ylabel("Module (dB)",'Interpreter','latex','FontSize',15);
-saveas(fig, figDir + "\" + analysisName + "\ordersTaylor_3d.eps");
+saveas(fig, figDir + "\" + analysisName + "\ordersTaylor_3d.eps", 'epsc');
 sgtitle({"Fonction $F(s)$ avec", "l'approximation de Taylor en 3D"}, ...
     'Interpreter','latex', 'FontSize', 20);
