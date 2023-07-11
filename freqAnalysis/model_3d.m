@@ -11,13 +11,13 @@ function bodeOut = model_3d(dataIn, h, seriesOrder)
     if isa(dataIn, 'iddata')
         lambda = dataIn.UserData.lambda; % [W/mK] Conductivité thermique ;
         a = dataIn.UserData.a;           % [m^2/s] Diffusivité thermique ;
-        e = dataIn.UserData.e;           % [m] Epaisseur plaque ;
+        ell = dataIn.UserData.ell;       % [m] Epaisseur plaque ;
         Ly = dataIn.UserData.size;       % [m] Taille du thermocouple (y) ;
         Lz = dataIn.UserData.size;       % [m] Taille du thermocouple (z) ;
     elseif isa(dataIn, 'struct')
         lambda = dataIn.lambda; % [W/mK] Conductivité thermique ;
         a = dataIn.a;           % [m^2/s] Diffusivité thermique ;
-        e = dataIn.e;           % [m] Epaisseur plaque ;
+        ell = dataIn.ell;       % [m] Epaisseur plaque ;
         Ly = dataIn.size;       % [m] Taille du thermocouple (y) ;
         Lz = dataIn.size;       % [m] Taille du thermocouple (z) ;
     else
@@ -94,8 +94,8 @@ function bodeOut = model_3d(dataIn, h, seriesOrder)
     
             % Résolution en 1D
             gamma = sqrt(1j*w/a_x + alpha(n+1)^2 + beta(m+1)^2);
-            C = lambda_x*gamma.*sinh(e*gamma);
-            A = cosh(e*gamma);
+            C = lambda_x*gamma.*sinh(ell*gamma);
+            A = cosh(ell*gamma);
             Fs_th = 1./(C + A*hx2);
 
             % Calcule le facteur de correction de la serie int(Y)*int(Z)

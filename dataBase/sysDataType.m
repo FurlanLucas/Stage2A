@@ -27,7 +27,7 @@ classdef sysDataType
         rho = 0;                % [kg/m³] Masse volumique ;
         cp = 0;                 % [J/kgK] Capacité thermique massique ;
         a = 0;                  % [m^2/s] Diffusivité thermique ;
-        e = 0;                  % [m] Epaisseur de la plaque ;
+        ell = 0;                % [m] Epaisseur de la plaque ;
         Ytr = 0;                % [uV/K] Coefficient du thermocouple ;
     end
     % ---------------------------------------------------------------------
@@ -100,11 +100,11 @@ classdef sysDataType
         end
 
         % Initialise l'paisseur du thermocouple
-        function obj = set.e(obj, e)
-            if (e <= 0)
+        function obj = set.ell(obj, ell)
+            if (ell <= 0)
                 error("La valeur de l'paisseur doit être positive.");
             end
-            obj.e = e;
+            obj.ell = ell;
         end
 
         % Convertion des données en tension par flux de chaleur

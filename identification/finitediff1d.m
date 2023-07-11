@@ -34,7 +34,7 @@ function [timeOut, y] = finitediff1d(dataIn, h, M, N)
     %% Entrées
 
     % Caracteristiques thermiques du système
-    e = dataIn.UserData.e;
+    ell = dataIn.UserData.ell;
     a = dataIn.UserData.a;
     lambda = dataIn.UserData.lambda;
     timeIn = dataIn.SamplingInstants/1e3;
@@ -43,7 +43,7 @@ function [timeOut, y] = finitediff1d(dataIn, h, M, N)
 
     % Differences finites
     dt = timeIn(end)/(N-1);
-    dx = e/(M-1);
+    dx = ell/(M-1);
     tau = a*dt/(dx*dx);
     
     % Résolution du système lineaire

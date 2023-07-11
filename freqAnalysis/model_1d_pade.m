@@ -11,11 +11,11 @@ function [bodeOut, Fs_pade] = model_1d_pade(dataIn, h, padeOrder)
     if isa(dataIn, 'iddata')
         lambda = dataIn.UserData.lambda; % [W/mK] Conductivité thermique ;
         a = dataIn.UserData.a;           % [m^2/s] Diffusivité thermique ;
-        e = dataIn.UserData.e;           % [m] Epaisseur plaque ;
+        ell = dataIn.UserData.ell;       % [m] Epaisseur plaque ;
     elseif isa(dataIn, 'struct')
         lambda = dataIn.lambda; % [W/mK] Conductivité thermique ;
         a = dataIn.a;           % [m^2/s] Diffusivité thermique ;
-        e = dataIn.e;           % [m] Epaisseur plaque ;
+        ell = dataIn.ell;       % [m] Epaisseur plaque ;
     end
 
     % Prendre l'ordre pour Taylor
@@ -30,8 +30,8 @@ function [bodeOut, Fs_pade] = model_1d_pade(dataIn, h, padeOrder)
     w = logspace(log10(wmin), log10(wmax), wpoints); % Vecteur des fréq.
 
     %% Approximation de Pade pour le modèle (avec des pertes)
-    A = [lambda/(2*e), h/2]; % Polinôme en xi
-    B = [-lambda/(2*e), h/2]; % Polinôme en xi
+    A = [lambda/(2*ell), h/2]; % Polinôme en xi
+    B = [-lambda/(2*ell), h/2]; % Polinôme en xi
     [Q,P] = padecoef(1, padeOrder); % Aproximation e^(x) = P(xi)/Q(xi)
 
     % Aproximation de la fonction de transfert F(xi) = N(xi)/D(xi)
@@ -39,8 +39,8 @@ function [bodeOut, Fs_pade] = model_1d_pade(dataIn, h, padeOrder)
     D = conv(conv(P,P), A) + conv(conv(Q,Q), B);
 
     % Passe à la variable de Laplace s = (a/e^2)xi
-    N = changeVariable(N(mod(fliplr(1:length(N)),2)==1), [e^2/a 0]);
-    D = changeVariable(D(mod(fliplr(1:length(D)),2)==1), [e^2/a 0]);
+    N = changeVariable(N(mod(fliplr(1:length(N)),2)==1), [ell^2/a 0]);
+    D = changeVariable(D(mod(fliplr(1:length(D)),2)==1), [ell^2/a 0]);
     N = N/D(end); D = D/D(end); % Unicité de F(s) (d0 = 1)
     
     % Diagramme de bode pour Pade

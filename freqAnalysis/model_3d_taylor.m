@@ -12,13 +12,13 @@ function [bodeOut, Fs_taylor] = model_3d_taylor(dataIn, h, seriesOrder, ...
     if isa(dataIn, 'iddata')
         lambda = dataIn.UserData.lambda; % [W/mK] Conductivité thermique ;
         a = dataIn.UserData.a;           % [m^2/s] Diffusivité thermique ;
-        e = dataIn.UserData.e;           % [m] Epaisseur plaque ;
+        ell = dataIn.UserData.ell;       % [m] Epaisseur plaque ;
         Ly = dataIn.UserData.size;       % [m] Taille du thermocouple (y) ;
         Lz = dataIn.UserData.size;       % [m] Taille du thermocouple (z) ;
     elseif isa(dataIn, 'struct')
         lambda = dataIn.lambda; % [W/mK] Conductivité thermique ;
         a = dataIn.a;           % [m^2/s] Diffusivité thermique ;
-        e = dataIn.e;           % [m] Epaisseur plaque ;
+        ell = dataIn.ell;       % [m] Epaisseur plaque ;
         Ly = dataIn.size;       % [m] Taille du thermocouple (y) ;
         Lz = dataIn.size;       % [m] Taille du thermocouple (z) ;
     else
@@ -95,8 +95,8 @@ function [bodeOut, Fs_taylor] = model_3d_taylor(dataIn, h, seriesOrder, ...
     % approximation pour e^(x) = P(xi)/Q(xi)
     P = (1/2).^norder ./ factorial(norder); % Aproximation e^(x) = P(xi)/Q(xi)
     Q = (-1/2).^norder ./ factorial(norder); % Aproximation e^(x) = P(xi)/Q(xi)
-    A = [lambda_x/(2*e), hx2/2]; % Polinôme en xi
-    B = [-lambda_x/(2*e), hx2/2]; % Polinôme en xi
+    A = [lambda_x/(2*ell), hx2/2]; % Polinôme en xi
+    B = [-lambda_x/(2*ell), hx2/2]; % Polinôme en xi
 
     pos = 1;
     for n = 0:seriesOrder % Serie en y
@@ -113,9 +113,9 @@ function [bodeOut, Fs_taylor] = model_3d_taylor(dataIn, h, seriesOrder, ...
         
             % Passe à la variable de Laplace s = (a/e^2)xi
             N = changeVariable(N(mod(fliplr(1:length(N)),2)==1), ...
-                [e^2/a_x (alpha(n+1)*e)^2 + (beta(m+1)*e)^2]);
+                [ell^2/a_x (alpha(n+1)*ell)^2 + (beta(m+1)*ell)^2]);
             D = changeVariable(D(mod(fliplr(1:length(D)),2)==1), ...
-                [e^2/a_x (alpha(n+1)*e)^2 + (beta(m+1)*e)^2]);
+                [ell^2/a_x (alpha(n+1)*ell)^2 + (beta(m+1)*ell)^2]);
             N = N/D(end); D = D/D(end); % Unicité de F(s) (d0 = 1)
         
             % Diagramme de bode

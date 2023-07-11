@@ -20,7 +20,7 @@ sysData(1).lambda = 15;           % [W/mK] Conductivité thermique ;
 sysData(1).rho = 7900;            % [kg/m³] Masse volumique ;
 sysData(1).cp = 500;              % [J/kgK] Capacité thermique massique ;
 sysData(1).setDiffusivity;        % [m^2/s] Diffusivité thermique ;
-sysData(1).e = 10e-3;             % [m] Epaisseur du thermocouple ;
+sysData(1).ell = 10e-3;           % [m] Epaisseur du thermocouple ;
 sysData(1).Ytr = 42;              % [uV/K] Coefficient du thermocouple ;
 
 %% Deuxième système analysé et configuré en tension -----------------------
@@ -39,5 +39,5 @@ sysData(2).lambda = 15;           % [W/mK] Conductivité thermique ;
 sysData(2).rho = 7900;            % [kg/m³] Masse volumique ;
 sysData(2).cp = 500;              % [J/kgK] Capacité thermique massique ;
 sysData(2).setDiffusivity;        % [m^2/s] Diffusivité thermique ;
-sysData(2).e = 5e-3;              % [m] Epaisseur du thermocouple ;
+sysData(2).ell = 5e-3;            % [m] Epaisseur du thermocouple ;
 sysData(2).Ytr = 42;              % [uV/K] Coefficient du thermocouple ;

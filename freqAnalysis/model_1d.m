@@ -11,11 +11,11 @@ function bodeOut = model_1d(dataIn, h)
     if isa(dataIn, 'iddata')
         lambda = dataIn.UserData.lambda; % [W/mK] Conductivité thermique ;
         a = dataIn.UserData.a;           % [m^2/s] Diffusivité thermique ;
-        e = dataIn.UserData.e;           % [m] Epaisseur plaque ;
+        ell = dataIn.UserData.ell;       % [m] Epaisseur plaque ;
     elseif isa(dataIn, 'struct')
         lambda = dataIn.lambda; % [W/mK] Conductivité thermique ;
         a = dataIn.a;           % [m^2/s] Diffusivité thermique ;
-        e = dataIn.e;           % [m] Epaisseur plaque ;
+        ell = dataIn.ell;       % [m] Epaisseur plaque ;
     end
 
     % Paramètres de la simulation et données
@@ -28,8 +28,8 @@ function bodeOut = model_1d(dataIn, h)
     
     % Résolution de l'équation en 1D pour les fréquences w
     k = sqrt(w*1j/a); 
-    C = lambda*k.*sinh(e*k);
-    A = cosh(e*k);
+    C = lambda*k.*sinh(ell*k);
+    A = cosh(ell*k);
     
     Fs_th = 1./(C + A*h); % Modèle théorique avec des pertes
     mag_th = abs(Fs_th);
