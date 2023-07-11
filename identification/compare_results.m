@@ -135,7 +135,7 @@ function compare_results(dataIn, varargin)
 
     %% Figure pour la comparaison
 
-    fprintf("\tAffichage des résultats.");
+    fprintf("\tAffichage des résultats.\n");
 
     fig = figure; hold on;
     plot(t/60, dataIn.y, 'ok', LineWidth=0.1, MarkerFaceColor='k', ...
