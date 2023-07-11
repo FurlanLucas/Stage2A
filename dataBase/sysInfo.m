@@ -28,7 +28,7 @@ sysData(1).Ytr = 42;              % [uV/K] Coefficient du thermocouple ;
 % utilisé a été une surface de bois. Le capteur de flux qui a été utilisé
 % c'était celui avec un rayon de 20mm et un coeficient Vq de 3.32 uVm²/W.
 sysData(2) = sysDataType('sys2_polBas'); % [-] Nom de l'analyse ;
-sysData(2).geometry = 'Parallelepiped'; % [-] Type of the geometry ;
+sysData(2).geometry = 'Cylinder'; % [-] Type of the geometry ;
 sysData(2).size = 37.5e-3;        % [m] Lateral size of the thermocouple ;
 sysData(2).type = 'both';         % [-] Type des données enregistrées ;
 sysData(2).R = 16;                % [Ohm] Résistance choffante ;
