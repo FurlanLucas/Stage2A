@@ -31,7 +31,7 @@ compare_results(identData, h=10);
 
 % Analyse du delay des modèles
 disp("Analyse du delay du système.");
-delay = find_delay(expData);
+delay = find_delay(expData); close all;
 
 % Analyse de convergence des modèles
 disp("Analyse de convergence des modèles.");

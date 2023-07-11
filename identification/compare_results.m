@@ -17,7 +17,14 @@ function compare_results(dataIn, varargin)
     %   approximations differentes comme en 1D : l'approximation de Pade
     %   et de Taylor.
     %
-    % EXAMPLE D'APPELL:
+    % ENTRÉES :
+    %
+    %   - dataIn : variable iddata avec l'entrée qui va être simulée. Les
+    %   information des coefficients thermiques du material et les autres
+    %   carachteristiques comme la masse volumique sont estoquées dans le
+    %   champs UserData dedans dataIn. Il sera estoqué comme sysDataType.
+    %
+    % EXAMPLE D'APPELL :
     %
     %   compare_results(dataIn) : pour analyser les données experimental
     %   dedans dataIn. dataIn doit être une variable du type iddata avec un
@@ -26,7 +33,7 @@ function compare_results(dataIn, varargin)
     %   compare_results(__, options) : pour données des autres options à
     %   l'analyse.
     %
-    % OPTIONS
+    % OPTIONS :
     %   
     %   h : Coefficient de transfert thermique pour les surfaces dans le
     %   modèle théorique. Si il est indiqué, tous les coefficients seront
