@@ -3,7 +3,7 @@ clc; clear; close all;
 figDir = 'outFig';            % [-] Emplacement pour les figures générées ;
 analysisName = 'sys1_polBas'; % [-] Non de l'analyse a être réalisé ;
 identNumber = 5;              % [-] Numéro du experiment a être analysé ;
-maxOrderConv = 11;   % [-] Ordre maximale dans l'analyse de convergence ; 
+maxOrderConv = 10;   % [-] Ordre maximale dans l'analyse de convergence ; 
 delayOrders = [0 20 10];      % [-] Ordre de retard à être analysée ;
 
 %% Vérification de sortie et chargement des données
@@ -35,7 +35,7 @@ delay = find_delay(expData); close all;
 
 % Analyse de convergence des modèles
 disp("Analyse de convergence des modèles.");
-models = convergence(validData, maxOrderConv, delayOrders);
+models = convergence(validData, maxOrderConv, 0);
 
 % Analyse des residues
 disp("Analyse des residues des modèles obtenus.");
