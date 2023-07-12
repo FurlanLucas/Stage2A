@@ -121,7 +121,8 @@ function compare_results(dataIn, varargin)
 
     % Simulation avec les defferences finites en 1D
     fprintf("\tSimulation pour differences finites en 1D.\n");
-    [t_findif1d, y1d_findif1d] = finitediff1d(dataIn, hx2, 20, 1e5);
+    [t_findif1d, y1d_findif1d] = finitediff1d(dataIn.UserData, t, u, ...
+        hx2, 20, 1e5);
     
     % Simulation pour Pade en 3D
     fprintf("\tSimulation pour Pade en 3D.\n");

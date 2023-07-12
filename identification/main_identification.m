@@ -27,7 +27,7 @@ validData = getexp(expData, setdiff(1:n_data, identNumber));
 
 % Compaire les modèles avec les résultats théoriques
 disp("Analyse de comparaison avec les modèles théoriques.");
-compare_results(identData, h=10);
+compare_results(identData, h=15);
 
 % Analyse du delay des modèles
 disp("Analyse du delay du système.");

@@ -1,4 +1,4 @@
-function [timeOut, y] = finitediff1d(dataIn, h, M, N)
+function [timeOut, y] = finitediff1d(dataIn, timeIn, phiIn, h, M, N)
     %% finitediff1D
     %
     % Il fait l'implantation du méthode de differences finites 1D pour
@@ -34,12 +34,9 @@ function [timeOut, y] = finitediff1d(dataIn, h, M, N)
     %% Entrées
 
     % Caracteristiques thermiques du système
-    ell = dataIn.UserData.ell;
-    a = dataIn.UserData.a;
-    lambda = dataIn.UserData.lambda;
-    timeIn = dataIn.SamplingInstants/1e3;
-    factor = dataIn.UserData.S_res/dataIn.UserData.takeArea;
-    phiIn = dataIn.u*factor;
+    ell = dataIn.ell;
+    a = dataIn.a;
+    lambda = dataIn.lambda;
 
     % Differences finites
     dt = timeIn(end)/(N-1);
