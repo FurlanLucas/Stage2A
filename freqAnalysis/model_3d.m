@@ -12,14 +12,14 @@ function bodeOut = model_3d(dataIn, h, seriesOrder)
         lambda = dataIn.UserData.lambda; % [W/mK] Conductivité thermique ;
         a = dataIn.UserData.a;           % [m^2/s] Diffusivité thermique ;
         ell = dataIn.UserData.ell;       % [m] Epaisseur plaque ;
-        Ly = dataIn.UserData.size;       % [m] Taille du thermocouple (y) ;
-        Lz = dataIn.UserData.size;       % [m] Taille du thermocouple (z) ;
+        Ly = 2*dataIn.UserData.size;     % [m] Taille du thermocouple (y) ;
+        Lz = 2*dataIn.UserData.size;     % [m] Taille du thermocouple (z) ;
     elseif isa(dataIn, 'struct')
         lambda = dataIn.lambda; % [W/mK] Conductivité thermique ;
         a = dataIn.a;           % [m^2/s] Diffusivité thermique ;
         ell = dataIn.ell;       % [m] Epaisseur plaque ;
-        Ly = dataIn.size;       % [m] Taille du thermocouple (y) ;
-        Lz = dataIn.size;       % [m] Taille du thermocouple (z) ;
+        Ly = 2*dataIn.size;     % [m] Taille du thermocouple (y) ;
+        Lz = 2*dataIn.size;     % [m] Taille du thermocouple (z) ;
     else
         error("Entrée 'dataIn' non valide.");
     end
