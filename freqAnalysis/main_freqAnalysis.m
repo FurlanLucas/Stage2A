@@ -101,7 +101,7 @@ sgtitle({"Fonction $F(s)$ avec", "l'approximation de Taylor en 1D"}, ...
 %% Analyse 3D (avec une comparaison entre differentes valeurs de h)
 
 results_1d = model_1d(expData, h);
-results_3d = model_3d(expData, h*ones(1,5), 6);
+results_3d = model_2d(expData, h*ones(1,5), 6);
 
 % Figure comparaison pour h
 fig = figure; subplot(2,1,1); hold on;
@@ -125,11 +125,11 @@ sgtitle({"Comparaison entre les", "mod\'{e}les 1D et 3D"}, ...
 
 %% Figure pour differentes ordres d'approximation de Pade en 3D
 
-results_3d_th = model_3d(expData, h*ones(1,5), 6);
+results_3d_th = model_2d(expData, h*ones(1,5), 6);
 
 fig = figure;
 for i=1:length(orders)
-    results_3d = model_3d_pade(expData, h*ones(1,5), 6, orders(i));
+    results_3d = model_2d_pade(expData, h*ones(1,2), 6, orders(i));
     subplot(2,1,1);
     semilogx(results_3d.w, 20*log10(results_3d.mag), colors(i), ...
         LineWidth=1.4, DisplayName="$N="+num2str(orders(i))+"$");  
@@ -156,7 +156,7 @@ sgtitle({"Fonction $F(s)$ avec", "l'approximation de Pade en 3D"}, ...
 
 fig = figure;
 for i=1:length(orders)
-    results_3d = model_3d_taylor(expData, h*ones(1,5), 6, orders(i));
+    results_3d = model_2d_taylor(expData, h*ones(1,5), 6, orders(i));
     subplot(2,1,1);
     semilogx(results_3d.w, 20*log10(results_3d.mag), colors(i), ...
         LineWidth=1.4, DisplayName="$N="+num2str(orders(i))+"$");  

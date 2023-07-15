@@ -92,7 +92,7 @@ function [bodeOut, Fs_taylor] = model_3d_taylor(dataIn, h, seriesOrder, ...
     Fs_taylor = cell(seriesOrder^2, 1); % Fonction de transfert
     norder = taylorOrder:-1:0;
 
-    % approximation pour e^(x) = P(xi)/Q(xi)
+    % Approximation pour e^(x) = P(xi)/Q(xi)
     P = (1/2).^norder ./ factorial(norder); % Aproximation e^(x) = P(xi)/Q(xi)
     Q = (-1/2).^norder ./ factorial(norder); % Aproximation e^(x) = P(xi)/Q(xi)
     A = [lambda_x/(2*ell), hx2/2]; % Polinôme en xi
