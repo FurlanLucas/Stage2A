@@ -21,7 +21,8 @@ classdef sysDataType
         type = 'None';          % [-] Type de mesure realisé en entrée ;
         R = 0;                  % [Ohm] Résistance choffante ;
         R_ = 0;                 % [Ohm] Résistance des cables ;
-        S_res = 0;              % [m] Rayon de la resistance ;
+        resGeometry = 'None';   % [m²] Type de résistance ;
+        resSize = 0;            % [m²] Taille de la résistance ;
         Vq = 0;                 % [uV/Wm²] Coefficient de transductance ;
         lambda = 0;             % [W/mK] Conductivité thermique ;
         rho = 0;                % [kg/m³] Masse volumique ;
@@ -61,12 +62,12 @@ classdef sysDataType
         end
 
         % Initialise la valeur de la surface de la résistance
-        function obj = set.S_res(obj, S_res)
-            if (S_res <= 0)
+        function obj = set.resSize(obj, resSize)
+            if (resSize <= 0)
                 error("La valeur de la surface doit être " + ...
                     "positive et non nulle.");
             end
-            obj.S_res = S_res;
+            obj.resSize = resSize;
         end
 
         % Initialise la valeur de la conductivité thermique
@@ -121,7 +122,7 @@ classdef sysDataType
                 end
                 phi = in/(obj.Vq * 1e-6);
             elseif strcmp(obj.type, 'tension')
-                phi = (in/(obj.R+obj.R_)).^2 * obj.R / obj.S_res;
+                phi = (in/(obj.R+obj.R_)).^2 * obj.R / obj.takeResArea;
             elseif strcmp(obj.type, 'None')
                 error("Le champs 'type' n'a pas été specifié.");
             end
@@ -145,6 +146,16 @@ classdef sysDataType
                 S = pi*(obj.size^2);
             elseif strcmp(obj.geometry, 'Parallelepiped')
                 S = obj.size^2;
+            end
+        end
+
+        % Prendre la surface perpendiculaire du thermocouple
+        function S = takeResArea(obj)
+            % Description 
+            if strcmp(obj.resGeometry, 'Circ')
+                S = pi*(obj.resSize^2);
+            elseif strcmp(obj.resGeometry, 'Square')
+                S = obj.resSize^2;
             end
         end
 

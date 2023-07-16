@@ -1,4 +1,9 @@
 function convertData()
+    %% convertData
+    %
+    %   Convert data
+    %
+    
     %% Entrées et définitions
     dirInputName = 'rawData';
     dirOutputName = 'convertedData';
@@ -32,7 +37,7 @@ function convertData()
                 % Transforme la sortie en variation de la sortie
                 y = sysData(i).setOutput(y - y(1));
     
-                if strcmp(sysData(i).type, 'tension')
+                if strcmp(sysData(i).type, 'tension') % asasas
                     newDataExp = iddata(y, sysData(i).toFlux(v), Ts);
                 else
                     newDataExp = iddata(y, sysData(i).toFlux(phi), Ts);
