@@ -149,7 +149,7 @@ classdef sysDataType
             end
         end
 
-        % Prendre la surface perpendiculaire du thermocouple
+        % Prendre la surface perpendiculaire de la résistance
         function S = takeResArea(obj)
             % Description 
             if strcmp(obj.resGeometry, 'Circ')

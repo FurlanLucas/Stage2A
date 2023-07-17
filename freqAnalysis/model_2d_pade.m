@@ -2,7 +2,7 @@ function [bodeOut, Fs_pade] = model_2d_pade(dataIn, h, seriesOrder, ...
     padeOrder)
     %% MODEL_1D
     %
-    %   Analyse en 1D de la function transfert F(s) = phi(s)/theta(s). IL
+    %   Analyse en 1D de la function transfert F(s) = phi(s)/theta(s). Il
     %   utilise les données qui sont disponibles dans dataIn, dedans le
     %   champs UserData (regardez aussi iddata).
 

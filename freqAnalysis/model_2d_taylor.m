@@ -71,7 +71,7 @@ function [bodeOut, Fs_taylor] = model_2d_taylor(dataIn, h, seriesOrder, ...
     %% Approximation de Pade pour le modèle (avec des pertes)
 
     Fs_taylor_ev = zeros(size(w));  % Vecteur avec des solutions
-    Fs_taylor = cell(seriesOrder^2, 1); % Fonction de transfert
+    Fs_taylor = cell(seriesOrder+1, 1); % Fonction de transfert
     norder = taylorOrder:-1:0;
 
     % Approximation pour e^(x) = P(xi)/Q(xi)
