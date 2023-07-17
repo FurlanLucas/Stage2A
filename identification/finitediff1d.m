@@ -1,4 +1,4 @@
-function [timeOut, y] = finitediff1d(dataIn, timeIn, phiIn, h, M, N)
+function [y, timeOut] = finitediff1d(dataIn, timeIn, phiIn, h, M, N)
     %% finitediff1D
     %
     % Il fait l'implantation du méthode de differences finites 1D pour
@@ -65,7 +65,7 @@ function [timeOut, y] = finitediff1d(dataIn, timeIn, phiIn, h, M, N)
 
         % Vecteur c
         c = [2*tau*dx*((phi(i)+phi(i+1)))/lambda; zeros(M-2,1); ...
-            -4*tau*dx*(T(end)*h)/lambda];
+             -4*tau*dx*(T(end)*h)/lambda];
 
         % Résultat
         T = A\(B*T + c); 

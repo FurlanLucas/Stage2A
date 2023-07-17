@@ -104,8 +104,23 @@ function compare_results(dataIn, varargin)
     end
 
     % Prendre le facteur de trransformation entre les surfaces
-    u = dataIn.u * dataIn.UserData.S_res/dataIn.UserData.takeArea;
+    u = dataIn.u * dataIn.UserData.takeResArea/dataIn.UserData.takeArea;
     t = dataIn.SamplingInstants/1e3; % Vecteur du temps
+
+    % Prendre le type d'analyse multidimensional
+    if strcmp(dataIn.UserData.geometry, "Cylinder")
+        model_multi_pade = @(var1, var2, var3, var4) model_2d_pade(var1,...
+            var2, var3, var4);
+        model_multi_taylor= @(var1,var2,var3,var4) model_2d_taylor(var1,...
+            var2,var3, var4);
+        type = "2D";
+    else
+        model_multi_pade = @(var1, var2, var3, var4) model_3d_pade(var1,...
+            var2, var3, var4);
+        model_multi_taylor= @(var1,var2,var3,var4) model_3d_taylor(var1,...
+            var2, var3, var4);
+        type = "3D";
+    end
 
     %% Main
 
@@ -121,46 +136,68 @@ function compare_results(dataIn, varargin)
 
     % Simulation avec les defferences finites en 1D
     fprintf("\tSimulation pour differences finites en 1D.\n");
-    [t_findif1d, y1d_findif1d] = finitediff1d(dataIn.UserData, t, u, ...
-        hx2, 20, 1e5);
+    [y_findif1d, t_findif1d]  = finitediff1d(dataIn.UserData, t, ...
+        u, hx2, 20, 1e6);
     
-    % Simulation pour Pade en 3D
-    fprintf("\tSimulation pour Pade en 3D.\n");
-    [~, Fs3d_pade] = model_3d_pade(dataIn, [hx2,hy1,hy2,hz1,hz2], ...
+    % Simulation pour Pade en 3D/2D
+    fprintf("\tSimulation pour Pade en " + type + ".\n");
+    [~, Fsmulti_pade] = model_multi_pade(dataIn, [hx2,hy1,hy2,hz1,hz2], ...
         seriesOrder, padeOrder);
-    y3d_pade = 0;
-    for i =1:length(Fs3d_pade)
-        y3d_pade = y3d_pade + lsim(Fs3d_pade{i}, u, t);
+    ymulti_pade = 0;
+    for i =1:length(Fsmulti_pade)
+        ymulti_pade = ymulti_pade + lsim(Fsmulti_pade{i}, u, t);
     end
 
-    % Simulation pour Taylor en 3D
-    fprintf("\tSimulation pour Taylor en 3D.\n");
-    [~,Fs3d_taylor] = model_3d_taylor(dataIn, [hx2,hy1,hy2,hz1,hz2], ...
-        seriesOrder, seriesOrder);
-    y3d_taylor = 0;
-    for i =1:length(Fs3d_pade)
-        y3d_taylor = y3d_taylor + lsim(Fs3d_taylor{i}, u, t);
+    % Simulation pour Taylor en 3D/2D
+    fprintf("\tSimulation pour Taylor en " + type + ".\n");
+    [~,Fsmulti_taylor] = model_multi_taylor(dataIn, [hx2,hy1,hy2,hz1,...
+        hz2], seriesOrder, taylorOrder);
+    ymulti_taylor = 0;
+    for i =1:length(Fsmulti_taylor)
+        ymulti_taylor = ymulti_taylor + lsim(Fsmulti_taylor{i}, u, t);
     end
+
+    % Simulation avec les defferences finites en 2D
+    fprintf("\tSimulation pour differences finites en 2D.\n");
+    [y_findif2d, t_findif2d]  = finitediff2d(dataIn.UserData, t, ...
+        dataIn.u, hx2, 10, 10, 1e5);
 
     %% Figure pour la comparaison
 
     fprintf("\tAffichage des résultats.\n\n");
 
     fig = figure; hold on;
+
+    % Valeurs théoriques
     plot(t/60, dataIn.y, 'ok', LineWidth=0.1, MarkerFaceColor='k', ...
         MarkerSize=0.1);
     h(1) = plot(NaN, NaN, 'ok', DisplayName="Donn\'{e}es", ...
         MarkerSize=7, MarkerFaceColor='k');
-    plot(t/60, y1d_pade, '-.r', LineWidth=2);
-    h(2) = plot(NaN, NaN, '-.r', DisplayName="Pade 1D", LineWidth=2);
-    plot(t/60, y1d_taylor, '--b',LineWidth=2, DisplayName="Taylor 1D");
-    h(3) = plot(NaN, NaN, '--b', DisplayName="Taylor 1D", LineWidth=2);
-    plot(t/60, y3d_pade, '-.g', LineWidth=2, DisplayName="Pade 3D");
-    h(4) = plot(NaN, NaN, ':y', DisplayName="Diff. finite 1D",LineWidth=3);
-    plot(t/60, y3d_taylor, '--m',LineWidth=2, DisplayName="Taylor 3D");
-    h(5) = plot(NaN, NaN, '-.g', DisplayName="Pade 3D", LineWidth=2);
-    plot(t_findif1d/60, y1d_findif1d, ':y', LineWidth=2);
-    h(6) = plot(NaN, NaN, '--m', DisplayName="Taylor 3D", LineWidth=2);
+
+    % Pade 1D
+    plot(t/60, y1d_pade, '-.r', LineWidth=2.5);
+    h(2) = plot(NaN, NaN, '-.r', DisplayName="Pade 1D", LineWidth=2.5);
+
+    % Taylor 1D
+    plot(t/60, y1d_taylor, '--b', LineWidth=2.5);
+    h(3) = plot(NaN, NaN, '--b', DisplayName="Taylor 1D", LineWidth=2.5);
+
+    % Différences finies 1D
+    plot(t_findif1d/60, y_findif1d, ':y', LineWidth=2.5);
+    h(4) = plot(NaN,NaN, ':y', DisplayName="Diff. finite 1D", LineWidth=2.5);
+
+    % Pade 3D
+    plot(t/60, ymulti_pade, '-.g', LineWidth=2.5);
+    h(5) = plot(NaN,NaN, '-.g', DisplayName="Pade "+type,LineWidth=2.5);
+
+    % Taylor 3D
+    plot(t/60, ymulti_taylor, '--m', LineWidth=2.5);
+    h(6) = plot(NaN, NaN, '--m', DisplayName="Taylor "+type, LineWidth=2.5);
+
+    % Différences finies 3D
+    plot(t_findif2d/60, y_findif2d, ':c', LineWidth=2.5);
+    h(7) = plot(NaN,NaN, ':c', DisplayName="Diff. finite 2D", LineWidth=2.5);
+
     xlabel("Temps (min)", Interpreter="latex", FontSize=17);
     ylabel("Temperature ($^\circ$C)", Interpreter="latex", FontSize=17);
     leg = legend(h,Location="southeast", Interpreter="latex", FontSize=17);
