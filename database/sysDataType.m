@@ -21,7 +21,6 @@ classdef sysDataType
         type = 'None';          % [-] Type de mesure realisé en entrée ;
         R = 0;                  % [Ohm] Résistance choffante ;
         R_ = 0;                 % [Ohm] Résistance des cables ;
-        resGeometry = 'None';   % [m²] Type de résistance ;
         resSize = 0;            % [m²] Taille de la résistance ;
         Vq = 0;                 % [uV/Wm²] Coefficient de transductance ;
         lambda = 0;             % [W/mK] Conductivité thermique ;
@@ -29,7 +28,8 @@ classdef sysDataType
         cp = 0;                 % [J/kgK] Capacité thermique massique ;
         a = 0;                  % [m^2/s] Diffusivité thermique ;
         ell = 0;                % [m] Epaisseur de la plaque ;
-        Ytr = 0;                % [uV/K] Coefficient du thermocouple ;
+        Ytr_arr = 0;            % [uV/K] Coeff. du thermocouple (arr.) ;
+        Ytr_avant = 0;          % [uV/K] Coeff. du thermocouple (avan.) ;
     end
     % ---------------------------------------------------------------------
 
@@ -128,13 +128,24 @@ classdef sysDataType
             end
         end
 
-        % Configure la sortie du thermocouple
-        function y = setOutput(obj, in)
+        % Configure la sortie du thermocouple de la face arrière
+        function y = setOutputArr(obj, in)
             % Description 
-            if obj.Ytr ~= 0
-                y = in/(obj.Ytr*1e-6);
+            if obj.Ytr_arr ~= 0
+                y = in/(obj.Ytr_arr*1e-6);
             else
-                error("Le champs 'Ytr' pour le coefficient du " + ...
+                error("Le champs 'Ytr_arr' pour le coefficient du " + ...
+                    "thermocouple n'a pas été specifié.");
+            end
+        end
+
+        % Configure la sortie du thermocouple de la face arrière
+        function y = setOutputAvant(obj, in)
+            % Description 
+            if obj.Ytr_avant ~= 0
+                y = in/(obj.Ytr_avant*1e-6);
+            else
+                error("Le champs 'Ytr_avant' pour le coefficient du " + ...
                     "thermocouple n'a pas été specifié.");
             end
         end

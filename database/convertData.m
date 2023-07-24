@@ -5,9 +5,10 @@ function convertData()
     %
     
     %% Entrées et définitions
-    dirInputName = 'rawData';
-    dirOutputName = 'convertedData';
-    sysInfo; % Prendre les variables refatives aux systèmes
+    dirInputName = 'rawData'; % Dossier avec les données reçu ;
+    dirOutputName = 'convertedData'; % Dossier avec les données de sortie ;
+    sysInfo; % Prendre les variables refatives aux systèmes ;
+    samplesNorm = 100; % Nombre d'échantillons pour calculler la moyenne ;
     
     %% Main
     
@@ -19,6 +20,7 @@ function convertData()
         found_data = 0; 
         Notes = {};
         for j = 1:length(dirFileNames)
+            Notes = cell(length(dirFileNames), 1);
 
             nameDivided = split(dirFileNames(j).name, '_');        
             if strcmp(sysData(i).name, nameDivided{1} + "_" + nameDivided{2})
@@ -26,32 +28,33 @@ function convertData()
     
                 % Lit le fichier
                 opts = delimitedTextImportOptions("Delimiter", '\t', ...
-                    'VariableNames', {'t', 'y', 'v', 'phi'});
+                    'VariableNames', {'t', 'y_arr', 'v', 'phi', 'y_avant'});
                 dataRead = readtable(dirFileNames(j).folder + "\" + ...
                     dirFileNames(j).name, opts); 
+
+                % Transforme le tableau en vecteur
                 t = str2double(strrep(dataRead.t(4:end,1), ',', '.'));
-                y = str2double(strrep(dataRead.y(4:end), ',', '.'));
+                y_arr = str2double(strrep(dataRead.y_arr(4:end),',','.'));
                 v = str2double(strrep(dataRead.v(4:end,1), ',', '.'));
-                phi = str2double(strrep(dataRead.phi(4:end,1), ',', '.'));            
-                Ts = mean(t(2:end) - t(1:end-1));
+                phi = str2double(strrep(dataRead.phi(4:end,1), ',', '.'));
+                y_avant = str2double(strrep(dataRead.y_avant(4:end), ...
+                    ',','.'));            
                 
-                % Transforme la sortie en variation de la sortie
-                y = sysData(i).setOutput(y - y(1));
-    
-                if strcmp(sysData(i).type, 'tension') % asasas
-                    %newDataExp = iddata(sysData(i).toFlux(v), y, Ts);
-                    newDataExp = iddata(y, sysData(i).toFlux(v), Ts);
-                    Notes = [Notes, {'NULL'}];
-                else
-                    %newDataExp = iddata(sysData(i).toFlux(phi), y, Ts);
-                    newDataExp = iddata(y, sysData(i).toFlux(phi), Ts);
-                    Notes = [Notes, {v}];
-                end            
+                % Transforme les mesures en variations des mesures
+                Ts = mean(t(2:end) - t(1:end-1));
+                y_arr = sysData(i).setOutputArr(y_arr -  ...
+                    mean(y_arr(1:samplesNorm)) );
+                y_avant = sysData(i).setOutputArr(y_avant -  ...
+                    mean(y_avant(1:samplesNorm)) );
+                newDataExp = iddata([y_arr, y_avant], ...
+                    sysData(i).toFlux(phi), Ts);
+                Notes{j} = v;       
                 
                 % Autres informations auxilières
                 newDataExp.Name = sysData(i).name;
-                newDataExp.OutputName = 'Température';
-                newDataExp.OutputUnit = '°C';
+                newDataExp.OutputName = {'Température arrière', ...
+                                         'Température avant'};
+                newDataExp.OutputUnit = {'°C', '°C'};
                 newDataExp.InputName = 'Flux de chaleur';
                 newDataExp.InputUnit = 'W/m²';
                 newDataExp.TimeUnit = 'milliseconds';
