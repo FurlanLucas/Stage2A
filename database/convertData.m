@@ -17,18 +17,18 @@ function convertData()
     for i = 1:length(sysData)  % Cherche chaque système
     
         % Cherche dans le dossier
-        found_data = 0; 
+        found_data = 0;         
         Notes = {};
+
         for j = 1:length(dirFileNames)
-            Notes = cell(length(dirFileNames), 1);
 
             nameDivided = split(dirFileNames(j).name, '_');        
-            if strcmp(sysData(i).name, nameDivided{1} + "_" + nameDivided{2})
+            if strcmp(sysData(i).name, nameDivided{1}+"_"+nameDivided{2})
                 found_data = found_data + 1;
     
                 % Lit le fichier
                 opts = delimitedTextImportOptions("Delimiter", '\t', ...
-                    'VariableNames', {'t', 'y_arr', 'v', 'phi', 'y_avant'});
+                    'VariableNames', {'t','y_arr','v','phi','y_avant'});
                 dataRead = readtable(dirFileNames(j).folder + "\" + ...
                     dirFileNames(j).name, opts); 
 

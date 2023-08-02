@@ -109,66 +109,19 @@ classdef sysDataType
         end
 
         % Convertion des données en tension par flux de chaleur
-        function phi = toFlux(obj, in)
-            % Pour le type 'tension', il va transformée la tension d'entrée 
-            % dans la surface avant en flux de chaleur : il est supposé que
-            % il n'y a pas des pertes dans la resistance (tous la puissance
-            % sera transformée en chaleur) et le résultat est normalisée 
-            % par rapport à sa surface. Pour le type 
-            if strcmp(obj.type, 'both') || strcmp(obj.type,'flux')
-                if obj.Vq == 0
-                    error("La valeur du coefficient du transducteur " +...
-                            "ne peut pas être nulle.");
-                end
-                phi = in/(obj.Vq * 1e-6);
-            elseif strcmp(obj.type, 'tension')
-                phi = (in/(obj.R+obj.R_)).^2 * obj.R / obj.takeResArea;
-            elseif strcmp(obj.type, 'None')
-                error("Le champs 'type' n'a pas été specifié.");
-            end
-        end
+        phi = toFlux(obj, v)
+
+        % Configure la sortie du thermocouple de la face avant
+        y = setOutputAvant(obj, in)
 
         % Configure la sortie du thermocouple de la face arrière
-        function y = setOutputArr(obj, in)
-            % Description 
-            if obj.Ytr_arr ~= 0
-                y = in/(obj.Ytr_arr*1e-6);
-            else
-                error("Le champs 'Ytr_arr' pour le coefficient du " + ...
-                    "thermocouple n'a pas été specifié.");
-            end
-        end
-
-        % Configure la sortie du thermocouple de la face arrière
-        function y = setOutputAvant(obj, in)
-            % Description 
-            if obj.Ytr_avant ~= 0
-                y = in/(obj.Ytr_avant*1e-6);
-            else
-                error("Le champs 'Ytr_avant' pour le coefficient du " + ...
-                    "thermocouple n'a pas été specifié.");
-            end
-        end
+        y = setOutputArr(obj, in)
 
         % Prendre la surface perpendiculaire du thermocouple
-        function S = takeArea(obj)
-            % Description 
-            if strcmp(obj.geometry, 'Cylinder')
-                S = pi*(obj.size^2);
-            elseif strcmp(obj.geometry, 'Parallelepiped')
-                S = obj.size^2;
-            end
-        end
+        S = takeArea(obj)
 
         % Prendre la surface perpendiculaire de la résistance
-        function S = takeResArea(obj)
-            % Description 
-            if strcmp(obj.resGeometry, 'Circ')
-                S = pi*(obj.resSize^2);
-            elseif strcmp(obj.resGeometry, 'Square')
-                S = obj.resSize^2;
-            end
-        end
+        S = takeResArea(obj)
 
     end
     % ---------------------------------------------------------------------
