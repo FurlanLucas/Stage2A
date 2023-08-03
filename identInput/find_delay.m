@@ -27,7 +27,6 @@ function nk = find_delay(dataIn)
         h = impulseest(data);
         figure, showConfidence(impulseplot(h))
     end
-    disp(' ');
 
     %% Sortie
     nk = mean(nk);

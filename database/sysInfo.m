@@ -30,18 +30,18 @@ sysData(1).Ytr_avant = 42;        % [uV/K] Coeff. du thermocouple (avan.) ;
 % Deuxième analyse faite avec le DAS configuré en tension. Le isolant
 % utilisé a été une surface de bois. Le capteur de flux qui a été utilisé
 % c'était celui avec un rayon de 20mm et un coeficient Vq de 3.32 uVm²/W.
-sysData(2) = sysDataType('sys2_isoBas'); % [-] Nom de l'analyse ;
-sysData(2).geometry = 'Cylinder'; % [-] Type of the geometry ;
-sysData(2).size = 37.5e-3;        % [m] Lateral size of the thermocouple ;
-sysData(2).type = 'both';         % [-] Type des données enregistrées ;
-sysData(2).R = 16;                % [Ohm] Résistance choffante ;
-sysData(2).R_ = 0.2;              % [Ohm] Résistance des cables ;
-sysData(2).resSize = 30e-3;       % [m²] Taille de la résistance ;
-sysData(2).Vq = 3.32;             % [uVm²/W] Coefficient de transductance ;
-sysData(2).lambda = 15;           % [W/mK] Conductivité thermique ;
-sysData(2).rho = 7900;            % [kg/m³] Masse volumique ;
-sysData(2).cp = 500;              % [J/kgK] Capacité thermique massique ;
-sysData(2).setDiffusivity;        % [m^2/s] Diffusivité thermique ;
-sysData(2).ell = 5e-3;            % [m] Epaisseur du thermocouple ;
-sysData(2).Ytr_arr = 42;          % [uV/K] Coeff. du thermocouple (arr.) ;
-sysData(2).Ytr_avant = 42;        % [uV/K] Coeff. du thermocouple (avan.) ;
+% sysData(2) = sysDataType('sys2_isoBas'); % [-] Nom de l'analyse ;
+% sysData(2).geometry = 'Cylinder'; % [-] Type of the geometry ;
+% sysData(2).size = 37.5e-3;        % [m] Lateral size of the thermocouple ;
+% sysData(2).type = 'both';         % [-] Type des données enregistrées ;
+% sysData(2).R = 16;                % [Ohm] Résistance choffante ;
+% sysData(2).R_ = 0.2;              % [Ohm] Résistance des cables ;
+% sysData(2).resSize = 30e-3;       % [m²] Taille de la résistance ;
+% sysData(2).Vq = 3.32;             % [uVm²/W] Coefficient de transductance ;
+% sysData(2).lambda = 15;           % [W/mK] Conductivité thermique ;
+% sysData(2).rho = 7900;            % [kg/m³] Masse volumique ;
+% sysData(2).cp = 500;              % [J/kgK] Capacité thermique massique ;
+% sysData(2).setDiffusivity;        % [m^2/s] Diffusivité thermique ;
+% sysData(2).ell = 5e-3;            % [m] Epaisseur du thermocouple ;
+% sysData(2).Ytr_arr = 42;          % [uV/K] Coeff. du thermocouple (arr.) ;
+% sysData(2).Ytr_avant = 42;        % [uV/K] Coeff. du thermocouple (avan.) ;

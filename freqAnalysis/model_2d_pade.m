@@ -22,6 +22,9 @@ function [bodeOut, Fs_pade] = model_2d_pade(dataIn, h, seriesOrder, ...
     else
         error("Entrée 'dataIn' non valide.");
     end
+    %r0 = Rmax;
+    %r0 = 33.8e-3;
+    r0 = dataIn.UserData.resSize;
 
     % Conductivité thermique
     lambda_x = lambda;
@@ -31,11 +34,11 @@ function [bodeOut, Fs_pade] = model_2d_pade(dataIn, h, seriesOrder, ...
     a_x = a;
 
     % Position a être analysé
-    r = 1e-4;
+    r_star = 0;
 
     % Coefficient de transfert thermique
     hx2 = h(1); % Convection naturelle en x2
-    hr2 = h(1); % Convection naturelle en r2
+    hr2 = h(2); % Convection naturelle en r2
 
     % Prendre l'ordre pour Taylor
     if ~exist('padeOrder', 'var')
@@ -56,16 +59,20 @@ function [bodeOut, Fs_pade] = model_2d_pade(dataIn, h, seriesOrder, ...
     f = @(alpha_n) hr2*besselj(0,alpha_n*Rmax) - ...
         lambda_r*besselj(1,alpha_n*Rmax).*alpha_n;
     
-    alpha = zeros(seriesOrder+mod(seriesOrder,2)+1, 1);
+    alpha = zeros(seriesOrder+1, 1);
     
     alpha(1) = bissec(f, 0, J0(1)/Rmax);
-    alpha(2) = bissec(f, J1(1)/Rmax, J0(2)/Rmax);
-    for i = 3:2:seriesOrder+mod(seriesOrder,2)+1
-       alpha(i) = bissec(f, J1(i-1)/Rmax, J0(i)/Rmax);
+    for i = 1:seriesOrder
        alpha(i+1) = bissec(f, J1(i)/Rmax, J0(i+1)/Rmax);
     end
-    alpha = alpha(1:seriesOrder+1);
-    Malpha = ((Rmax^2) / 2) * (besselj(0, alpha*Rmax) .^ 2);
+
+    % for i = 1:seriesOrder+1
+    %     f = @(x) x.*besselj(0, alpha(i)*x).^2;
+    %     Malpha(i) = integral(f, 0, Rmax);
+    % end
+
+    Malpha = (besselj(0, alpha*Rmax) .^ 2).*((Rmax * alpha).^2 + ...
+        (Rmax * hr2 / lambda_r)^2)./(2*(alpha.^2));
 
     %% Approximation de Pade pour le modèle (avec des pertes)
 
@@ -76,7 +83,7 @@ function [bodeOut, Fs_pade] = model_2d_pade(dataIn, h, seriesOrder, ...
     [Q,P] = padecoef(1, padeOrder); % Aprox. e^(x) = P(xi)/Q(xi)
 
     for n = 0:seriesOrder % Serie en r
-        R = besselj(0, r*alpha(n+1));
+        R = besselj(0, r_star*alpha(n+1));
 
         % Aproximation de la fonction de transfert F(xi) = N(xi)/D(xi)
         N = conv(P,Q); 
@@ -93,15 +100,15 @@ function [bodeOut, Fs_pade] = model_2d_pade(dataIn, h, seriesOrder, ...
         Fs_eval = polyval(N,w*1j)./polyval(D,w*1j);
 
         % Calcule le facteur de correction de la serie int(Y)*int(Z)
-        int_R = (Rmax/alpha(n+1)) * besselj(1, alpha(n+1)*Rmax);
+        int_R = (r0/alpha(n+1)) * besselj(1, alpha(n+1)*r0);
+        % f = @(x) x.*besselj(0, alpha(n+1)*x);
+        % int_R = integral(f, 0, r0);
 
         % Some les fonctions (serie en y et en z)
-        Fs_pade_ev = Fs_pade_ev + Fs_eval * ...
-            (R/Malpha(n+1))*int_R;
+        Fs_pade_ev = Fs_pade_ev + Fs_eval * (R/Malpha(n+1))*int_R;
         
         % Fonction de transfert
-        Fs_pade{n+1} = tf(N,D) * ...
-            (R/Malpha(n+1))*int_R;
+        Fs_pade{n+1} = tf(N,D) * (R/Malpha(n+1))*int_R;
     end
 
     %% Résultats

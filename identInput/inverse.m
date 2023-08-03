@@ -12,11 +12,6 @@ function inversed = inverse(models, validData, fs)
     % Prendre
     t = validData.SamplingInstants;
 
-    %% Prendre les données de l'Onera
-
-    disp("Prendre les données d'entrée.");
-    [phi, t] = takeExpFlux(fileDataName, fs);
-
     %% Modèle OE
     N = models.OE.B;
     D = models.OE.F;

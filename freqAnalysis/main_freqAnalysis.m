@@ -1,7 +1,7 @@
 clc; clear; close all;
 %% Entrées et définitions
 figDir = 'outFig';            % [-] Emplacement pour les figures générées ;
-analysisName = 'sys1_polBas'; % [-] Non de l'analyse a être réalisé ;
+analysisName = 'sys1_isoBas'; % [-] Non de l'analyse a être réalisé ;
 expNumber = 1;                % [-] Numéro du experiment a être analysé ;
 orders = [1 5 10];          % Ordre pour l'approximation de Pade ;
 colors = ['r','b','g','m'];   % Couleurs pour les graphes des ordres ;
@@ -95,7 +95,7 @@ for i=1:length(orders)
     results_1d = model_1d_taylor(expData, h, orders(i));
     subplot(2,1,1);
     semilogx(results_1d.w, 20*log10(results_1d.mag), colors(i), ...
-        LineWidth=1.4, DisplayName="$N="+num2str(orders(i))+"$");  
+        LineWidth=1.4, DisplayName="$M="+num2str(orders(i))+"$");  
     hold on; subplot(2,1,2); hold on;
     semilogx(results_1d.w, results_1d.phase*180/pi, colors(i), ...
         LineWidth=1.4);

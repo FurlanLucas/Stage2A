@@ -15,17 +15,23 @@ if not(isfolder(figDir + "\" + analysisName))
     mkdir(figDir + "\" + analysisName);
 end
 
-addpath('..\dataBase'); % Pour prendre la base de données
+
+%% Prendre les données de l'Onera et ceux expérimentales
+
+disp("Prends les données d'entrée.");
+%addpath('..\dataBase'); % Pour prendre la base de données
 load("..\database\convertedData\" + analysisName + ".mat");
 expData = transformInput(expData);
 
 % Données d'identification
 identData = getexp(expData, identNumber);
 
+% Données de l'Onera
+[phi, t] = takeExpFlux(fileDataName);
 
 %% Identification du retard
 
-disp("identification du retard.");
+disp("Identification du retard.");
 delay = find_delay(identData);
 
 %% Identification de la dynamique du capteur
@@ -48,5 +54,5 @@ close all;
 %% Test l'inverse et cree la sortie
 
 disp("Cree les donnees inverses.");
-signal = createTensionSignal(inversedModels, phi, t);
+signal = createTensionSignal(inversedModels, phi, t, fs);
 

@@ -1,7 +1,7 @@
 clc; clear; close all;
 %% Entrées et définitions
 figDir = 'outFig';            % [-] Emplacement pour les figures générées ;
-analysisName = 'sys2_polBas'; % [-] Non de l'analyse a être réalisé ;
+analysisName = 'sys1_isoBas'; % [-] Non de l'analyse a être réalisé ;
 identNumber = 1;              % [-] Numéro du experiment a être analysé ;
 maxOrderConv = 10;   % [-] Ordre maximale dans l'analyse de convergence ; 
 delayOrders = [0 20 10];      % [-] Ordre de retard à être analysée ;

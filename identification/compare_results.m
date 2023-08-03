@@ -127,7 +127,7 @@ function compare_results(dataIn, varargin)
     % Simulation pour Pade en 1D
     fprintf("\tSimulation pour Pade en 1D.\n");
     [~, Fs1d_pade] = model_1d_pade(dataIn, hx2, padeOrder);
-    y1d_pade = lsim(Fs1d_pade, u, t);
+    y1d_pade = lsim(Fs1d_pade{1}, u, t);
 
     % Simulation pour Taylor en 1D
     fprintf("\tSimulation pour Taylor en 1D.\n");
@@ -143,24 +143,24 @@ function compare_results(dataIn, varargin)
     fprintf("\tSimulation pour Pade en " + type + ".\n");
     [~, Fsmulti_pade] = model_multi_pade(dataIn, [hx2,hy1,hy2,hz1,hz2], ...
         seriesOrder, padeOrder);
-    ymulti_pade = 0;
+    ymulti_pade = zeros(length(y1d_pade), 1);
     for i =1:length(Fsmulti_pade)
-        ymulti_pade = ymulti_pade + lsim(Fsmulti_pade{i}, u, t);
+        ymulti_pade = ymulti_pade + lsim(Fsmulti_pade{i}, dataIn.u, t);
     end
 
     % Simulation pour Taylor en 3D/2D
     fprintf("\tSimulation pour Taylor en " + type + ".\n");
     [~,Fsmulti_taylor] = model_multi_taylor(dataIn, [hx2,hy1,hy2,hz1,...
         hz2], seriesOrder, taylorOrder);
-    ymulti_taylor = 0;
+    ymulti_taylor = zeros(length(y1d_pade), 1);
     for i =1:length(Fsmulti_taylor)
-        ymulti_taylor = ymulti_taylor + lsim(Fsmulti_taylor{i}, u, t);
+        ymulti_taylor = ymulti_taylor + lsim(Fsmulti_taylor{i}, dataIn.u, t);
     end
 
     % Simulation avec les defferences finites en 2D
     fprintf("\tSimulation pour differences finites en 2D.\n");
-    [y_findif2d, t_findif2d]  = finitediff2d(dataIn.UserData, t, ...
-        dataIn.u, hx2, 10, 10, 1e5);
+    [y_findif2d, t_findif2d]  = finitediff2d_v2(dataIn.UserData, t, ...
+        dataIn.u, hx2, 10, 70, 1e5);
 
     %% Figure pour la comparaison
 
@@ -170,7 +170,7 @@ function compare_results(dataIn, varargin)
 
     % Valeurs théoriques
     plot(t/60, dataIn.y, 'ok', LineWidth=0.1, MarkerFaceColor='k', ...
-        MarkerSize=0.1);
+        MarkerSize=.8);
     h(1) = plot(NaN, NaN, 'ok', DisplayName="Donn\'{e}es", ...
         MarkerSize=7, MarkerFaceColor='k');
 

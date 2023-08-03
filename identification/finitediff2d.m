@@ -34,8 +34,9 @@ function [y, timeOut] = finitediff2d(dataIn, timeIn, phiIn, h, Mx, Mr, N)
     if strcmp(dataIn.resGeometry, 'Circ')
         r0 = dataIn.resSize;
     else
-        r0 = dataIn.resSize/sqrt(pi);
+        r0 = dataIn.resSize; %/sqrt(pi);
     end
+    r0 = Inf;
 
 
     myphi = @(ri, ni) myphiFF(ri, r0, phi(ni));

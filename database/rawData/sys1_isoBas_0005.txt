@@ -1,6 +1,6 @@
 sys1_isoBas_0005.rec ( 6101 Echant/voies ) Période acquisition :100ms
 Date :25/07/2023 15:45:18
-Temps	y[V]	u[V]	phi[V]	y_avant[V]	
+Temps	y_back[V]	u[V]	phi[V]	y_front[V]	
 0,000000	1,6836e-005	-3,7826e-002	-6,8293e-005	-1,7984e-005	
 100,000000	8,6095e-006	-3,7826e-002	-6,4499e-005	-1,0331e-005	
 200,000000	1,7984e-005	-3,4043e-002	-1,0623e-004	1,6836e-005	

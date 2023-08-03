@@ -1,6 +1,6 @@
 sys1_isoPla_0004.rec ( 6091 Echant/voies ) Période acquisition :100ms
 Date :24/07/2023 12:30:12
-Temps	y[V]	u[V]	phi[V]	y_avant[V]	
+Temps	y_back[V]	u[V]	phi[V]	y_front[V]	
 0,000000	-8,6286e-005	-2,6478e-002	-1,5949e-004	-4,3621e-005	
 100,000000	-9,1452e-005	-2,2695e-002	-1,8764e-004	-8,2460e-005	
 200,000000	-3,6351e-005	-4,1608e-002	-1,4073e-004	-6,7728e-005	

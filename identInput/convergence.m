@@ -91,6 +91,7 @@ function models = convergence(dataIn, maxOrder, delayOrders, varargin)
     for i = 1:length(delayOrders)
 
         fprintf("\tAnalyse pour le retard nk = %d.\n", delayOrders(i));
+        fprintf("\t\tAnalyse en 00%%.");
         for order = minOrder:maxOrder
     
             % Modèle ARX
@@ -140,9 +141,10 @@ function models = convergence(dataIn, maxOrder, delayOrders, varargin)
 
             % Affiche le progrèss
             p = 100*(order - minOrder)/(maxOrder - minOrder);
-            fprintf("\t\tAnalyse en %2.0f%%.\n", p);
+            fprintf("\b\b\b\b%02.0f%%.", p);
         end
-    
+
+        fprintf("\n\t\tAffichage et enregistrement des figures.\n");
         % Critère d'erreur
         figure(figLossFunc);
         subplot(4, 1, 1);  hold on;

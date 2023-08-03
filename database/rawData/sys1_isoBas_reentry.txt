@@ -1,6 +1,6 @@
 sys1_isoFin_0002.rec ( 4591 Echant/voies ) Période acquisition :100ms
 Date :28/07/2023 14:32:22
-Temps	y[V]	u[V]	phi[V]	y_avant[V]	
+Temps	y_back[V]	u[V]	phi[V]	y_front[V]	
 0,000000	-5,3187e-005	-3,4043e-002	-1,0623e-004	-2,4107e-005	
 100,000000	-5,3187e-005	-2,6478e-002	-1,2520e-004	-3,4821e-005	
 200,000000	-1,9132e-006	-3,4043e-002	-8,3469e-005	-3,3864e-005	

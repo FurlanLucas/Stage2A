@@ -12,6 +12,7 @@ function dataOut = transformInput(dataIn)
         curr_data = iddata(curr_exp.u, dataIn.Notes{i}.^2);
         curr_data.Ts = curr_exp.Ts;
         curr_data.TimeUnit = dataIn.TimeUnit;
+        curr_data.ExperimentName = curr_exp.ExperimentName;
 
         if i == 1
             dataOut = curr_data;

@@ -41,6 +41,9 @@ function resid = validation(dataIn, models, varargin)
 
     %% Entrées
 
+    figDir = 'outFig';        % [-] Emplacement pour les figures générées ;
+    analysisName = dataIn.UserData.name; % [-] Non de l'analyse ; 
+
     % Prendre les entrées optionnelles
     if ~isempty(varargin)
         for arg = 1:length(varargin)
@@ -59,7 +62,9 @@ function resid = validation(dataIn, models, varargin)
     sysARMAX = models.ARMAX;
     sysBJ = models.BJ;
 
-    %% Main
+    
+
+    %% Main figure (general comparaison)
    
     figTemps = figure; % Création de la Figure du temps
     figCorr = figure; % Création de la Figure des correlations
@@ -107,14 +112,14 @@ function resid = validation(dataIn, models, varargin)
         subplot(n_data, 1, i); hold on;
         plot(validData.SamplingInstants/60e3, validData.y, 'k', ...
             LineWidth=1.4, DisplayName="Donn\'{e}es");
-        plot(validData.SamplingInstants/60e3, y_oe, "--r", LineWidth=1.4, ...
+        plot(validData.SamplingInstants/60e3, y_oe, "-r", LineWidth=2, ...
             DisplayName='Mod\`{e}le OE');
-        plot(validData.SamplingInstants/60e3, y_arx, "-.g", LineWidth=1.4, ...
+        plot(validData.SamplingInstants/60e3, y_arx, "-.g", LineWidth=2, ...
             DisplayName='Mod\`{e}le ARX');
         plot(validData.SamplingInstants/60e3, y_armax, "-.b", ...
-            LineWidth=1.4, DisplayName='Mod\`{e}le ARMAX');
+            LineWidth=2, DisplayName='Mod\`{e}le ARMAX');
         plot(validData.SamplingInstants/60e3, y_bj, ":y", ...
-            LineWidth=1.4, DisplayName='Mod\`{e}le ARMAX');
+            LineWidth=2, DisplayName='Mod\`{e}le BJ');
         grid minor; 
         ylabel("Data "+num2str(i), Interpreter='latex', FontSize=17);
     
@@ -137,8 +142,8 @@ function resid = validation(dataIn, models, varargin)
             MarkerSize=1, DisplayName="Mod\`{e}le ARX", MarkerFaceColor='b');
         plot(Rue_oe/(Ree_oe(length(e_oe))*Ruu(length(e_oe))), 'or', ...
             MarkerSize=1, DisplayName="Mod\`{e}le OE", MarkerFaceColor='r');
-        plot(Rue_bj/(Ree_bj(length(e_bj))*Ruu(length(e_bj))), 'or', ...
-            MarkerSize=1, DisplayName="Mod\`{e}le BJ", MarkerFaceColor='r');
+        plot(Rue_bj/(Ree_bj(length(e_bj))*Ruu(length(e_bj))), 'oy', ...
+            MarkerSize=1, DisplayName="Mod\`{e}le BJ", MarkerFaceColor='y');
         patch([xlim fliplr(xlim)], 2.17*[1 1 -1 -1]/sqrt(length(e_oe)), ...
             'black', 'FaceColor', 'black', 'FaceAlpha', 0.1, 'HandleVisibility', 'off');
         ylim(min(4*2.17/sqrt(length(e_oe)), 1)*[-1, 1]);
@@ -159,10 +164,57 @@ function resid = validation(dataIn, models, varargin)
     figure(figTemps.Number);
     xlabel('Temps (min)', Interpreter='latex', FontSize=17);
     legend(Interpreter="latex", FontSize=12, Location="northwest");
-    saveas(figTemps, figDir+"\"+analysisName+"\valid_poly.eps");
+    saveas(figTemps, figDir+"\"+analysisName+"\valid_poly.eps", 'epsc');
     sgtitle({"Donn\'{e}es de validation pour le", "mod\'{e}le OE "}, ...
         Interpreter="latex", FontSize=20);
 
     % Resultats
     resid = NaN;
+
+
+    %% Main figure (general comparaison inverse) 
+
+    figInv = figure;
+
+    % Données de validation;
+    for i = 1:n_data
+        validData = getexp(dataIn, i);
+        validData.y = validData.y;
+        
+        % Modèle OE
+        invOE = idpoly(sysOE.B/sysOE.B(1),sysOE.F/sysOE.B(1),1,1,1,sysOE.NoiseVariance,sysOE.Ts);
+        y_oe = lsim(invOE, validData.y);
+    
+        % Modèle ARX
+        invARX = idpoly(sysARX.B/sysARX.B(1),sysARX.A/sysARX.B(1),1,1,1,sysARX.NoiseVariance, ...
+            sysARX.Ts);
+        y_arx = lsim(invARX, validData.y);
+    
+        % Modèle ARMAX
+        invARMAX = idpoly(sysARMAX.B/sysARMAX.B(1),sysARMAX.A/sysARMAX.B(1),1,1,1, ...
+            sysARMAX.NoiseVariance, sysARMAX.Ts);
+        y_armax = lsim(invARMAX, validData.y);
+
+        % Modèle BJ
+        invBJ = idpoly(sysBJ.B/sysBJ.B(1),sysBJ.F/sysBJ.B(1),1,1,1, ...
+            sysBJ.NoiseVariance, sysBJ.Ts);
+        y_bj = lsim(invBJ, validData.y);
+    
+        % Figure des données (temps)
+        figure(figInv.Number);
+        subplot(n_data, 1, i); hold on;
+        plot(validData.SamplingInstants/60e3, validData.u, 'k', ...
+            LineWidth=1.4, DisplayName="Donn\'{e}es");
+        plot(validData.SamplingInstants/60e3, y_oe, "-r", LineWidth=2, ...
+            DisplayName='Mod\`{e}le OE');
+        plot(validData.SamplingInstants/60e3, y_arx, "-.g", LineWidth=2, ...
+            DisplayName='Mod\`{e}le ARX');
+        plot(validData.SamplingInstants/60e3, y_armax, "-.b", ...
+            LineWidth=2, DisplayName='Mod\`{e}le ARMAX');
+        plot(validData.SamplingInstants/60e3, y_bj, ":y", ...
+            LineWidth=2, DisplayName='Mod\`{e}le BJ');
+        grid minor; 
+        ylabel("Data "+num2str(i), Interpreter='latex', FontSize=17);
+    end
+
 end

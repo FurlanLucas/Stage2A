@@ -23,7 +23,7 @@ function nk = find_delay(dataIn)
             data.ExperimentName{1}, nk);
 
         % Graphiquement
-        h = impulseest(data, 40);
+        h = impulseest(data);
         figure, showConfidence(impulseplot(h))
     end
     disp(' ');

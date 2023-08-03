@@ -59,10 +59,7 @@ function bodeOut = model_2d(dataIn, h, seriesOrder)
        alpha(i+1) = bissec(f, J1(i)/Rmax, J0(i+1)/Rmax);
     end
     alpha = alpha(1:seriesOrder+1);
-    %Malpha = (R^2 / 2) * ((besselj(1, alpha*R) .^ 2) + (besselj(0, alpha*R) .^ 2));
     Nalpha = ((Rmax^2) / 2) * (besselj(0, alpha*Rmax) .^ 2);
-
-
 
     %% Modèle théorique de F(s) en 3D
     Fs_2D = zeros(size(w));  % Vecteur avec des solutions
