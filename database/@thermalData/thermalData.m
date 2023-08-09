@@ -29,6 +29,8 @@ classdef thermalData
     %       sysData : les information liées à chaque réalisation, du type 
     %       << sysDataType >>.
     %
+    %       Notes : notes de l'user.
+    %
     %   Méthodes :
     %
     %       getexp(id) : il prend un jeux des données identifié comme id ; 
