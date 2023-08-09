@@ -4,7 +4,42 @@ classdef thermalData
     % Cette classe permet d'avoir l'ensamble de tous les jeux des données
     % experimentales pour un même système.
     %
-    %   -> Type décrit le type de mesure realisé, ce qui peut être
+    %   Propritées :
+    %
+    %       Name : nom de l'analyse faite. Il sera le même que celui du
+    %       sysDataType associé ;
+    %
+    %       t : cellule 1 x Ne avec les échantillons temporélle em ms, avec
+    %       Ne le nombre de experiments realisés ;
+    %
+    %       v : cellule 1 x Ne avec tension mésuré en entrée de la
+    %       résistance en V, avec Ne le nombre de experiments realisés ;
+    %
+    %       phi : cellule 1 x Ne avec tension mésuré en sortie du capeteur
+    %       de flux termique, avec Ne le nombre de experiments realisés ;
+    %
+    %       y_front : cellule 1 x Ne avec tension mésuré en sortie du 
+    %       termocouple placé dans la face avant, avec Ne le nombre de 
+    %       experiments realisés ;
+    %
+    %       y_back : cellule 1 x Ne avec tension mésuré en sortie du 
+    %       termocouple placé dans la face arrière, avec Ne le nombre de 
+    %       experiments realisés ;
+    %
+    %       sysData : les information liées à chaque réalisation, du type 
+    %       << sysDataType >>.
+    %
+    %   Méthodes :
+    %
+    %       getexp(id) : il prend un jeux des données identifié comme id ; 
+    %
+    %       getexpAlim(id) : il prend un jeux des données identifié comme 
+    %       id pour l'identification d'entrée ;
+    %
+    %       add(obj, y_front, y_back, v, phi, t) : il ajoute un nouveau
+    %       jeux des données au ensemble.
+    %
+    % See also getexp, getexpAlim, sysDataType.
 
     %% Proprietées --------------------------------------------------------
     properties
@@ -15,8 +50,6 @@ classdef thermalData
         y_front = {};             % [°C] Température dans la face avant ;
         y_back = {};              % [°C] Température dans la face arrière ;
         sysData = sysDataType;    % [-] Données du système ;
-        identNumber = 1;          % [-] Données de identification ;
-        validNumbers = 2;         % [-] Données de validation ;
         Notes = {};               % [-] Notes de l'user ;
     end 
 

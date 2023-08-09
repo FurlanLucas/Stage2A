@@ -1,8 +1,20 @@
 function dataOut = getexpAlim(obj, id)
-    %% getIdent
+    %% getexpAlim
     %
-    % Description
+    % Implantation d'une fonction getexp pour la classe thermalData. Le
+    % fonctionement de cette méthode est similaire à getexp de la toolbox
+    % d'identification. Il prendre les données associé avec l'entrée de
+    % tension/flux de chaleur du systéme.
     %
+    %   data = mySet.getexp(id) prend le jeux des données numéro id de
+    %   l'emsemble mySet.
+    %
+    %   data = mySet.getexp([id1, id2, ..., idn) prend le jeux des données 
+    %   énumérée id1, id2, ..., idn dans l'emsemble mySet.
+    %
+    % La particularité de cette fonction est que elle va prendre la sortie
+    % comme un jeux des données dans lequel l'entrée est la tension
+    % apliquée dans la resistance et la sortie est le flux de chaleur.
 
     %% Main
 

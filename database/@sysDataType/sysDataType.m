@@ -49,7 +49,7 @@ classdef sysDataType
     %
     %       Y_tr_front : coefficient du thermocouple utilisé dans la face
     %       avant (la même face dans laquelle est appliqué le e flux de 
-    %       chaleur) ;
+    %       chaleur).
     %
     %   Méthodes :
     %
@@ -68,7 +68,7 @@ classdef sysDataType
     %
     %       setOutputBack : il fait la conversion entre la tension mesuré 
     %       en V et la variation de température réelle en °C pour la
-    %       surface arrière en utilisant Ytr_back ;
+    %       surface arrière en utilisant Ytr_back.
     %
     %
     %   OBS : la configuration de la diffusivité est faite automatiquement
@@ -76,7 +76,7 @@ classdef sysDataType
     %   volumique est configuré.
     %
     % See also takeArea, takeArea, takeResArea, setOutputFront,
-    % setOutputBack, setOutputFront, 
+    % setOutputBack, setOutputFront.
 
     %% Proprietées --------------------------------------------------------
     properties

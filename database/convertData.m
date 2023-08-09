@@ -57,7 +57,6 @@ function convertData()
         end   
         
         % Enregistre tous les experiments réalisés
-        expData.validNumbers = 2:length(expData.v);
         save(dirOutputName + "\" +sysData(i).Name, "expData");
     end
 
