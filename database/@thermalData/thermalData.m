@@ -1,7 +1,8 @@
 classdef thermalData
     %% sysDataType
-    % Cette classe permet d'avoir l'ensamble de tous les information liées
-    % à chaque réalisation experimental.
+    %
+    % Cette classe permet d'avoir l'ensamble de tous les jeux des données
+    % experimentales pour un même système.
     %
     %   -> Type décrit le type de mesure realisé, ce qui peut être
 
@@ -24,22 +25,16 @@ classdef thermalData
         % Contructeur de la classe
         function obj = thermalData(sysData)
             if nargin == 1
-                obj.Name = sysData.name;
+                obj.Name = sysData.Name;
                 obj.sysData = sysData;
             end
         end
 
-        % Prends le données de identification
-        dataOut = ident(obj, varargin);
+        % Prends un (ou plusiers) jeux des données
+        dataOut = getexp(obj, id);
 
-        % Prends le données de validation
-        dataOut = valid(obj, varargin);
-
-        % Prends le données de identification (entrée)
-        dataOut = identT(obj, varargin);
-
-        % Prends le données de valid (entrée)
-        dataOut = validT(obj, varargin);
+        % Prends un (ou plusiers) jeux des données (alimentation)
+        dataOut = getexpAlim(obj, id);
 
         % Get methods
         get(obj);

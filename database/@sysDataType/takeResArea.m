@@ -6,9 +6,9 @@ function S = takeResArea(obj)
     % un cube, la résistance est supposeé carrée.
 
     %% Main 
-    if strcmp(obj.geometry, 'Cylinder')
-        S = pi*(obj.resSize^2);
-    elseif strcmp(obj.geometry, 'Parallelepiped')
-        S = obj.resSize^2;
+    if strcmp(obj.Geometry, 'Cylinder')
+        S = pi*(obj.ResSize^2);
+    elseif strcmp(obj.Geometry, 'Parallelepiped')
+        S = obj.ResSize^2;
     end
 end

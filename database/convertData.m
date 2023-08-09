@@ -1,8 +1,12 @@
 function convertData()
     %% convertData
     %
-    %   Convert data
+    % Function qui fait la conversion entre les données brutes dans les
+    % fichiers TXT et crée les données du type thermalData. Il fait aussi
+    % l'enregistrement sur 'nom.mat', où << nom >> est le non de l'analyse
+    % sur sysInfo.m
     %
+    % See also sysInfo, thermalData.
     
     %% Entrées et définitions
     dirInputName = 'rawData'; % Dossier avec les données reçu ;
@@ -12,17 +16,17 @@ function convertData()
     %% Main
     
     allFileNames = {dir(dirInputName + "\*.txt").name};
-
+    
     for i = 1:length(sysData)  % Cherche chaque système
     
         % Crée le variable de donnée thermalData
         expData = thermalData(sysData(i));
-
+    
         % Cherche dans le dossier
-        pos = contains(allFileNames, sysData(i).name);
-        fileNames = {allFileNames{pos}};
+        pos = contains(allFileNames, sysData(i).Name);
+        fileNames = allFileNames(pos);
         n_files = sum(pos)-1;
-
+    
         % Par chaque fichier
         for j = 1:n_files
     
@@ -30,7 +34,7 @@ function convertData()
             opts = delimitedTextImportOptions("Delimiter", '\t', ...
                 'VariableNames', {'t','y_back','v','phi','y_front'});
             dataRead = readtable(dirInputName + "\" + fileNames{j}, opts); 
-
+    
             % Transforme le tableau en vecteur
             t = str2double(strrep(dataRead.t(4:end,1), ',', '.'));
             y_back = str2double(strrep(dataRead.y_back(4:end),',','.'));
@@ -39,8 +43,8 @@ function convertData()
             y_front = str2double(strrep(dataRead.y_front(4:end), ',','.'));            
             
             % Transforme les mesures en variations des mesures
-            y_front = sysData(i).setOutputArr(toVar(y_front));
-            y_back = sysData(i).setOutputArr(toVar(y_back));
+            y_front = sysData(i).setOutputFront(toVar(y_front));
+            y_back = sysData(i).setOutputBack(toVar(y_back));
             phi = sysData(i).toFlux(toVar(phi));       
             
             % Autres informations auxilières
@@ -53,7 +57,8 @@ function convertData()
         end   
         
         % Enregistre tous les experiments réalisés
-        save(dirOutputName + "\" +sysData(i).name, "expData");
+        expData.validNumbers = 2:length(expData.v);
+        save(dirOutputName + "\" +sysData(i).Name, "expData");
     end
 
 end
