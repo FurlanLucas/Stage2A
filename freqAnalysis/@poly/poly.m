@@ -56,13 +56,22 @@ classdef poly
         obj = plus(obj1, obj2);
 
         % Réécrit la fonction de multiplication
-        objout = mtimes(objin1, objin2)
+        objout = mtimes(objin1, objin2);
 
         % Réécrit le opérateur de puissance
         obj = mpower(obj1, obj2);
 
         % Composition des polynômes
-        R = comp(obj, P)
+        R = comp(obj, P);
+
+        % Prendre les coefficients paires
+        R = even(obj);
+
+        % Prendre les coefficients impaires
+        R = odd(obj);
+
+        % Évalue le polynômes dans les points espécifiés
+        R = evaluate(obj, in);
 
     end
 end

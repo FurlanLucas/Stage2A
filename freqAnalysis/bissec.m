@@ -1,5 +1,6 @@
 function root = bissec(f, a, b, varargin)
-    %% Bissec 
+    %% bissec
+    %
     % Fonction pour calculer la racine d'une équation avec le méthode de la 
     % bissection. Il prendre comme entrées la fontion f a être analysée et
     % les extrêmes d'intervale dans lequelle il y a la racine.
@@ -14,33 +15,38 @@ function root = bissec(f, a, b, varargin)
     %
     %   - printProcess : Contrôle si il va avoir d'affichage de chaque
     %   iteration à l'écran ;
-    %   - maxError : Contrôle de l'erreur minimale pour avoir la 
+    %   - relError : Contrôle de l'erreur minimale pour avoir la 
     %   convergence. Cet erreur sera donné par rapport a difference entre 
     %   x_k et x_k+1 en module.
     %   - maxIt : Contrôle  de le nombre d'iterations maximale pour avoir
     %   la convergence.
 
     %% Entrées
-    % Valeur par défaut
+    % Valeurs par défaut
     maxError = 1e-10; maxIt = 100; printProcess = false;
 
-    % Test les argument optionelles
-    for i=1:2:length(varargin)
-        % Valeur d'erreur maximale par défaut (entre la différence de x)
-        if varargin{i} == "error"
-            maxError = varargin{i+1};
-        end
-        % Nombre de iteration maximale
-        if varargin{i} == "maxIt"
-            maxIt = varargin{i+1};
-        end
-        % Affiche chaque iteration
-        if varargin{i} == "printProcess"
-            printProcess = varargin{i+1};
+    % Test les arguments optionelles
+    for i=1:2:length(varargin)        
+        switch varargin{i}
+            % Valeur d'erreur maximale par défaut (variation de x)
+            case 'relError'
+                maxError = varargin{i+1};
+
+            % Nombre de iteration maximale
+            case 'maxIt'      
+                maxIt = varargin{i+1};
+
+            % Affiche chaque iteration
+            case 'printProcess'     
+                printProcess = varargin{i+1};
+
+            % Erreur
+            otherwise
+                error("Option << " + varargin{i} + " >> invalide.");
         end
     end
 
-    %% Poucle principale
+    %% Boucle principale
     if printProcess
         disp('------------------------------------------');
         fprintf("It \t\t a \t\t b \t\t f(a) \t\t f(b)\n");

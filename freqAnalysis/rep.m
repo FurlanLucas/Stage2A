@@ -1,7 +1,7 @@
 clc; clear; close all;
 %% Entrées et définitions
 figDir = 'outFig';            % [-] Emplacement pour les figures générées ;
-analysisName = 'sys1_polBas'; % [-] Non de l'analyse a être réalisé ;
+analysisName = 'sys1_isoBas'; % [-] Non de l'analyse a être réalisé ;
 expNumber = 1;                % [-] Numéro du experiment a être analysé ;
 numberOfZeros = 7;            % [-] Numéro de zéros de l'analyse ;
 points = 1000;                % [-] Points pour l'analyse ;
