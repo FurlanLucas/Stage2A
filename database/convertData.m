@@ -12,12 +12,15 @@ function convertData()
     dirInputName = 'rawData'; % Dossier avec les données reçu ;
     dirOutputName = 'convertedData'; % Dossier avec les données de sortie ;
     sysInfo; % Prendre les variables refatives aux systèmes ;
+
+    fprintf("<strong>Convertion des données</strong>\n");
     
     %% Main
     
     allFileNames = {dir(dirInputName + "\*.txt").name};
     
     for i = 1:length(sysData)  % Cherche chaque système
+        fprintf("\tConvertion pour le système %s en cours.\n", sysData(i).Name);
     
         % Crée le variable de donnée thermalData
         expData = thermalData(sysData(i));
@@ -59,5 +62,7 @@ function convertData()
         % Enregistre tous les experiments réalisés
         save(dirOutputName + "\" +sysData(i).Name, "expData");
     end
+
+    disp(" ");
 
 end
