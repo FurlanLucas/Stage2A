@@ -113,7 +113,8 @@ classdef sysDataType
 
         % Initialise la géométrie
         function obj = set.Geometry(obj, Geometry)
-            if ~strcmp(Geometry, 'Cylinder') && ~strcmp(Geometry, 'Cube')
+            if ~strcmp(Geometry, 'Cylinder') && ~strcmp(Geometry, 'Cube') && ...
+                    ~strcmp(Geometry, 'None')
                 error("La géométrie doit être << Cylinder >> ou << " + ...
                     "Cube >>.");
             end

@@ -20,7 +20,7 @@ function convertData()
     allFileNames = {dir(dirInputName + "\*.txt").name};
     
     for i = 1:length(sysData)  % Cherche chaque système
-        fprintf("\tConvertion pour le système %s en cours.\n", sysData(i).Name);
+        fprintf("Convertion pour le système %s en cours.\n", sysData(i).Name);
     
         % Crée le variable de donnée thermalData
         expData = thermalData(sysData(i));

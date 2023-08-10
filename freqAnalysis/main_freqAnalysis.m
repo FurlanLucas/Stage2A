@@ -8,7 +8,7 @@ colors = ['r','b','g','m'];   % Couleurs pour les graphes des ordres ;
 h_comp = [10, 20];            % Comparaison pour des valeurs de h ;
 h = 15;                       % Valeur finale de h
 
-fprintf("\n<strong>Analyse fréquentielle</strong>\n");
+fprintf("<strong>Analyse fréquentielle</strong>\n");
 
 %% Vérification de sortie et chargement des données
 if not(isfolder(figDir + "\" + analysisName))
