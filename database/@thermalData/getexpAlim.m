@@ -1,31 +1,41 @@
 function dataOut = getexpAlim(obj, id)
     %% getexpAlim
     %
-    % Implantation d'une fonction getexp pour la classe thermalData. Le
-    % fonctionement de cette méthode est similaire à getexp de la toolbox
-    % d'identification. Il prendre les données associé avec l'entrée de
-    % tension/flux de chaleur du systéme.
+    % Implementation of getexp method (the same as in the System
+    % Identification Toolbox) for the thermalData class, but to be used in
+    % the input system identification analysis.
     %
-    %   data = mySet.getexp(id) prend le jeux des données numéro id de
-    %   l'emsemble mySet.
+    % Calls
     %
-    %   data = mySet.getexp([id1, id2, ..., idn) prend le jeux des données 
-    %   énumérée id1, id2, ..., idn dans l'emsemble mySet.
+    %   data = thermalData.getexpAlim(id): take the id data in the mySet 
+    %   thermalData variable and returns it in the format of an iddata.
     %
-    % La particularité de cette fonction est que elle va prendre la sortie
-    % comme un jeux des données dans lequel l'entrée est la tension
-    % apliquée dans la resistance et la sortie est le flux de chaleur.
+    %   data = thermalData.getexpAlim([id1, id2, ..., idn]): take the 
+    %   data sets enumerated id1 to idn and returns it in the format of 
+    %   an iddata. 
+    %
+    % Inputs
+    %
+    %   id: integer number to identify the dataset.
+    %
+    % Outputs
+    %
+    %   data: iddata object, with the entry beeing the tension applied
+    %   in the front face, output beeing the measured heat flux also in the
+    %   front face.
+    %
+    % See also: getexpAlim, thermalData.
 
     %% Main
 
     n_data = length(id);
     for i = 1:n_data
 
-        % Crée le donnée du type 'iddata'
+        % Create a current iddata (to each id given in the arguments)
         curr_data = iddata(obj.phi{id(i)}, obj.v{id(i)}.^2, ...
             obj.t{id(i)}(2)-obj.t{id(i)}(1));
     
-        % Des autres infos
+        % Other additional information
         curr_data.Name = obj.Name;
         curr_data.InputName = {'Tension en entrée'};
         curr_data.InputUnit = {'V²'};

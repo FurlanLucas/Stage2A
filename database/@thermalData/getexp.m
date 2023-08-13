@@ -1,26 +1,40 @@
 function dataOut = getexp(obj, id)
     %% getexp
     %
-    % Implantation d'une fonction getexp pour la classe thermalData. Le
-    % fonctionement de cette méthode est similaire à getexp de la toolbox
-    % d'identification.
+    % Implementation of getexp method (the same as in the System
+    % Identification Toolbox) for the thermalData class. 
     %
-    %   data = mySet.getexp(id) prend le jeux des données numéro id de
-    %   l'emsemble mySet.
+    % Calls
     %
-    %   data = mySet.getexp([id1, id2, ..., idn) prend le jeux des données 
-    %   énumérée id1, id2, ..., idn dans l'emsemble mySet.
+    %   data = thermalData.getexp(id): take the id data in the mySet 
+    %   thermalData variable and returns it in the format of an iddata.
+    %
+    %   data = thermalData.getexp([id1, id2, ..., idn]): take the data
+    %   sets enumerated id1 to idn and returns it in the format of an 
+    %   iddata. 
+    %
+    % Inputs
+    %
+    %   id: integer number to identify the dataset.
+    %
+    % Outputs
+    %
+    %   data: iddata object, with the entry beeing the heat flux measured
+    %   in the front face, outputs beeing the temperatures measured in both
+    %   faces.
+    %
+    % See also: getexpAlim, thermalData.
    
     %% Main
 
     n_data = length(id);
     for i = 1:n_data
 
-        % Crée le donnée du type 'iddata'
+        % Create a current iddata (to each id given in the arguments)
         curr_data = iddata([obj.y_back{id(i)}, obj.y_front{id(i)}], ...
             obj.phi{id(i)}, obj.t{id(i)}(2)-obj.t{id(i)}(1));
     
-        % Des autres infos 
+        % Other additional information
         curr_data.Name = obj.Name;
         curr_data.InputName = {'Flux de chaleur'};
         curr_data.InputUnit = {'W/m²'};

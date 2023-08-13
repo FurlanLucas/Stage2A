@@ -1,218 +1,197 @@
 classdef sysDataType
     %% sysDataType
     %
-    % Cette classe permet d'avoir l'ensamble de tous les information liées
-    % à chaque réalisation experimental.
+    % Class that has all the information related to each system analysed,
+    % such as thermal properties, geometry dimension and sensor
+    % coefficients. The front surface is defined as the surface for x=0 and
+    % the rear face for x=ell.
     %
-    %   Propritées :
+    % Properties
     %
-    %       Name : nom de l'analyse faite. Normalement, il codifie le
-    %       système a être analisé et le type d'isolant qui a été utilisé ;
+    %   Name: analysis name that codifies the system and tipe of insulating
+    %   used;
     %
-    %       Geometry : géométrie du système analysé. Il peut être
-    %       'Cylinder', dans ce cas l'analyse multidimentional utilisé
-    %       sera 2D (axisimétrique), ou 'Cube' pour laquelle une analyse 3D
-    %       sera utilisée ;
+    %   Geometry: sysmtem geometry. It can be 'Cylinder' for which the
+    %   analysis will be 2D (axisymmetric cylindrical coordenates) or
+    %   'Cube' for wich the analysis will be 3D in regular cartesian
+    %   coordenate system. If its 'None', a error will be thrown.
     %
-    %       Size : taille du thermocouple en m. Pour une géométrie du type
-    %       'Cylinder' il est le rayon du thermocouple, pour une géométrie
-    %       du type 'Cube', il est la largeur ;
+    %   Size: termocouple size in meters. If the geometry is 'Cylinder',
+    %   the size is supposed to be the radious of the termocouple. For a
+    %   'Cube' geometry, it is supposed to be the lateral length of the
+    %   termocouple;
     %
-    %       R : valeur de la résistance utilisé dans l'analyse en Ohms, à 
-    %       compter avec les fils de connexion ;
+    %   R: resistence value in Ohms, without the cables resistence;
     %
-    %       R_ : valeur de la résistance des cables en Ohms ;
+    %   R_: resistance value of the cables in Ohms, without the heat 
+    %   resistence itself;
     %
-    %       ResSize : taille de la résistance utilisé (pour l'analyse 
-    %       multidimensionalle) en m. Pour une géométrie du type 
-    %       'Cylinder', la résistance sera supposé circulaire est 
-    %       << ResSize >> est son rayon. Pour une géométrie du type 'Cube', 
-    %       la résistance sera supposé carré est << ResSize >> est sa 
-    %       largeur.
+    %   Vq: transductance coefficient for the heat flux sensor in
+    %   uV/(W/m²);
     %
-    %       Vq : coefficient de transductance du capteur de flux en 
-    %       uVm²/W ;
+    %   lambda: thermal conductivity of the material in W/mK;
     %
-    %       lambda : conductivité thermique du thermocouple en W/mK ;
+    %   rho: material density in kg/m³;
     %
-    %       rho : masse volumique du thermocouple en kg/m³ ;
+    %   cp: specific heat with constant pressure in J/kgK;
     %
-    %       cp : capacité thermique massique du thermocouple en J/kgK ;
+    %   a: thermocouple thermal diffusivity in m^2/s. This value is
+    %   calculated with lambda/(cp*rho) and can not be changed. A new value
+    %   is calculated each time the conductivity, density or the specific
+    %   heat changes.
     %
-    %       a : diffusivité thermique du thermocouple en m^2/s ;
+    %   ell: depth of the thermocouple (x axis) in meters;
     %
-    %       ell : epaisseur du thermocouple en m. Il est defini comme la
-    %       position en x du capteur ;
+    %   Y_tr_back: thermocouple coefficient in uV/K for the rear face;
     %
-    %       Y_tr_back : coefficient du thermocouple utilisé dans la face
-    %       arrière (la face contraire à l'entrée de flux de chaleur) ;
+    %   Y_tr_front: thermocouple coefficient in uV/K for the front face.
     %
-    %       Y_tr_front : coefficient du thermocouple utilisé dans la face
-    %       avant (la même face dans laquelle est appliqué le e flux de 
-    %       chaleur).
+    % Methods
     %
-    %   Méthodes :
+    %   takeArea: takes the area of a thermocouple surface perpendicular 
+    %   with respect to the heat flux in m²;
     %
-    %       takeArea : il prends la valeur de la surface du thermocouple en
-    %       m perpendiculaire au flux de chaleur pour l'analyse 1D ; 
+    %   takeResArea : takes the resistance area in m²;
     %
-    %       takeResArea : il prends la valeur de la surface de la 
-    %       résistance en m pour l'analyse 1D ;
+    %   toFlux : does the conversion between tension in V and heat flux 
+    %   measured W/m²;
     %
-    %       toFlux : il fait la conversion entre la tension mesuré en V et
-    %       la variation de flux de chaleur en entrée en W/m² ;
+    %   setOutputFront: does the conversion between tension in V and the
+    %   temperature change measured in the front face in °C.
     %
-    %       setOutputFront : il fait la conversion entre la tension mesuré 
-    %       en V et la variation de température réelle en °C pour la
-    %       surface avant en utilisant Ytr_front ;
-    %
-    %       setOutputBack : il fait la conversion entre la tension mesuré 
-    %       en V et la variation de température réelle en °C pour la
-    %       surface arrière en utilisant Ytr_back.
-    %
-    %
-    %   OBS : la configuration de la diffusivité est faite automatiquement
-    %   a chaque fois que la conductivité, la capacité ou la masse 
-    %   volumique est configuré.
+    %   setOutputBack: does the conversion between tension in V and the
+    %   temperature change measured in the rear face in °C.
     %
     % See also takeArea, takeArea, takeResArea, setOutputFront,
     % setOutputBack, setOutputFront.
 
-    %% Proprietées --------------------------------------------------------
+    %% Proprerties ----------------------------------------------------------------
     properties
-        Name = 'Empty';         % [-] Nom de l'analyse ;
-        Geometry = 'None';      % [-] Type of the geometry ;
-        Size = 0;               % [m] Lateral size of the thermocouple ;
-        Type = 'None';          % [-] Type de mesure realisé en entrée ;
-        R = 0;                  % [Ohm] Résistance choffante ;
-        R_ = 0;                 % [Ohm] Résistance des cables ;
-        ResSize = 0;            % [m²] Taille de la résistance ;
-        Vq = 0;                 % [uVm²/W] Coefficient de transductance ;
-        lambda = 0;             % [W/mK] Conductivité thermique ;
-        rho = 0;                % [kg/m³] Masse volumique ;
-        cp = 0;                 % [J/kgK] Capacité thermique massique ;
-        ell = 0;                % [m] Epaisseur de la plaque ;
-        Ytr_back = 0;           % [uV/K] Coeff. du thermocouple (arr.) ;
-        Ytr_front = 0;          % [uV/K] Coeff. du thermocouple (avan.) ;
+        Name = 'Empty';         % [-] Analysis name
+        Geometry = 'None';      % [-] Geometry type
+        Size = 0;               % [m] Lateral size of the thermocouple
+        R = 0;                  % [Ohm] Heat resistance value
+        R_ = 0;                 % [Ohm] Cables resistance value
+        ResSize = 0;            % [m] Resistance size
+        Vq = 0;                 % [uVm²/W] Heat flux sensor coefficient
+        lambda = 0;             % [W/mK] Thermal conductivity
+        rho = 0;                % [kg/m³] Termocouple dentsity
+        cp = 0;                 % [J/kgK] Specific heat with constant pressure
+        ell = 0;                % [m] Depth of the termocouple
+        Ytr_back = 0;           % [uV/K] Thermocouple coefficient (rear)
+        Ytr_front = 0;          % [uV/K] Thermocouple coefficient (front)
     end
 
     properties (SetAccess = private)
-        a = 0;                  % [m^2/s] Diffusivité thermique ;
+        a = 0;                  % [m^2/s] Thermal diffusivity
     end
-    % ---------------------------------------------------------------------
 
-    %% Méthodes publiques -------------------------------------------------
+    %% Methods --------------------------------------------------------------------
     methods
 
-        % Contructeur de la classe
+        % Class constructor
         function obj = sysDataType(name)
             if nargin == 1
                 obj.Name = name;
             end
         end
 
-        % Initialise la géométrie
+        % Set geometry propertie
         function obj = set.Geometry(obj, Geometry)
             if ~strcmp(Geometry, 'Cylinder') && ~strcmp(Geometry, 'Cube') && ...
                     ~strcmp(Geometry, 'None')
-                error("La géométrie doit être << Cylinder >> ou << " + ...
-                    "Cube >>.");
+                error("The geometry is not valid. It has to be either " + ...
+                    "'Cylinder' or 'Cube'.");
             end
             obj.Geometry = Geometry;
         end
 
-        % Initialise la valeur de la résistance choffante
+        % Set resistance value propertie
         function obj = set.R(obj, R)
             if (R <= 0)
-                error("La valeur de la résistance doit être " + ...
-                    "positive et non nulle.");
+                error("The resiste value has to be positive and non-zero.");
             end
             obj.R = R;
         end
 
-        % Initialise la valeur de la résistance des cables
+        % Set cable resistance value propertie
         function obj = set.R_(obj, R_)
             if (R_ <= 0)
-                error("La valeur de la résistance doit être " + ...
-                    "positive et non nulle.");
+                error("The resiste value has to be positive and non-zero.");
             end
             obj.R_ = R_;
         end
 
-        % Initialise la valeur de la surface de la résistance
+        % Set the resistance size
         function obj = set.ResSize(obj, ResSize)
             if (ResSize <= 0)
-                error("La valeur de la surface doit être " + ...
-                    "positive et non nulle.");
+                error("The resiste size has to be positive and non-zero.");
             end
             obj.ResSize = ResSize;
         end
 
-        % Initialise la valeur de la conductivité thermique
+        % Set the thermal conductivity
         function obj = set.lambda(obj, lambda)
             if (lambda <= 0)
-                error("La valeur de la conductivité thermique doit " + ...
-                    "être positive et non nulle.");
+                error("The conductivity has to be positive and" + ...
+                    "non-zero.");
             end
             obj.lambda = lambda;
             obj = obj.setDiffusivity;
         end
 
-        % Initialise la valeur de la surface de la masse volumique
+        % Set the density value
         function obj = set.rho(obj, rho)
             if (rho <= 0)
-                error("La valeur de la masse volumique doit être " + ...
-                    "positive et non nulle.");
+                error("The density has to be positive and non-zero.");
             end
             obj.rho = rho;
             obj = obj.setDiffusivity;
         end
 
-        % Initialise la capacité thermique
+        % Set the specific heat
         function obj = set.cp(obj, cp)
             if (cp <= 0)
-                error("La valeur du cp doit être positive et non " + ...
-                    "nulle.");
+                error("The specific heat has to be positive and" + ...
+                    "non-zero.");
             end
             obj.cp = cp;
             obj = obj.setDiffusivity;
         end
 
-        % Initialise l'paisseur du thermocouple
+        % Set the depth value (x position)
         function obj = set.ell(obj, ell)
             if (ell <= 0)
-                error("La valeur de l'paisseur doit être positive.");
+                error("The depth has to be positive and non-zero.");
             end
             obj.ell = ell;
         end
 
-        % Convertion des données en tension par flux de chaleur
+        % Change tension into heat flux
         phi = toFlux(obj, v)
 
-        % Configure la sortie du thermocouple de la face avant
+        % Change tension into temperature (front face)
         y = setOutputFront(obj, in)
 
-        % Configure la sortie du thermocouple de la face arrière
+        % Change tension into temperature (rear face)
         y = setOutputBack(obj, in)
 
-        % Prendre la surface perpendiculaire du thermocouple
+        % Take thermocouple area
         S = takeArea(obj)
 
-        % Prendre la surface perpendiculaire de la résistance
+        % Take resistence area
         S = takeResArea(obj)
 
     end
-    % ---------------------------------------------------------------------
 
-    %% Méthodes non visiblées ---------------------------------------------
+    %% Hiden methods --------------------------------------------------------------
     methods (Hidden=true)
 
-        % Configure la diffusivité
+        % Diffusivity configuration
         function obj = setDiffusivity(obj)
-            % Function de configuration de la diffusivité.
             obj.a = obj.lambda/(obj.cp*obj.rho);
         end
         
     end
-    % ---------------------------------------------------------------------
+    % -----------------------------------------------------------------------------
 end

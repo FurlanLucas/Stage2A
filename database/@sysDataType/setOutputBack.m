@@ -1,15 +1,15 @@
 function y = setOutputBack(obj, in)
-    %% setOutputArr
+    %% setOutputBack
     %
-    % Configure la sortie en variation de température dans la face arrière
-    % en utilisant le coeficient Y_tr du termocouple. Il est nécessaire
-    % avoir une proprieté Y_tr non nulle.
+    % Change the output from volts to °C (or K) variation in the rear face,
+    % defined as (x=ell).
+    %
+    % See also sysDataType.
 
     %% Main
     if obj.Ytr_back ~= 0
         y = in/(obj.Ytr_back*1e-6);
     else
-        error("Le champs 'Ytr_arr' pour le coefficient du " + ...
-            "thermocouple n'a pas été specifié.");
+        error("The thermocouple coefficient value was not defined.");
     end
 end

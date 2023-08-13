@@ -22,8 +22,8 @@ function [y, timeOut] = finitediff2d_v2(dataIn, timeIn, phiIn, h, Mx, Mr, N)
     a = dataIn.a;
     lambda_x = dataIn.lambda;
     lambda_r = dataIn.lambda;
-    Rmax = dataIn.size;
-    r0 = dataIn.resSize;
+    Rmax = dataIn.Size;
+    r0 = dataIn.ResSize;
     %r0 = Rmax;
     %r0 = 35.6e-3;
 
@@ -42,7 +42,8 @@ function [y, timeOut] = finitediff2d_v2(dataIn, timeIn, phiIn, h, Mx, Mr, N)
 
     %% A Matrix
     T = zeros(Mx*Mr, 1);
-    y = zeros(1,N);
+    y_back = zeros(1,N);
+    y_front = zeros(1,N);
 
     count = 0;
     for n = 2:N
@@ -173,8 +174,12 @@ function [y, timeOut] = finitediff2d_v2(dataIn, timeIn, phiIn, h, Mx, Mr, N)
         end
 
         T = B\(A*T + c);
-        y(n) = T(Mr*Mx-Mr+1);
+        y_back(n) = T(Mr*Mx-Mr+1);
+        y_front(n) = T(1);
 
     end % end for
+
+    %% Sortie
+    y = {y_back, y_front};
 
 end % end function

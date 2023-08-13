@@ -20,7 +20,7 @@ addpath('..\dataBase'); % Pour prendre la base de données
 load("..\database\convertedData\" + analysisName + ".mat");
 
 % Données de identification et validation
-n_data = size(expData, 4); % Nombre des exp réalisés ;
+n_data = length(expData.v); % Nombre des exp réalisés ;
 identData = expData.getexp(identNumber);
 validData = expData.getexp(setdiff(1:n_data, identNumber));
 
@@ -28,7 +28,7 @@ validData = expData.getexp(setdiff(1:n_data, identNumber));
 
 % Compaire les modèles avec les résultats théoriques
 disp("Analyse de comparaison avec les modèles théoriques.");
-compare_results(identData, h=15);
+compare_results(expData, h=15);
 
 % Analyse du delay des modèles
 disp("Analyse du delay du système.");

@@ -44,7 +44,7 @@ function [y, timeOut] = finitediff1d(dataIn, timeIn, phiIn, h, M, N)
     tau = a*dt/(dx*dx);
     
     % Résolution du système lineaire
-    y = zeros(1,N);
+    y_back = zeros(1,N); y_front = zeros(1,N);
     timeOut = (0:N-1)*dt;
     phi = interp1(timeIn, phiIn, timeOut);
     T0 = zeros(M, 1);
@@ -69,7 +69,11 @@ function [y, timeOut] = finitediff1d(dataIn, timeIn, phiIn, h, M, N)
 
         % Résultat
         T = A\(B*T + c); 
-        y(i+1) = T(end);
+        y_back(i+1) = T(end);
+        y_front(i+1) = T(1);
     end
+
+    %% Sortie
+    y = {y_back, y_front};
 
 end

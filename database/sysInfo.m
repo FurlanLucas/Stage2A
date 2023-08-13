@@ -1,18 +1,17 @@
 %% sysInfo
-% Fichier avec des information de chaque réalisation experimental. IL ne
-% retourne pas des variables mais les données (sysData) sont estoquées dans
-% le workspace.
+% File with all the information of the systems that have been analysed. It
+% doesn't return any variable, but they are loaded to the current
+% workspace.
 
-%% Premier système analysé et configuré en tension ------------------------
-% Première analyse faite avec le DAS configuré en tension. Le isolant
-% utilisé a été une surface de bois. Le capteur de flux qui a été utilisé
-% c'était le plus grande disponible (rayon de 30mm) avec un coeficient Vq
-% de 7.86 uVm²/W. Il y a été utilisé aussi un deuxième termocouple dans la
-% face avant (même coefficient).
+%% First system analysed with an homogenous material ------------------------------
+% First system analysed with DAS configured in tension mode. The insulant
+% used was the ___ material. The heat flux sensor used was the bigger one
+% avaiablem (radius of 30mm) with a coefficient Vq = 7.86 cV/(W/m²). A
+% second thermocouple was used in the front face.
+
 sysData(1) = sysDataType('sys1_isoBas'); % [-] Nom de l'analyse ;
 sysData(1).Geometry = 'Cylinder'; % [-] Type of the geometry ;
 sysData(1).Size = 37.5e-3;        % [m] Lateral size of the thermocouple ;
-sysData(1).Type = 'both';         % [-] Type des données enregistrées ;
 sysData(1).R = 48.9;              % [Ohm] Résistance choffante ;
 sysData(1).R_ = 0.4;              % [Ohm] Résistance des cables ;
 sysData(1).ResSize = 30e-3;       % [m²] Taille de la résistance ;
@@ -23,7 +22,6 @@ sysData(1).cp = 500;              % [J/kgK] Capacité thermique massique ;
 sysData(1).ell = 10e-3;           % [m] Epaisseur du thermocouple ;
 sysData(1).Ytr_back = 42;         % [uV/K] Coeff. du thermocouple (arr.) ;
 sysData(1).Ytr_front = 42;        % [uV/K] Coeff. du thermocouple (avan.) ;
-
 
 %% Deuxième système analysé et configuré en tension -----------------------
 % Deuxième analyse faite avec le DAS configuré en tension. Le isolant

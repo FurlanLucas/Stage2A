@@ -1,19 +1,17 @@
 function get(obj)
     %% get
     %
-    % Implantation de la méthode get pour la classe thermalData
+    % Get implementation for thermalData class.
 
     %% Main
     
-    if strcmp(obj.name, 'Empty')
-        fprintf("\nVariable <strong>vide</strong> du type" + ...
-            "thermalData.\n\n");
+    if strcmp(obj.Name, 'Empty')
+        fprintf("\nEmpty <strong>thermoData</strong> variable.\n\n");
     else
-        fprintf("\nVariable du type thermalData.\nDonnées " + ...
-            "experimentales du système <strong>%s</strong> avec " + ...
-            "%d jeux des données.\n\n", ...
-            obj.name, length(obj.phi));
-        for i = 1:length(obj.phi)
+        fprintf("\nClass <strong>thermalData</strong> variavble " + ...
+            "with %d different sets of data for <strong>%s</strong>" + ...
+            " system.\n\n", obj.Ne, obj.Name);
+        for i = 1:obj.Ne
             fprintf("\tJeux %2d: %d échantillons ;\n", i, ...
                 length(obj.phi{i}));
         end

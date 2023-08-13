@@ -1,63 +1,67 @@
 classdef thermalData
     %% sysDataType
     %
-    % Cette classe permet d'avoir l'ensamble de tous les jeux des données
-    % experimentales pour un même système.
+    % Class with all experimental data and system variables. Has the
+    % implementation of getexp to take some iddata.
     %
-    %   Propritées :
+    % Properties
     %
-    %       Name : nom de l'analyse faite. Il sera le même que celui du
-    %       sysDataType associé ;
+    %   Name: analysis name (it will be the same as used in the sysData
+    %   type associeted with it;
     %
-    %       t : cellule 1 x Ne avec les échantillons temporélle em ms, avec
-    %       Ne le nombre de experiments realisés ;
+    %   Ne: number of experiments realised;
+    %   
+    %   t: 1xNe cell with time samples in milliseconds, Ne being the number
+    %   of experiments;
     %
-    %       v : cellule 1 x Ne avec tension mésuré en entrée de la
-    %       résistance en V, avec Ne le nombre de experiments realisés ;
+    %   v: 1xNe cell with the measured tension applied to the resistence
+    %   samples in volts, Ne being the number of experiments;
     %
-    %       phi : cellule 1 x Ne avec tension mésuré en sortie du capeteur
-    %       de flux termique, avec Ne le nombre de experiments realisés ;
+    %   phi: 1xNe cell with the measured heat flux samples in volts, Ne 
+    %   being the number of experiments;
     %
-    %       y_front : cellule 1 x Ne avec tension mésuré en sortie du 
-    %       termocouple placé dans la face avant, avec Ne le nombre de 
-    %       experiments realisés ;
+    %   y_back: 1xNe cell with the measured temperature samples in volts
+    %   for the rear face, Ne being the number of experiments;
     %
-    %       y_back : cellule 1 x Ne avec tension mésuré en sortie du 
-    %       termocouple placé dans la face arrière, avec Ne le nombre de 
-    %       experiments realisés ;
+    %   y_back: 1xNe cell with the measured temperature samples in volts
+    %   for the rear face, Ne being the number of experiments;
     %
-    %       sysData : les information liées à chaque réalisation, du type 
-    %       << sysDataType >>.
+    %   sysData: system data, specified as a sysDataType;
     %
-    %       Notes : notes de l'user.
+    %   Notes: user notes for the experiments Could be different from the
+    %   notes in sysData.
     %
-    %   Méthodes :
+    % Methodes
     %
-    %       getexp(id) : il prend un jeux des données identifié comme id ; 
+    %   getexp(id) : take a experiment data set as an iddata for the system
+    %   identification analysis. The data id will be taken;
     %
-    %       getexpAlim(id) : il prend un jeux des données identifié comme 
-    %       id pour l'identification d'entrée ;
+    %   getexpAlim(id) : take a experiment data set as an iddata for the 
+    %   system identification analysis for the input heat flux. The data id 
+    %   will be taken;
     %
-    %       add(obj, y_front, y_back, v, phi, t) : il ajoute un nouveau
-    %       jeux des données au ensemble.
+    %   add(obj, y_front, y_back, v, phi, t) : will add a new data set to
+    %   the current objetc.
     %
     % See also getexp, getexpAlim, sysDataType.
 
-    %% Proprietées --------------------------------------------------------
+    %% Proprerties ----------------------------------------------------------------
     properties
-        Name = 'Empty';           % [-] Nom de l'analyse ;
-        t = {};                   % [ms] Temps ;
-        v = {};                   % [V] Tension en entrée ;
-        phi = {};                 % [W/m²] Flux de chaleur en entrée ;
-        y_front = {};             % [°C] Température dans la face avant ;
-        y_back = {};              % [°C] Température dans la face arrière ;
-        sysData = sysDataType;    % [-] Données du système ;
-        Notes = {};               % [-] Notes de l'user ;
+        Name = 'Empty';           % [-] Analysis name
+        Ne = 0;                   % [-] Number of experiments
+        t = {};                   % [ms] Time samples
+        v = {};                   % [V] Input tension
+        phi = {};                 % [W/m²] Heat flux
+        y_front = {};             % [°C] Temperature in the front face
+        y_back = {};              % [°C] Température in the rear fece
+        sysData = sysDataType;    % [-] System data
+        Notes = {};               % [-] User notes.
     end 
 
-    %% Méthodes -----------------------------------------------------------
+    %% Methods --------------------------------------------------------------------
     methods
-        % Contructeur de la classe
+
+        % Class constructor
         function obj = thermalData(sysData)
             if nargin == 1
                 obj.Name = sysData.Name;
@@ -65,24 +69,23 @@ classdef thermalData
             end
         end
 
-        % Prends un (ou plusiers) jeux des données
+        % Take a data set as iddata
         dataOut = getexp(obj, id);
 
-        % Prends un (ou plusiers) jeux des données (alimentation)
+        % Take a data set as iddata (for input analysis)
         dataOut = getexpAlim(obj, id);
 
-        % Get methods
+        % Get method
         get(obj);
 
-        % Ajoute un nouvelle jeux de données
-        function obj = add(obj, y_front, y_back, v, phi, t)
-            % Ajoute les données
-            pos = length(obj.phi) + 1;
-            obj.y_front{pos} = y_front;
-            obj.y_back{pos} = y_back;
-            obj.v{pos} = v;
-            obj.phi{pos} = phi;
-            obj.t{pos} = t;
+        % Add a new dataset
+        function obj = add(obj, y_front, y_back, v, phi, t)   
+            obj.Ne = obj.Ne+1;
+            obj.y_front{obj.Ne} = y_front;
+            obj.y_back{obj.Ne} = y_back;
+            obj.v{obj.Ne} = v;
+            obj.phi{obj.Ne} = phi;
+            obj.t{obj.Ne} = t;
         end
 
     end
