@@ -1,15 +1,17 @@
 function objout = mpower(objin, n)
     %% mpower
     %
-    % Il va evaluer le polynôme Q(x) à la puissance n, c'est à dire
-    % P(x) = [Q(x)]^n. Si n = 0, donc P(x) = 1.
+    % Take the mpower of a poly class, defined as R(x) = P(x)^n. It will
+    % use a sucession of convolutions.
+    %
+    % See also mtimes.
     
     %% Main
 
-    % Prend l'entrée
+    % Take the input
     Q = objin.coef;
     
-    % Prendre les cas plus simples
+    % Simplest case
     if n == 0
         objout = poly(1);
         return
@@ -17,9 +19,9 @@ function objout = mpower(objin, n)
         objout = objin;
         return
 
-    % Le  cas générale
+    % General case
     else
-        R = conv(Q, Q); % Il va faire n fois la convolution de Q
+        R = conv(Q, Q); % It will do the convolution n times
         for i = 3:n
             R = conv(R, Q);
         end

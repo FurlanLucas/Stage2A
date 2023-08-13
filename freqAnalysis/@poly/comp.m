@@ -1,14 +1,27 @@
 function R = comp(obj, P)
-    % composition
+    % comp
     %
-    % Cette fonction permet de changer la variable du polinôme Q(y) pour y = P(x) 
-    % et retourner un nouvel polynôme R(x) = Q(P(x)). Des convolution sucessives 
-    % sont utilisées. L'entrée P peut être un polinôme ou un vecteur de
-    % coefficients.
+    % Take the composition between to different polynomials, by taken
+    % R(x)=Q(P(x)). Succesive convolutions are used to each calculation.
     %
-    % R(x) = sum( r_i * x^i )
-    %      = sum( q_i * (p(x))^i )
+    % Calls
     %
+    %   R = Q.comp(P): returns a poly variable with the result of the
+    %   composition of polynomials Q(x) and P(x). The P(x) polynomial can
+    %   also be a vector of doubles identifing the polynomial.
+    %
+    % Inputs
+    %
+    %   Q: Polynomial to be composed (the most 'extern' one);
+    %
+    %   P: Polynomial to be composed (the most 'intern' one). Can also be a
+    %   vector of doubles identifing the coefficients of the polynomial.
+    %
+    % Outputs
+    %
+    %   R: Polynomial with the result of the composition.
+    %
+    % See also mpower, mtimes.
 
     %% Entrées
 

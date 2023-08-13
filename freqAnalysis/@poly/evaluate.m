@@ -1,8 +1,7 @@
 function out = evaluate(obj, in)
     %% polyeval
     %
-    %   Évalue le polinôme obj dans les points especifiées dans le vecteur
-    %   in.
+    %   Evaluate a polynomial in each point.
 
     %% Main
     out = polyval(obj.coef, in);

@@ -1,8 +1,9 @@
 function R = even(obj)
-    %% odd
+    %% even
     %
-    % Prends les coefficients paires du polinômes. Si le polinôme P(x) en
-    % entrée est paire, donc R(x^2) = P(x).
+    % Generate a second polynomial by taking all the even coefficients in
+    % the object. If the polynomial was already even, the result will be
+    % R(x^2) = P(x).
 
     %% Main
     pos = mod(fliplr(1:obj.order+1),2) == 0;

@@ -1,15 +1,14 @@
 function objout = plus(objin1, objin2)
     %% plus
     %
-    % Prendre la summe de deux polynômes P(x) et Q(x). Il faut aligner les
-    % deux vecteur de coefficientes dans un façon que il sera possibles de
-    % les ajouter.
+    % Take the sum of two polynomials. Its necessary to shift the smallest
+    % polynomial to add the coefficients all together.
 
     %% Main
     P = objin1.coef;
     Q = objin2.coef;
     
-    % Prendre l'ordre plus grande
+    % Take the biggest
     P_order = length(P);
     Q_order = length(Q);
     if P_order > Q_order
@@ -18,12 +17,12 @@ function objout = plus(objin1, objin2)
          max_order = size(Q);
     end
 
-    % Ajoute les deux polynômes
+    % Ajustment
     new_P = padarray(P, max_order-size(P), 0, 'pre');
     new_Q = padarray(Q, max_order-size(Q), 0, 'pre');
     R = new_P + new_Q;
 
-    % Sortie
+    % Output
     objout = poly(R);
 
 end

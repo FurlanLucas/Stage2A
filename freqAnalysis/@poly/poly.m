@@ -1,50 +1,55 @@
 classdef poly
     %% poly
     %
-    % Cette classe permet de definir un polynôme et operer avec lui.
+    % Class that defines a polynomial object.
     %
-    %   Propritées :
+    % Properties
     %
-    %       Coef : coefficients du polynôme, enregistré comme un vecteur
-    %       ligne ou colune ;
+    %   coef: polynomial coeficients. Could be set as a column or row
+    %   vector;
     %
-    %       order : ordre du polinôme, égale à length(coef) - 1 ;
+    %   order: polynomial order, defined as the number of coefficients -1;
     %
-    %       Notes : informations de l'user.
+    %   Notes: user notes.
     %
-    %   Méthodes :
+    % Methods
+    % 
+    %   comp: take the composition between to polynomials as R(x)=Q(P(x));
     %
-    %       comp : prends la composition des deux polynômes, returné comme
-    %       un polinôme il-même.
+    %   odd: returns another polynomial with all the odd coefficients;
+    %
+    %   even: returns another polynomial with all the even coefficients;
+    %
+    %   evaluate: evaluate the polynomial in specified points.
     %
     % See also comp.
 
-    %% Proprietées --------------------------------------------------------
+    %% Properties -----------------------------------------------------------------
     properties
-        coef = [];                % Coefficients du polinôme ;
-        Notes = {};               % Notes de l'user ;
+        coef = [];                % Polynomial coefficients
+        Notes = {};               % User notes
     end 
 
     properties (SetAccess = private)
         order = 0;                  % Ordre du polinôme ;
     end
 
-    %% Méthodes -----------------------------------------------------------
+    %% Methods --------------------------------------------------------------------
     methods
-        % Contructeur de la classe
+        % Class constructor
         function obj = poly(coef)
             if nargin == 1
                 obj.coef = coef;
             end
         end
 
-        % Configuration de lordre
+        % Order configuration
         function obj = set.coef(obj, coef)
             if iscolumn(coef) || isrow(coef) 
                 obj.coef = coef;
                 obj = obj.setOrder;
             else
-                error("La taille du vecteur n'est pas la bonne.");
+                error("The input is not a vector size variable.");
             end
         end
 
@@ -52,25 +57,25 @@ classdef poly
             obj.order = length(obj.coef)-1;
         end
 
-        % Réécrit la fonction plus
+        % Overload of plus operator
         obj = plus(obj1, obj2);
 
-        % Réécrit la fonction de multiplication
+        % Overload of mtimes operator
         objout = mtimes(objin1, objin2);
 
-        % Réécrit le opérateur de puissance
+        % Overload mpower operator
         obj = mpower(obj1, obj2);
 
-        % Composition des polynômes
+        % Defines the polynomial composition
         R = comp(obj, P);
 
-        % Prendre les coefficients paires
+        % Take all even coefficients
         R = even(obj);
 
-        % Prendre les coefficients impaires
+        % Take all odd coefficients
         R = odd(obj);
 
-        % Évalue le polynômes dans les points espécifiés
+        % Evaluate the polynomial
         R = evaluate(obj, in);
 
     end
