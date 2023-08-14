@@ -141,7 +141,7 @@ function bodeOut = model_3d(dataIn, h, seriesOrder, varargin)
     f = @(alpha) cot(alpha*Ly) - ...
             ((lambda_y*alpha).^2 - hy1*hy2)./(lambda_y*alpha*(hy1+hy2));
     for i=0:seriesOrder
-        alpha(i+1) = bissec(f, (i+correc)*pi/Ly, (i+1-correc)*pi/Ly);
+        alpha(i+1) = bisec(f, (i+correc)*pi/Ly, (i+1-correc)*pi/Ly);
     end
     Nalpha = (1./(2*Ly*alpha.^2)).*( Hy1 + (Hy1^2 + (alpha*Ly).^2) .* ...
         (1 + Hy2./(Hy2^2 + (alpha*Ly).^2)) );
@@ -156,7 +156,7 @@ function bodeOut = model_3d(dataIn, h, seriesOrder, varargin)
     f = @(beta) cot(beta*Lz) - ...
             ((lambda_z*beta).^2 - hz1*hz2)./(lambda_z*beta*(hz1+hz2));
     for i=0:seriesOrder
-        beta(i+1) = bissec(f, (i+correc)*pi/Lz, (i+1-correc)*pi/Lz);
+        beta(i+1) = bisec(f, (i+correc)*pi/Lz, (i+1-correc)*pi/Lz);
     end
     Mbeta = (1./(2*Lz*beta.^2)).*( Hz1 + (Hz1^2 + (beta*Lz).^2) .* ...
         (1 + Hz2./(Hz2^2 + (beta*Lz).^2)) );

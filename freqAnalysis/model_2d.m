@@ -125,11 +125,11 @@ function bodeOut = model_2d(dataIn, h, seriesOrder, varargin)
     
     alpha = zeros(seriesOrder+mod(seriesOrder,2)+1, 1);
     
-    alpha(1) = bissec(f, 0, J0(1)/Rmax);
-    alpha(2) = bissec(f, J1(1)/Rmax, J0(2)/Rmax);
+    alpha(1) = bisec(f, 0, J0(1)/Rmax);
+    alpha(2) = bisec(f, J1(1)/Rmax, J0(2)/Rmax);
     for i = 3:2:seriesOrder+mod(seriesOrder,2)+1
-       alpha(i) = bissec(f, J1(i-1)/Rmax, J0(i)/Rmax);
-       alpha(i+1) = bissec(f, J1(i)/Rmax, J0(i+1)/Rmax);
+       alpha(i) = bisec(f, J1(i-1)/Rmax, J0(i)/Rmax);
+       alpha(i+1) = bisec(f, J1(i)/Rmax, J0(i+1)/Rmax);
     end
     alpha = alpha(1:seriesOrder+1);
     Nalpha = ((Rmax^2) / 2) * (besselj(0, alpha*Rmax) .^ 2);

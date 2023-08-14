@@ -1,5 +1,5 @@
-function root = bissec(f, a, b, varargin)
-    %% bissec
+function root = bisec(f, a, b, varargin)
+    %% bisec
     %
     % Bissection method implementation to find a root of a function.
     % Receives a handle to the function and the values of the interval [a,
@@ -24,7 +24,7 @@ function root = bissec(f, a, b, varargin)
     %
     % Outputs
     %
-    %   root: output root for the bissection method;
+    %   root: output root for the bisection method;
     %
     % Aditional options
     %

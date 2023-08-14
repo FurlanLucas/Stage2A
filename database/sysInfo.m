@@ -9,19 +9,19 @@
 % avaiablem (radius of 30mm) with a coefficient Vq = 7.86 cV/(W/m²). A
 % second thermocouple was used in the front face.
 
-sysData(1) = sysDataType('sys1_isoBas'); % [-] Nom de l'analyse ;
-sysData(1).Geometry = 'Cube'; % [-] Type of the geometry ;
-sysData(1).Size = 37.5e-3;        % [m] Lateral size of the thermocouple ;
-sysData(1).R = 48.9;              % [Ohm] Résistance choffante ;
-sysData(1).R_ = 0.4;              % [Ohm] Résistance des cables ;
-sysData(1).ResSize = 30e-3;       % [m²] Taille de la résistance ;
-sysData(1).Vq = 7.86;             % [uVm²/W] Coefficient de transductance ;
-sysData(1).lambda = 15;           % [W/mK] Conductivité thermique ;
-sysData(1).rho = 7900;            % [kg/m³] Masse volumique ;
-sysData(1).cp = 500;              % [J/kgK] Capacité thermique massique ;
-sysData(1).ell = 10e-3;           % [m] Epaisseur du thermocouple ;
-sysData(1).Ytr_back = 42;         % [uV/K] Coeff. du thermocouple (arr.) ;
-sysData(1).Ytr_front = 42;        % [uV/K] Coeff. du thermocouple (avan.) ;
+sysData(1) = sysDataType('sys1_isoBas'); % [-] Analysis name;
+sysData(1).Geometry = 'Cylinder'; % [-] Type of the geometry;
+sysData(1).Size = 37.5e-3;        % [m] Lateral size of the thermocouple;
+sysData(1).R = 48.9;              % [Ohm] Heat resistance value;
+sysData(1).R_ = 0.4;              % [Ohm] Cables resistence;
+sysData(1).ResSize = 30e-3;       % [m²] Resistence size;
+sysData(1).Vq = 7.86;             % [uVm²/W] Transconductance coefficient;
+sysData(1).lambda = 15;           % [W/mK] Thermal conductivity;
+sysData(1).rho = 7900;            % [kg/m³] Density
+sysData(1).cp = 500;              % [J/kgK] Specific heat in constant pressure;
+sysData(1).ell = 10e-3;           % [m] termocouple depth;
+sysData(1).Ytr_back = 42;         % [uV/K] Thermocouple coefficient (rear);
+sysData(1).Ytr_front = 42;        % [uV/K] Thermocouple coefficient (back).
 
 %% Deuxième système analysé et configuré en tension -----------------------
 % Deuxième analyse faite avec le DAS configuré en tension. Le isolant

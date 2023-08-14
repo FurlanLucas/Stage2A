@@ -155,9 +155,9 @@ function [bodeOut, Fs_pade] = model_2d_pade(dataIn, h, padeOrder, ...
     
     alpha = zeros(seriesOrder+1, 1);
     
-    alpha(1) = bissec(f, 0, J0(1)/Rmax);
+    alpha(1) = bisec(f, 0, J0(1)/Rmax);
     for i = 1:seriesOrder
-       alpha(i+1) = bissec(f, J1(i)/Rmax, J0(i+1)/Rmax);
+       alpha(i+1) = bisec(f, J1(i)/Rmax, J0(i+1)/Rmax);
     end
 
     Malpha = (besselj(0, alpha*Rmax) .^ 2).*((Rmax * alpha).^2 + ...
