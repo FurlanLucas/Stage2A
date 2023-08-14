@@ -25,7 +25,9 @@ function bodeOut = model_2d(dataIn, h, seriesOrder, varargin)
     %   the field sysData. It is possible also use a structure with the
     %   same fields as a sysDataType;
     %
-    %   h: heat transfer coefficient in W/(m²K);
+    %   h: vector of heat transfer coefficients in W/(m²K). The first one
+    %   is the value for the rear face hx2 and the second one is to the
+    %   external surface in r direction hr2;
     %
     %   seriesOrder: number of terms + 1 for the series in r direction.
     %

@@ -35,7 +35,10 @@ function [bodeOut, Fs_taylor] = model_3d_taylor(dataIn, h, taylorOrder, ...
     %   the field sysData. It is possible also use a structure with the
     %   same fields as a sysDataType;
     %
-    %   h: heat transfer coefficient in W/(m²K);
+    %   h: vector of heat transfer coefficients in W/(m²K). The first one
+    %   is the value for the rear face hx2 and the second and third one are
+    %   relative to the y direction (hy1 and hy2). The last two values are
+    %   for the z direction (hz1 and hz2);
     %
     %   seriesOrder: number of terms + 1 for the series in x and y
     %   directions;
