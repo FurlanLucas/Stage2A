@@ -10,7 +10,7 @@
 % second thermocouple was used in the front face.
 
 sysData(1) = sysDataType('sys1_isoBas'); % [-] Nom de l'analyse ;
-sysData(1).Geometry = 'Cylinder'; % [-] Type of the geometry ;
+sysData(1).Geometry = 'Cube'; % [-] Type of the geometry ;
 sysData(1).Size = 37.5e-3;        % [m] Lateral size of the thermocouple ;
 sysData(1).R = 48.9;              % [Ohm] Résistance choffante ;
 sysData(1).R_ = 0.4;              % [Ohm] Résistance des cables ;

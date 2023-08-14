@@ -1,108 +1,108 @@
 function bodeOut = model_1d(dataIn, h, varargin)
     %% model_1d
     %
-    %   Analyse en 1D de la function transfert F(s) = phi(s)/theta(s)
-    %   théorique, sans aproximation polynomial. Il utilise les données 
-    %   qui sont disponibles dans dataIn, dedans le champs sysData.
+    % One dimentional analysis of the theorical transfer function F(s) =
+    % phi(s)/theta(s), without polynomial approximation. It uses the data
+    % available in dataIn, within the field sysData.
     %
-    %   Appels:
+    % Calls
     %
-    %       bodeOut = model_1d(dataIn, h) : prendre le diagramme de bode
-    %       avec le modèle 1d de la transfert de chaleur en utilisant la
-    %       valeur du coefficient de transfert termique h ;
+    %   bodeOut = model_1d(dataIn, h): take the Bode diagram for 1D model
+    %   of the heat transfer using the heat transfert coefficient h;
     %
-    %       bodeOut = model_1d(__, optons) : prendre des entrées
-    %       optionnelles.
+    %   bodeOut = model_1d(__, optons): take the optional arguments.
     %
-    %   Entrées :
+    % Inputs
     % 
-    %   - dataIn : variable thermalData avec le système qui va être simulée. Les
-    %   information des coefficients thermiques du material et les autres
-    %   carachteristiques comme la masse volumique sont estoquées dans le
-    %   champs sysData dedans dataIn. Il peut aussi être utilisé comme une
-    %   structure si il y a des champs necessaires dedans ;
-    %   - h : Valeur du coefficient de transfert thermique (pertes).
+    %   dataIn: thermalData variable with all the information for the
+    %   system that will be simulated. The thermal coefficients are within
+    %   the field sysData. It is possible also use a structure with the
+    %   same fields as a sysDataType;
     %
-    %   Sorties :
-    %   
-    %   - bodeOut : structure avec le résultat de l'analyse qui contien les
-    %   champs bodeOut.w avec les fréquences choisit, bodeOut.mag avec la
-    %   magnitude et bodeOut.phase avec les données de phase. Les variables
-    %   bodeOut.mag et bodeOut.phase sont des celulles 1x2 avec des valeurs
-    %   pour la face arrière {1} et avant {2}.
+    %   h: heat transfer coefficient in W/(m²K).
     %
-    %   Entrées optionnelles :
+    % Outputs
     %   
-    %   - wmin : fréquence minimale pour l'analyse en rad/s ;
-    %   - wmax : fréquence maximale pour l'analyse en rad/s ;
-    %   - wpoints : numéro de points en fréquence a être analysés.
+    %   bodeOut: structure with the analysis result. It contains the field
+    %   bodeOut.w with the frequences that has been used, bodeOut.mag with
+    %   the magnitude and bodeOut.phase with the phases. The variables
+    %   bodeOut.mag and bodeOut.phase are 1x2 cells with the values for the
+    %   rear face {1} and the front face {2}.
+    %
+    % Aditional options
+    %   
+    %   wmax: minimum frequency to be used in rad/s;
+    %
+    %   wmax: maximum frequency to be used in rad/s;
+    %
+    %   wpoints: number of frequency points.
     %   
     % See also thermalData, sysDataType.
 
-    %% Entrées et constantes
+    %% Inputs and constants
 
-    wmin = 1e-3;              % [rad/s] Fréquence minimale pour le bode ;
-    wmax = 1e2;               % [rad/s] Fréquence maximale pour le bode ;
-    wpoints = 1000;           % [rad/s] Nombre des fréquences ;  
+    wmin = 1e-3;              % [rad/s] Minimum frequency
+    wmax = 1e2;               % [rad/s] Maximum frequency
+    wpoints = 1000;           % [rad/s] Number of frequency points  
 
-    %% Données optionales et autres paramètres
+    %% Aditional options
 
-    % Test les argument optionelles
+    % Verify the optional arguments
     for i=1:2:length(varargin)        
         switch varargin{i}
-            % Fréquence minimale pour le diagramme de bode
+            % Minimum frequency
             case 'wmin'
                 wmin = varargin{i+1};
 
-            % Fréquence maximale pour le diagramme de bode
+            % Maximum frequency
             case 'wmax'      
                 wmax = varargin{i+1};
 
-            % Nombre des points pour le diagrame
+            % Number of frequency points 
             case 'wpoints'     
                 wpoints = varargin{i+1};
 
-            % Erreur
+            % Error
             otherwise
-                error("Option << " + varargin{i} + "non disponible.");
+                error("Option << " + varargin{i} + "is not available.");
         end
     end
 
-    % Il verifie le type d'entrée
+    % Verify the input type
     if isa(dataIn, 'thermalData')
-        lambda = dataIn.sysData.lambda; % [W/mK] Conductivité thermique ;
-        a = dataIn.sysData.a;           % [m^2/s] Diffusivité thermique ;
-        ell = dataIn.sysData.ell;       % [m] Epaisseur plaque ;
+        lambda = dataIn.sysData.lambda; % [W/mK] Thermal conductivity
+        a = dataIn.sysData.a;           % [m²/s] Thermal conductivity
+        ell = dataIn.sysData.ell;       % [m] Thermal conductivity
     elseif isa(dataIn, 'struct')
-        lambda = dataIn.lambda; % [W/mK] Conductivité thermique ;
-        a = dataIn.a;           % [m^2/s] Diffusivité thermique ;
-        ell = dataIn.ell;       % [m] Epaisseur plaque ;
+        lambda = dataIn.lambda; % [W/mK] Thermal conductivity
+        a = dataIn.a;           % [m²/s] Thermal conductivity
+        ell = dataIn.ell;       % [m] Thermal conductivity
     else
-        error("Entrée << dataIn >> non valide.");
+        error("Input << dataIn >> is not valid.");
     end
 
-    %% Autres variables de l'analyses
-    w = logspace(log10(wmin), log10(wmax), wpoints); % Vecteur des fréq.
+    %% Other variables
+    w = logspace(log10(wmin), log10(wmax), wpoints); % Frequency vector
 
-    %% Modèle théorique de F(s) en 1D
+    %% Theorical model in 1D
     
-    % Résolution de l'équation en 1D pour les fréquences w
+    % Equation solution in 1D
     k = sqrt(w*1j/a); 
     C = lambda*k.*sinh(ell*k);
     B = (1./(lambda*k)) .* sinh(ell*k);
     A = cosh(ell*k); % D = A
     
-    % Face arrière
+    % Rear face
     Fs_th = 1./(C + A*h);
     mag_th{1} = abs(Fs_th);
     phase_th{1} = angle(Fs_th);
 
-    % Face avant
+    % Front face
     Fs_th = (A + B*h)./(C + A*h);
     mag_th{2} = abs(Fs_th);
     phase_th{2} = angle(Fs_th);
 
-    %% Résultats
+    %% Results
     bodeOut.w = w;
     bodeOut.mag = mag_th;
     bodeOut.phase = phase_th;    

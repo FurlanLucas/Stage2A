@@ -1,7 +1,7 @@
 clc;
-%% Fichier main
+%% Main file to all analysis
 
-fprintf("<strong>ANALYSE PAR LE FICHIER MAIN</strong>\n\n");
+fprintf("<strong>MAIN FILE ANALYSIS</strong>\n\n");
 % Prendre la conversion de variables
 run("database\convertData.m");
 

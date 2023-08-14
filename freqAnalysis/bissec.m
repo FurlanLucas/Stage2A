@@ -1,48 +1,65 @@
 function root = bissec(f, a, b, varargin)
     %% bissec
     %
-    % Fonction pour calculer la racine d'une équation avec le méthode de la 
-    % bissection. Il prendre comme entrées la fontion f a être analysée et
-    % les extrêmes d'intervale dans lequelle il y a la racine.
+    % Bissection method implementation to find a root of a function.
+    % Receives a handle to the function and the values of the interval [a,
+    % b] such that f(a)*f(b) < 0. Will find a unique root. A sample mean
+    % value is calculated in each iteration.
     %
-    % Example d'appell :
+    % Call
     %
-    % f = @(x) x^2 - 4;
-    % ans = bissec(f, 0, 3); % Il va avoir une valeur de 2
-    % ans = bissec(f, -3, 0); % Il va avoir une valeur de -2 
+    %   root = bissec(f, a, b): find a root of the function f in the
+    %   interval [a, b]. If there is more than one root, it will return
+    %   only one of them.
     %
-    % Il y a aussi les arguments optionnels, à savoir :
+    %   root = bissec(__, options): give aditional options to the call.
     %
-    %   - printProcess : Contrôle si il va avoir d'affichage de chaque
-    %   iteration à l'écran ;
-    %   - relError : Contrôle de l'erreur minimale pour avoir la 
-    %   convergence. Cet erreur sera donné par rapport a difference entre 
-    %   x_k et x_k+1 en module.
-    %   - maxIt : Contrôle  de le nombre d'iterations maximale pour avoir
-    %   la convergence.
+    % Inputs
+    %
+    %   f: funtion handle;
+    %
+    %   a: double giving the beginning of the interval;
+    %
+    %   b: double giving the ending of the interval.
+    %
+    % Outputs
+    %
+    %   root: output root for the bissection method;
+    %
+    % Aditional options
+    %
+    %   printProcess: controls if the function will display each iteration
+    %   at the command window. The default value is false;
+    %
+    %   relErro: minimal error to consider the method convergent. The error
+    %   is relative to the prior iteration e(k) = x(k) - x(k-1). The default
+    %   is 1e-10;
+    %
+    %   maxIt: controls the maximum iteration fot the method. The default
+    %   value is 100;
 
-    %% Entrées
-    % Valeurs par défaut
-    maxError = 1e-10; maxIt = 100; printProcess = false;
+    %% Inputs
+    % Default values
+    relError = 1e-10; maxIt = 100; printProcess = false;
 
-    % Test les arguments optionelles
+    % Optional arguments
     for i=1:2:length(varargin)        
         switch varargin{i}
-            % Valeur d'erreur maximale par défaut (variation de x)
+            % Minimum relative error
             case 'relError'
-                maxError = varargin{i+1};
+                relError = varargin{i+1};
 
-            % Nombre de iteration maximale
+            % Maximum iteration
             case 'maxIt'      
                 maxIt = varargin{i+1};
 
-            % Affiche chaque iteration
+            % Display the iterations
             case 'printProcess'     
                 printProcess = varargin{i+1};
 
-            % Erreur
+            % Error
             otherwise
-                error("Option << " + varargin{i} + " >> invalide.");
+                error("The option << " + varargin{i} + " >> is invalid.");
         end
     end
 
@@ -53,7 +70,7 @@ function root = bissec(f, a, b, varargin)
     end
 
     actualError = Inf; i = 0; oldMiddle = Inf;
-    while (actualError > maxError) && (i < maxIt)
+    while (actualError > relError) && (i < maxIt)
         newMiddle = (a+b)/2;
         if (f(a)*f(newMiddle)) < 0
             b = newMiddle;
@@ -63,11 +80,11 @@ function root = bissec(f, a, b, varargin)
             root = newMiddle;
             if printProcess
                 disp('------------------------------------------');
-                fprintf("\nRacine trouvé à %d iteration. Error nule", i);
+                fprintf("\nRoot find at %d iteration without error", i);
             end
             return 
         else
-            fprintf("Impossible de trouver la racine (i = %d).\n\n",i);            
+            fprintf("Impossible to find the root (i = %d).\n\n",i);            
             return
         end
 
@@ -86,7 +103,7 @@ function root = bissec(f, a, b, varargin)
     root = newMiddle;
     if printProcess
         disp('------------------------------------------');
-        fprintf("\nRacine trouvé à %d iteration\n", i);
+        fprintf("\nRoot find at %d iteration.\n", i);
     end
 
 end

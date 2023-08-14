@@ -1,123 +1,123 @@
 function bodeOut = model_2d(dataIn, h, seriesOrder, varargin)
-    %% model_1d
+    %% model_2d
     %
-    %   Analyse en 2D de la function transfert F(s) = phi(s)/theta(s)
-    %   théorique, sans aproximation polynomial. Il utilise les données 
-    %   qui sont disponibles dans dataIn, dedans le champs sysData.
+    % Two dimentional analysis of the theorical transfer function F(s) =
+    % phi(s)/theta(s), without polynomial approximation. It uses the data
+    % available in dataIn, within the field sysData and suppose to have a
+    % system axisymetric.
     %
-    %   Appels:
+    % Calls
     %
-    %       bodeOut = model_2d(dataIn, h) : prendre le diagramme de bode
-    %       avec le modèle 1d de la transfert de chaleur en utilisant la
-    %       valeur du coefficient de transfert termique h. L'ordre de la
-    %       expantion en série est fixé à 6.
+    %   bodeOut = model_2d(dataIn, h): take the Bode diagram for 2D model
+    %   of the heat transfer using the heat transfert coefficient h. The
+    %   series order is taken to be 6;
     %
-    %       bodeOut = model_2d(dataIn, h, seriesOrder) : prendre le diagramme 
-    %       de bode avec le modèle 1d de la transfert de chaleur en utilisant 
-    %       la valeur du coefficient de transfert termique h. L'ordre de la 
-    %       expantion en série est donnée par seriesOrder.;
+    %   bodeOut = model_2d(dataIn, h, seriesOrder): take the Bode diagram 
+    %   for 2D model of the heat transfer using the heat transfert 
+    %   coefficient h and a series in the r direction of order seriesOrder;
     %
-    %       bodeOut = model_2d(__, optons) : prendre des entrées
-    %       optionnelles.
+    %   bodeOut = model_2d(__, optons): take the optional arguments.
     %
-    %   Entrées :
+    % Inputs
     % 
-    %   - dataIn : variable thermalData avec le système qui va être simulée. Les
-    %   information des coefficients thermiques du material et les autres
-    %   carachteristiques comme la masse volumique sont estoquées dans le
-    %   champs sysData dedans dataIn. Il peut aussi être utilisé comme une
-    %   structure si il y a des champs nécessaires dedans ;
-    %   - h : Valeur du coefficient de transfert thermique (pertes). Il est
-    %   donnée comme un vecteur h = [hx2, hr2] ;
-    %   - seriesOrder : numéro des termes dans la série en r.
+    %   dataIn: thermalData variable with all the information for the
+    %   system that will be simulated. The thermal coefficients are within
+    %   the field sysData. It is possible also use a structure with the
+    %   same fields as a sysDataType;
     %
-    %   Sorties :
-    %   
-    %   - bodeOut : structure avec le résultat de l'analyse qui contien les
-    %   champs bodeOut.w avec les fréquences choisit, bodeOut.mag avec la
-    %   magnitude et bodeOut.phase avec les données de phase. Les variables
-    %   bodeOut.mag et bodeOut.phase sont des celulles 1x2 avec des valeurs
-    %   pour la face arrière {1} et avant {2}.
+    %   h: heat transfer coefficient in W/(m²K);
     %
-    %   Entrées optionnelles :
+    %   seriesOrder: number of terms + 1 for the series in r direction.
+    %
+    % Outputs
     %   
-    %   - wmin : fréquence minimale pour l'analyse en rad/s ;
-    %   - wmax : fréquence maximale pour l'analyse en rad/s ;
-    %   - wpoints : numéro de points en fréquence a être analysés.
+    %   bodeOut: structure with the analysis result. It contains the field
+    %   bodeOut.w with the frequences that has been used, bodeOut.mag with
+    %   the magnitude and bodeOut.phase with the phases. The variables
+    %   bodeOut.mag and bodeOut.phase are 1x2 cells with the values for the
+    %   rear face {1} and the front face {2}.
+    %
+    % Aditional options
+    %   
+    %   wmax: minimum frequency to be used in rad/s;
+    %
+    %   wmax: maximum frequency to be used in rad/s;
+    %
+    %   wpoints: number of frequency points.
     %   
     % See also thermalData, sysDataType.
 
-    %% Entrées et constantes
+    %% Inputs and constants
 
-    wmin = 1e-3;              % [rad/s] Fréquence minimale pour le bode ;
-    wmax = 1e2;               % [rad/s] Fréquence maximale pour le bode ;
-    wpoints = 1000;           % [rad/s] Nombre des fréquences ;  
+    wmin = 1e-3;              % [rad/s] Minimum frequency
+    wmax = 1e2;               % [rad/s] Maximum frequency
+    wpoints = 1000;           % [rad/s] Number of frequency points  
 
-    %% Données optionales et autres paramètres
+    %% Aditional options
 
-    % Test les argument optionelles
+    % Verify the optional arguments
     for i=1:2:length(varargin)        
         switch varargin{i}
-            % Fréquence minimale pour le diagramme de bode
+            % Minimum frequency
             case 'wmin'
                 wmin = varargin{i+1};
 
-            % Fréquence maximale pour le diagramme de bode
+            % Maximum frequency
             case 'wmax'      
                 wmax = varargin{i+1};
 
-            % Nombre des points pour le diagrame
+            % Number of frequency points 
             case 'wpoints'     
                 wpoints = varargin{i+1};
 
-            % Erreur
+            % Error
             otherwise
-                error("Option << " + varargin{i} + "non disponible.");
+                error("Option << " + varargin{i} + "is not available.");
         end
     end
 
-    % Il verifie le type d'entrée
+    % Verify the input type
     if isa(dataIn, 'thermalData')
-        lambda = dataIn.sysData.lambda; % [W/mK] Conductivité thermique ;
-        a = dataIn.sysData.a;           % [m^2/s] Diffusivité thermique ;
-        ell = dataIn.sysData.ell;       % [m] Epaisseur plaque ;
-        Rmax = dataIn.sysData.Size;     % [m] Taille du thermocouple (r) ;
-        R0 = dataIn.sysData.ResSize;    % [m] Taille de la resistance (r) ;
+        lambda = dataIn.sysData.lambda; % [W/mK] Thermal conductivity
+        a = dataIn.sysData.a;           % [m²/s] Thermal conductivity
+        ell = dataIn.sysData.ell;       % [m] Thermal conductivity
+        Rmax = dataIn.sysData.Size;     % [m] Termocouple size
+        R0 = dataIn.sysData.ResSize;    % [m] Resistence size
     elseif isa(dataIn, 'struct')
-        lambda = dataIn.lambda; % [W/mK] Conductivité thermique ;
-        a = dataIn.a;           % [m^2/s] Diffusivité thermique ;
-        ell = dataIn.ell;       % [m] Epaisseur plaque ;
-        Rmax = dataIn.Size;     % [m] Taille du thermocouple (r) ;
-        R0 = dataIn.ResSize;    % [m] Taille de la resistance (r) ;
+        lambda = dataIn.lambda; % [W/mK] Thermal conductivity
+        a = dataIn.a;           % [m²/s] Thermal conductivity
+        ell = dataIn.ell;       % [m] Thermal conductivity
+        Rmax = dataIn.Size;     % [m] Termocouple size
+        R0 = dataIn.ResSize;    % [m] Resistence size
     else
-        error("Entrée << dataIn >> non valide.");
+        error("Input << dataIn >> is not valid.");
     end
 
-    % Prendre l'ordre pour la série
+    % Take the series order
     if ~exist('seriesOrder', 'var')
-        seriesOrder = 10;
+        seriesOrder = 6;
     end
+    
+    %% Other variables for the analysis
+    w = logspace(log10(wmin), log10(wmax), wpoints); % Freq. vector
 
-    %% Autres variables de l'analyses
-    w = logspace(log10(wmin), log10(wmax), wpoints); % Vecteur des fréq.
-
-    % Conductivité thermique
+    % Thermal conductivity
     lambda_x = lambda;
     lambda_r = lambda;
 
-    % Diffusivité thermique (x)
+    % Thermal diffusivity (x)
     a_x = a;
 
-    % Position a être analysé en r
+    % Position to be analysed in r direction
     r = 0;
 
-    % Coefficient de transfert thermique
-    hx2 = h(1); % Convection naturelle en x2
-    hr2 = h(1); % Convection naturelle en r2
+    % Heat transfert coefficient
+    hx2 = h(1); % Natural convection in x2
+    hr2 = h(1); % Natural convection in r2
 
-    %% Solutions de l'équation transcendente
+    %% Eigen value equation roots
 
-    % Prendre les solutions pour alpha_n (dans la direction y)
+    % Take the solution in the r direction
     load("J_roots.mat", 'J0', 'J1');
     
     f = @(alpha_n) hr2*besselj(0,alpha_n*Rmax) - ...
@@ -134,32 +134,32 @@ function bodeOut = model_2d(dataIn, h, seriesOrder, varargin)
     alpha = alpha(1:seriesOrder+1);
     Nalpha = ((Rmax^2) / 2) * (besselj(0, alpha*Rmax) .^ 2);
 
-    %% Modèle théorique de F(s) en 2D 
+    %% Theorical model in 2D
     Fs_2D = {zeros(size(w)), zeros(size(w))};
 
-    for n = 0:seriesOrder % Serie en y
+    for n = 0:seriesOrder % Serie in r
         R = besselj(0, alpha(n+1)*r);
 
-        % Calcule le facteur de correction de la serie int(Y)*int(Z)
+        % Take the integral for converting to the actual tf.
         int_R = (R0/alpha(n+1)) * besselj(1, alpha(n+1)*R0);
     
-        % Résolution en 1D (quadripôle)
+        % Quadripole resolution
         gamma = sqrt(1j*w/a_x + alpha(n+1)^2);
         C = lambda_x*gamma.*sinh(ell*gamma);
         B = (1./(lambda*gamma)) .* sinh(ell*gamma);
         A = cosh(ell*gamma); % D = A
 
-        % Face arrière
+        % Rear face
         Fs_eval = 1./(C + A*hx2);
         Fs_2D{1} = Fs_2D{1} + Fs_eval * (R/Nalpha(n+1))*int_R;
 
-        % Face avant
+        % Front face
         Fs_eval = (A + B*hx2)./(C + A*hx2);
         Fs_2D{2} = Fs_2D{2} + Fs_eval * (R/Nalpha(n+1))*int_R;
 
     end
 
-    %% Résultats
+    %% Result
     bodeOut.w = w;
     bodeOut.mag{1} = abs(Fs_2D{1});
     bodeOut.mag{2} = abs(Fs_2D{2});

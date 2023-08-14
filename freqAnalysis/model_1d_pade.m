@@ -1,161 +1,160 @@
 function [bodeOut, Fs_pade] = model_1d_pade(dataIn, h, padeOrder, varargin)
     %% model_1d_pade
     %
-    %   Analyse en 1D de la function transfert F(s) = phi(s)/theta(s)
-    %   théorique, avec une aproximation polynomial de Pade. Il utilise 
-    %   les données qui sont disponibles dans dataIn, dedans le champs
-    %   sysData.
+    % One dimentional analysis of the theorical transfer function F(s) =
+    % phi(s)/theta(s), with a Pade polynomial approximation. It uses the 
+    % data available in dataIn, within the field sysData.
     %
-    %   Appels:
+    % Calls
     %
-    %       [bodeOut, Fs_pade] = model_1d_pade(dataIn, h) : prendre le
-    %       diagramme de bode et de la fonction de transfert avec le modèle 1d 
-    %       de la transfert de chaleur en utilisant la valeur du coefficient 
-    %       de transfert termique h et une approximation de Pade d'ordre 10.
-    %       
-    %       [bodeOut, Fs_pade] = model_1d_pade(dataIn, h, padeOrder) : prendre 
-    %       le diagramme de bode et de la fonction de transfert avec le modèle 1d 
-    %       de la transfert de chaleur en utilisant la valeur du coefficient 
-    %       de transfert termique h et une approximation de Pade d'ordre 
-    %       padeOrder.
+    %   [bodeOut, Fs_pade] = model_1d_pade(dataIn, h): take the Bode diagram 
+    %   for 1D model of the heat transfer using the heat transfert 
+    %   coefficient h. The Pade approximation order is fixed to 10.
     %
-    %       [bodeOut, Fs_pade] = model_1d_pade(__, optons) : prendre des entrées
-    %       optionnelles.
+    %   [bodeOut, Fs_pade] = model_1d_pade(dataIn, h, padeOrder): take the 
+    %   Bode diagram for 1D model of the heat transfer using the heat 
+    %   transfert coefficient h and an order padeOrder for the polynomial
+    %   approximation.
     %
-    %   Entrées :
+    %   [bodeOut, Fs_pade] = model_1d_pade(__, optons): take the optional 
+    %   arguments.
+    %
+    % Inputs
     % 
-    %   - dataIn : variable thermalData avec le système qui va être simulée. Les
-    %   information des coefficients thermiques du material et les autres
-    %   carachteristiques comme la masse volumique sont estoquées dans le
-    %   champs sysData dedans dataIn. Il peut aussi être utilisé comme une
-    %   structure si il y a des champs necessaires dedans ;
-    %   - h : Valeur du coefficient de transfert thermique (pertes) ;
-    %   - padeOrder : ordre de l'approximation de Pade.
+    %   dataIn: thermalData variable with all the information for the
+    %   system that will be simulated. The thermal coefficients are within
+    %   the field sysData. It is possible also use a structure with the
+    %   same fields as a sysDataType;
     %
-    %   Sorties :
-    %   
-    %   - bodeOut : structure avec le résultat de l'analyse qui contien les
-    %   champs bodeOut.w avec les fréquences choisit, bodeOut.mag avec la
-    %   magnitude et bodeOut.phase avec les données de phase. Les variables
-    %   bodeOut.mag et bodeOut.phase sont des celulles 1x2 avec des valeurs
-    %   pour la face arrière {1} et avant {2}.
-    %   - Fs_pade : function de transfert (variable tf) avec
-    %   l'approximation de Pade. Il est une celulle 1x2 avec des résultats
-    %   pour la face arrière {1} et avant {2}.
+    %   h: heat transfer coefficient in W/(m²K).
     %
-    %   Entrées optionnelles :
+    % Outputs
     %   
-    %   - wmin : fréquence minimale pour l'analyse en rad/s ;
-    %   - wmax : fréquence maximale pour l'analyse en rad/s ;
-    %   - wpoints : numéro de points en fréquence a être analysés.
+    %   bodeOut: structure with the analysis result. It contains the field
+    %   bodeOut.w with the frequences that has been used, bodeOut.mag with
+    %   the magnitude and bodeOut.phase with the phases. The variables
+    %   bodeOut.mag and bodeOut.phase are 1x2 cells with the values for the
+    %   rear face {1} and the front face {2};
+    %
+    %   Fs_pade: 2x1 cell with the transfer function result from Pade
+    %   approximation. The first cell corresponds to the rear face and the
+    %   second to the front face.
+    %
+    % Aditional options
+    %   
+    %   wmax: minimum frequency to be used in rad/s;
+    %
+    %   wmax: maximum frequency to be used in rad/s;
+    %
+    %   wpoints: number of frequency points.
     %   
     % See also thermalData, sysDataType, model_1d.
 
-    %% Entrées et constantes
+    %% Inputs and constants
 
-    wmin = 1e-3;              % [rad/s] Fréquence minimale pour le bode ;
-    wmax = 1e2;               % [rad/s] Fréquence maximale pour le bode ;
-    wpoints = 1000;           % [rad/s] Nombre des fréquences ;  
+    wmin = 1e-3;              % [rad/s] Minimum frequency
+    wmax = 1e2;               % [rad/s] Maximum frequency
+    wpoints = 1000;           % [rad/s] Number of frequency points 
 
-    %% Données optionales et autres paramètres
+    %% Aditional options
 
-    % Il verifie le type d'entrée
-    if isa(dataIn, 'thermalData')
-        lambda = dataIn.sysData.lambda; % [W/mK] Conductivité thermique ;
-        a = dataIn.sysData.a;           % [m^2/s] Diffusivité thermique ;
-        ell = dataIn.sysData.ell;       % [m] Epaisseur plaque ;
-    elseif isa(dataIn, 'struct')
-        lambda = dataIn.lambda; % [W/mK] Conductivité thermique ;
-        a = dataIn.a;           % [m^2/s] Diffusivité thermique ;
-        ell = dataIn.ell;       % [m] Epaisseur plaque ;
-    else
-        error("Entrée << dataIn >> non valide.");
-    end
-
-    % Test les argument optionelles
+    % Verify the optional arguments
     for i=1:2:length(varargin)        
         switch varargin{i}
-            % Fréquence minimale pour le diagramme de bode
+            % Minimum frequency
             case 'wmin'
                 wmin = varargin{i+1};
 
-            % Fréquence maximale pour le diagramme de bode
+            % Maximum frequency
             case 'wmax'      
                 wmax = varargin{i+1};
 
-            % Nombre des points pour le diagrame
+            % Number of frequency points 
             case 'wpoints'     
                 wpoints = varargin{i+1};
 
-            % Erreur
+            % Error
             otherwise
-                error("Option << " + varargin{i} + "non disponible.");
+                error("Option << " + varargin{i} + "is not available.");
         end
     end
 
-    % Prendre l'ordre pour Pade
+    % Verify the input type
+    if isa(dataIn, 'thermalData')
+        lambda = dataIn.sysData.lambda; % [W/mK] Thermal conductivity
+        a = dataIn.sysData.a;           % [m²/s] Thermal conductivity
+        ell = dataIn.sysData.ell;       % [m] Thermal conductivity
+    elseif isa(dataIn, 'struct')
+        lambda = dataIn.lambda; % [W/mK] Thermal conductivity
+        a = dataIn.a;           % [m²/s] Thermal conductivity
+        ell = dataIn.ell;       % [m] Thermal conductivity
+    else
+        error("Input << dataIn >> is not valid.");
+    end
+
+    % Take the Pade approximation order
     if ~exist('padeOrder', 'var')
         padeOrder = 10;
     end
     
-    %% Autres variables de l'analyse
-    w = logspace(log10(wmin), log10(wmax), wpoints); % Vecteur des fréq.
+    %% Other variables for the analysis
+    w = logspace(log10(wmin), log10(wmax), wpoints); % Freq. vector
 
-    % Approximation de Pade
+    % Pade approximation
     [Q,P] = padecoef(1, padeOrder); % Aproximation e^(x) = P(xi)/Q(xi)
-    P = poly(P); Q = poly(Q); % Change des vecteur en polinômes
+    P = poly(P); Q = poly(Q); % Change from vectors to poly variables
 
-    %% Approximation de Pade pour le modèle arrière (avec des pertes)
+    %% Pade approximation for the rear model (with loss)
 
-    % Polynômes de la fonction (ils ne sont pas des termes du quadripôle)
-    A_ = poly([lambda/(2*ell), h/2]); % Polinôme en xi
-    B_ = poly([-lambda/(2*ell), h/2]); % Polinôme en xi
+    % Fonction polynomials (it is not from the quadripoles)
+    A_ = poly([lambda/(2*ell), h/2]); % Polynomial in xi
+    B_ = poly([-lambda/(2*ell), h/2]); % Polynomial in xi
 
-    % Aproximation de la fonction de transfert F(xi) = N(xi)/D(xi)
-    N = P * Q; % Numérateur
-    D = (P*P*A_) + (Q*Q*B_); % Dénominateur
+    % Aproximation for the transfert function F(xi) = N(xi)/D(xi)
+    N = P * Q; % Numerator
+    D = (P*P*A_) + (Q*Q*B_); % Denominator
 
-    % Passe à la variable de Laplace s = (a/e^2)xi
+    % Change to the original Laplace variable s = (a/e^2)xi
     N = N.odd.comp([ell^2/a 0]);
     D = D.odd.comp([ell^2/a 0]);    
 
-    % Unicité de F(s) (d0 = 1)
+    % Unicity of F(s) (d0 = 1)
     N.coef = N.coef/D.coef(end); 
     D.coef = D.coef/D.coef(end);
     
-    % Diagramme de bode pour Pade
+    % Bode diagram for the function
     F_approx_ev = N.evaluate(w*1j)./D.evaluate(w*1j);
     mag_pade{1} = abs(F_approx_ev);
     phase_pade{1} = angle(F_approx_ev);
     Fs_pade{1} = tf(N.coef, D.coef);
 
-    %% Approximation de Pade pour le modèle avant (avec des pertes)
+    %% Pade approximation for the front model (with loss)
 
-    % Polynômes de la fonction (ils ne sont pas des termes du quadripôle)
-    A_ = poly([lambda/ell, h]); % Polinôme en xi
-    B_ = poly([lambda/ell, -h]); % Polinôme en xi
-    C_ = poly([(lambda/ell)^2, h*lambda/ell 0]); % Polinôme en xi
-    D_ = poly([-(lambda/ell)^2, h*lambda/ell 0]); % Polinôme en xi
+    % Fonction polynomials (it is not from the quadripoles)
+    A_ = poly([lambda/ell, h]); % Polynomial in xi
+    B_ = poly([lambda/ell, -h]); % Polynomial in xi
+    C_ = poly([(lambda/ell)^2, h*lambda/ell 0]); % Polynomial in xi
+    D_ = poly([-(lambda/ell)^2, h*lambda/ell 0]); % Polynomial in xi
 
-    % Aproximation de la fonction de transfert F(xi) = N(xi)/D(xi)
-    N = (P*P*A_) + (Q*Q*B_); % Numérateur
-    D = (P*P*C_) + (Q*Q*D_); % Dénominateur
+    % Aproximation for the transfert function F(xi) = N(xi)/D(xi)
+    N = (P*P*A_) + (Q*Q*B_); % Numerator
+    D = (P*P*C_) + (Q*Q*D_); % Denominator
 
-    % Passe à la variable de Laplace s = (a/e^2)xi
+    % Change to the original Laplace variable s = (a/e^2)xi
     N = N.even.comp([ell^2/a 0]);
     D = D.even.comp([ell^2/a 0]);
 
-    % Unicité de F(s) (d0 = 1)
+    % Unicity of F(s) (d0 = 1)
     N.coef = N.coef/D.coef(end); 
     D.coef = D.coef/D.coef(end);
     
-    % Diagramme de bode pour Pade
+    % Bode diagram for the function
     F_approx_ev = N.evaluate(w*1j)./D.evaluate(w*1j);
     mag_pade{2} = abs(F_approx_ev);
     phase_pade{2} = angle(F_approx_ev);
     Fs_pade{2} = tf(N.coef, D.coef);
 
-    %% Résultats
+    %% Results
     bodeOut.w = w;
     bodeOut.mag = mag_pade;
     bodeOut.phase = phase_pade;
