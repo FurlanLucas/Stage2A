@@ -1,26 +1,32 @@
 clc; clear; close all;
-%% Entrées et définitions
-figDir = 'outFig';            % [-] Emplacement pour les figures générées ;
-analysisName = 'sys1_isoBas'; % [-] Non de l'analyse a être réalisé ;
-expNumber = 1;                % [-] Numéro du experiment a être analysé ;
-numberOfZeros = 7;            % [-] Numéro de zéros de l'analyse ;
-points = 1000;                % [-] Points pour l'analyse ;
+%% rep
+%
+%   Gerenerates the figure of the first roots of the eigen value equation
+%   in cylindrical coordenates. It uses the same code as the model___.m
+%   files.
 
-% Coefficients phisiques
-hr2 = 15;           % [-] Coefficient de transfert thermique en r = Rmax ;
-Rmax = 30e-3;       % [-] Rayon de thermocouple ;
-lambda_r = 15;      % [-] Conductivité thermique dans la direction r ;
+%% Inputs and definitions
+figDir = 'outFig';            % Directory for output figures
+analysisName = 'sys1_isoBas'; % Analysis name
+expNumber = 1;                % Number for the experiment to be used
+numberOfZeros = 7;            % Number of zeros to be found
+points = 1000;                % Number of points in the graph
 
-%% Vérification de sortie et chargement des données
+% Phisical coefficients
+hr2 = 15;           % [W/(m²K)] Heat transfert coefficient
+Rmax = 30e-3;       % [m] Thermocouple size
+lambda_r = 15;      % [W/mK] Thermal conductivity in r direction
+
+%% %% Output directory verification and variable loads
 if not(isfolder(figDir + "\" + analysisName))
     mkdir(figDir + "\" + analysisName);
 end
 
-addpath('..\database'); % Pour le fichier de definition de sysDataType
+addpath('..\database'); % To define the thermalData and sysDataType variables
 load("..\database\convertedData\" + analysisName + ".mat");
 expData = getexp(expData, expNumber);
 
-%% Solutions de l'équation transcendente
+%% Eigen value equation roots
 
 % Prendre les solutions pour alpha_n (dans la direction y)
 load("J_roots.mat", 'J0', 'J1');
@@ -30,9 +36,9 @@ f = @(alpha_n) hr2*besselj(0,alpha_n*Rmax) - ...
 
 alpha = zeros(numberOfZeros+1, 1);
 
-alpha(1) = bissec(f, 0, J0(1)/Rmax);
+alpha(1) = bisec(f, 0, J0(1)/Rmax);
 for i = 1:numberOfZeros
-   alpha(i+1) = bissec(f, J1(i)/Rmax, J0(i+1)/Rmax);
+   alpha(i+1) = bisec(f, J1(i)/Rmax, J0(i+1)/Rmax);
 end
 
 Nalpha = ((Rmax^2) / 2) * (besselj(0, alpha*Rmax) .^ 2);
@@ -41,13 +47,19 @@ Nalpha = ((Rmax^2) / 2) * (besselj(0, alpha*Rmax) .^ 2);
 
 figAlpha = linspace(0, alpha(end), points);
 
+% Figure in english
 fig = figure; hold on;
-plot(figAlpha, f(figAlpha), 'b',DisplayName="$f(x)-g(x)$",LineWidth=1.5);
-plot(alpha, f(alpha), 'or', MarkerFaceColor='r', MarkerSize=8, ...
-    DisplayName="Racines trouv\'{e}es");
+plot(figAlpha, f(figAlpha), 'b',DisplayName="$(f-g)(x)$",LineWidth=1.5);
+p = plot(alpha, f(alpha), 'or', MarkerFaceColor='r', MarkerSize=8, ...
+    DisplayName="Found roots");
 xlabel("$x$", Interpreter="latex", FontSize=17);
 ylabel("Amplitude", Interpreter="latex", FontSize=17);
 legend(Location="SouthWest",Interpreter="latex", FontSize=17); 
 grid minor;
 saveas(fig, figDir+"\"+analysisName+"\roots_bessel.eps", 'epsc');
+
+% Figure in french
+set(p, "DisplayName", "Racines trouv\'{e}es");
+grid minor;
+saveas(fig, figDir+"\"+analysisName+"\roots_bessel_en.eps", 'epsc');
 title("Calcule des racines",Interpreter="latex", FontSize=23);
