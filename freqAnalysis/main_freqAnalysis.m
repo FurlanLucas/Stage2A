@@ -16,7 +16,7 @@ if not(isfolder(figDir + "\" + analysisName))
 end
 
 disp("Loading variables.");
-addpath('..\database'); % Pour le fichier de definition des classes
+addpath('..\database'); % For the class definitions
 load("..\database\convertedData\" + analysisName + ".mat");
 
 % Choos the multidimenstional analysis to be used
