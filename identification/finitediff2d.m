@@ -1,147 +1,215 @@
 function [y, timeOut] = finitediff2d(dataIn, timeIn, phiIn, h, Mx, Mr, N)
     %% finitediff2D
     %
-    % Il fait l'implantation du méthode de differences finites 1D pour
-    % l'équation du chaleur. L'équation a été implanté avec les méthode
-    % implicite.
+    % Function that implements the finite difference method in a 2D
+    % analysis of the heat equation with a axisymetric system. It is used
+    % the implicit method.
     %
+    % Calls
     %
-    % Entrées :
-    % 
-    %   - dataIn : variable iddata avec l'entrée qui va être simulée. Les
-    %   information des coefficients thermiques du material et les autres
-    %   carachteristiques comme la masse volumique sont estoquées dans le
-    %   champs UserData dedans dataIn.
-    %   - M : Nombre de nodes dans la variable x. Il doit être un intier.
-    %   - dt : Discretization du temps.
+    %   [y, timeOut] = finitediff2d(dataIn, timeIn, phiIn, h, Mx, Mr, N):
+    %   calls the function for the data in dataIn. The time vector that
+    %   will be used and the heat flux applied to the front face (x = 0) is
+    %   giving in timeIn and phiIn, respectively. The heat transfert
+    %   coefficient is giving by h. Mx, Mr and N are the number of elements
+    %   in x, r directions and in time, respectively.
     %
+    % Inputs
+    %
+    %   dataIn: sysData variable with all the information for the
+    %   system that will be simulated. It is possible also use a structure 
+    %   with the same fields as a sysDataType;
+    %
+    %   h: vector of heat transfer coefficients in W/(m²K). The first one
+    %   is the value for the rear face hx2 and the second one is to the
+    %   external surface in r direction hr2;
+    %
+    %   Mx: Number of elements in x direction. Have to be an integer;
+    %
+    %   Mr: Number of elements in r direction. Have to be an integer;
+    %
+    %   N: Number of elements in time. Have to be an integer.
+    %
+    % Outputs
+    %
+    %   y: 2x1 cell array with the temperature variation outout of the 
+    %   system. The first {1} position corresponds to the rear face and the 
+    %   second one to front face.
+    %
+    %   timeOut: time vector with each simulation instant.
+    %
+    % See also sysDataType, model_2d, model_2d_pade and model_2d_taylor.
 
-    %% Entrées
-    % Caracteristiques thermiques du système
+    %% Inputs
+
     ell = dataIn.ell;
-    a = dataIn.a;
-    lambda = dataIn.lambda;
-    r = dataIn.size;
+    a = dataIn.a;   % [m^2/s] Thermal diffusivity
+    lambda_x = dataIn.lambda; % [W/mK] Thermal conductivity in x direction
+    lambda_r = dataIn.lambda; % [W/mK] Thermal conductivity in r direction
+    Rmax = dataIn.Size; % [m] Termocouple size
+    r0 = dataIn.ResSize; % [m] Resistance size
 
-    % Differences finies
+    % Finite differences
     dt = timeIn(end)/(N-1);
     dx = ell/(Mx-1);
-    dr = r/(Mr-1);
-    r = (1:Mr)*dr;
-    timeOut = (0:N-1)*dt;
-    phi = interp1(timeIn, phiIn, timeOut);
+    dr = Rmax/(Mr-1);
 
-    if strcmp(dataIn.resGeometry, 'Circ')
-        r0 = dataIn.resSize;
-    else
-        r0 = dataIn.resSize; %/sqrt(pi);
-    end
-    r0 = Inf;
+    r = (0:Mr-1)*dr; % Radius vector (position in r direction)
+    timeOut = (0:N-1)*dt; % New time vector
+    phi = interp1(timeIn, phiIn, timeOut).* (r' <= r0); % New heat flux vector
 
+    % Heat transfer coefficient
+    hr = h(1);
+    hx = h(2);
 
-    myphi = @(ri, ni) myphiFF(ri, r0, phi(ni));
+    %% Main loop
 
-    hr = h;
-    hx = h;
+    % Display current status
+    fprintf("\t\tAnalysis at 00%%.\n");
 
-
-    %% A Matrix
-    %T = 500*ones(Mx*Mr, 1);
+    % initialize variables
     T = zeros(Mx*Mr, 1);
-    c = zeros(Mx*Mr, 1);
-    y = zeros(1,N);
+    y_back = zeros(1,N);
+    y_front = zeros(1,N);
 
-    for n = 1:N
+    count = 0;
+    for n = 2:N
         A = zeros(Mx*Mr);
+        B = zeros(Mx*Mr);
+        c = zeros(Mx*Mr, 1);
 
         for i = 1:Mr
             for j=1:Mx
                 pos = i + Mr*(j-1);
                 
                 R1 = a*dt/(dr^2);
-                R2 = a*dt/(r(i)*2*dr);
+                R2 = a*dt/(2*r(i)*dr);
                 R3 = a*dt/(dx^2);
                 
-                % Interior da malha
+                % Within the mash
                 if (i > 1) && (i < Mr) && (j > 1) && (j < Mx)
+                    B(pos, pos-1) = R2 - R1;
+                    B(pos, pos) = 2 + 2*R1 + 2*R3;
+                    B(pos, pos+1) = -R1 - R2;
+                    B(pos, pos-Mr) = -R3;
+                    B(pos, pos+Mr) = -R3;
                     A(pos, pos-1) = R1 - R2;
-                    A(pos, pos) = 1 - 2*R1 - 2*R3;
+                    A(pos, pos) = 2 - 2*R1 - 2*R3;
                     A(pos, pos+1) = R1 + R2;
                     A(pos, pos-Mr) = R3;
                     A(pos, pos+Mr) = R3;
 
-                % Fronteira inferior em j (dentro em i)
+                % Inferior boundary in j (within in i)
                 elseif (j == 1) && (i ~= 1) && (i ~= Mr)
+                    B(pos, pos-1) = R2 - R1;
+                    B(pos, pos) = 2 + 2*R1 + 2*R3;
+                    B(pos, pos+1) = -R1 - R2;
+                    B(pos, pos+Mr) = -2*R3;
                     A(pos, pos-1) = R1 - R2;
-                    A(pos, pos) = 1 - 2*R1 - 2*R3;
+                    A(pos, pos) = 2 - 2*R1 - 2*R3;
                     A(pos, pos+1) = R1 + R2;
                     A(pos, pos+Mr) = 2*R3;
-                    c(pos) = R3*2*dx*(myphi(r(i), n))/lambda;
+                    c(pos) = R3*2*dx*( (phi(i, n) + phi(i, n-1) )...
+                                          )/lambda_x;
 
-                % Fronteira superior em j (dentro em i)
+                % Superior boundary in j (within in i)
                 elseif (j == Mx) && (i ~= 1) && (i ~= Mr)
+                    B(pos, pos-1) = R2 - R1;
+                    B(pos, pos) = 2 + 2*R1 + 2*R3 + R3*(2*dx*hx/lambda_x);
+                    B(pos, pos+1) = -R1 - R2;
+                    B(pos, pos-Mr) = -2*R3;
                     A(pos, pos-1) = R1 - R2;
-                    A(pos, pos) = 1 - 2*R1 - 2*R3 - R3*(2*dx*hx/lambda);
+                    A(pos, pos) = 2 - 2*R1 - 2*R3 - R3*(2*dx*hx/lambda_x);
                     A(pos, pos+1) = R1 + R2;
-                    A(pos, pos-Mr) = 2*R3; 
+                    A(pos, pos-Mr) = 2*R3;
 
-                % Fronteira inferior em i (dentro em j)
+                % Inferior boundary in i (within in j)
                 elseif (i == 1) && (j ~= 1) && (j ~= Mx)
-                    A(pos, pos) = 1 - 2*R1 - 2*R3;
+                    B(pos, pos) = 2 + 2*R1 + 2*R3;
+                    B(pos, pos+1) = -2*R1;
+                    B(pos, pos-Mr) = -R3;
+                    B(pos, pos+Mr) = -R3;
+                    A(pos, pos) = 2 - 2*R1 - 2*R3;
                     A(pos, pos+1) = 2*R1;
                     A(pos, pos-Mr) = R3;
                     A(pos, pos+Mr) = R3;
 
-                % Fronteira superior em i (dentro em j)
+                % Superior boundary in i (within in j)
                 elseif (i == Mr) && (j ~= 1) && (j ~= Mx)
+                    B(pos, pos-1) = - 2*R1;
+                    B(pos, pos) = 2 + 2*R1 + 2*R3 + (R1+R2)*(2*dr*hr/lambda_r);
+                    B(pos, pos-Mr) = -R3;
+                    B(pos, pos+Mr) = -R3;
                     A(pos, pos-1) = 2*R1;
-                    A(pos, pos) = 1 - 2*R1 - 2*R3 - (R1+R2)*(2*dr*hr/lambda);
+                    A(pos, pos) = 2 - 2*R1 - 2*R3 - (R1+R2)*(2*dr*hr/lambda_r);
                     A(pos, pos-Mr) = R3;
                     A(pos, pos+Mr) = R3;
 
-                % Fronteira infeior em i e j
+                % Inferior boundary in i and j
                 elseif (i == 1) && (j == 1)
-                    A(pos, pos) = 1 - 2*R1 - 2*R3;
+                    B(pos, pos) = 2 + 2*R1 + 2*R3;
+                    B(pos, pos+1) = -2*R1;
+                    B(pos, pos+Mr) = -2*R3;
+                    A(pos, pos) = 2 - 2*R1 - 2*R3;
                     A(pos, pos+1) = 2*R1;
                     A(pos, pos+Mr) = 2*R3;
-                    c(pos) = R3*2*dx*(myphi(r(i), n))/lambda;
+                    c(pos) = R3*2*dx*( (phi(i, n) + phi(i, n-1) )...
+                                          )/lambda_x;
                   
-                % Fronteira inferior em j e superior em i
+                % Inferior boundary in j ans supeior in i
                 elseif (j == 1) && (i == Mr)
+                    B(pos, pos-1) = -2*R1;
+                    B(pos, pos) = 2 + 2*R1 + 2*R3 + (R1+R2)*(2*dr*hr/lambda_r);
+                    B(pos, pos+Mr) = -2*R3;
                     A(pos, pos-1) = 2*R1;
-                    A(pos, pos) = 1 - 2*R1 - 2*R3 - (R1+R2)*(2*dr*hr/lambda);
+                    A(pos, pos) = 2 - 2*R1 - 2*R3 - (R1+R2)*(2*dr*hr/lambda_r);
                     A(pos, pos+Mr) = 2*R3;
-                    c(pos) = R3*2*dx*(myphi(r(i), n))/lambda;
+                    c(pos) = R3*2*dx*( (phi(i, n) + phi(i, n-1) )...
+                                          )/lambda_x;
 
-                % Fronteira inferior em i e superior em j
+                % Inferior boundary in j and superior in i
                 elseif (i == 1) && (j == Mx)
-                    A(pos, pos) = 1 - 2*R1 - 2*R3 - R3*(2*dx*hx/lambda);
+                    B(pos, pos) = 2 + 2*R1 + 2*R3 + R3*(2*dx*hx/lambda_x);
+                    B(pos, pos+1) = -2*R1;
+                    B(pos, pos-Mr) = -2*R3;
+                    A(pos, pos) = 2 - 2*R1 - 2*R3 - R3*(2*dx*hx/lambda_x);
                     A(pos, pos+1) = 2*R1;
                     A(pos, pos-Mr) = 2*R3;
 
-                % Fronteira superior em i et j
+                % Inferior boundary in i and j
                 elseif (i == Mr) && (j == Mx)
+                    B(pos, pos-1) = -2*R1;
+                    B(pos, pos) = 2 + 2*R1 + 2*R3 + (R1+R2)*(2*dr*hr/lambda_r)...
+                        + R3*(2*dx*hx/lambda_x);
+                    B(pos, pos-Mr) = -2*R3;
                     A(pos, pos-1) = 2*R1;
-                    A(pos, pos) = 1 - 2*R1 - 2*R3 - (R1+R2)*(2*dr*hr/lambda)...
-                        - R3*(2*dx*hx/lambda);
+                    A(pos, pos) = 2 - 2*R1 - 2*R3 - (R1+R2)*(2*dr*hr/lambda_r)...
+                        - R3*(2*dx*hx/lambda_x);
                     A(pos, pos-Mr) = 2*R3;
                 else
-                    error("You not suppose to see this.")
+                    error("There is a non-specified element.");
                 end
 
                 
             end
         end
 
-        T = A*T + c;
-        y(n) = T(Mr*Mx-Mr+1);
-    end
-end
+        % Display the current status
+        p = floor(100*n/N);
+        if p > count
+            fprintf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b");
+            fprintf("\t\tAnalysis at %2d%%.\n", p);
+            count = count + 1;
+        end
 
-function out = myphiFF(ri, r0, in)
-    if ri <= r0
-        out = in;
-    else 
-        out = 0;
-    end
-end
+        % Take the results
+        T = B\(A*T + c);
+        y_back(n) = T(Mr*Mx-Mr+1);
+        y_front(n) = T(1);
+
+    end % end for
+
+    %% Output
+    y = {y_back, y_front};
+
+end % end function
