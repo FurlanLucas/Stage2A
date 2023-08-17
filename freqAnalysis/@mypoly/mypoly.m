@@ -1,4 +1,4 @@
-classdef poly
+classdef mypoly
     %% poly
     %
     % Class that defines a polynomial object.
@@ -37,7 +37,7 @@ classdef poly
     %% Methods --------------------------------------------------------------------
     methods
         % Class constructor
-        function obj = poly(coef)
+        function obj = mypoly(coef)
             if nargin == 1
                 obj.coef = coef;
             end

@@ -102,13 +102,13 @@ function [bodeOut, Fs_pade] = model_1d_pade(dataIn, h, padeOrder, varargin)
 
     % Pade approximation
     [Q,P] = padecoef(1, padeOrder); % Aproximation e^(x) = P(xi)/Q(xi)
-    P = poly(P); Q = poly(Q); % Change from vectors to poly variables
+    P = mypoly(P); Q = mypoly(Q); % Change from vectors to mypoly variables
 
     %% Pade approximation for the rear model (with loss)
 
     % Fonction polynomials (it is not from the quadripoles)
-    A_ = poly([lambda/(2*ell), h/2]); % Polynomial in xi
-    B_ = poly([-lambda/(2*ell), h/2]); % Polynomial in xi
+    A_ = mypoly([lambda/(2*ell), h/2]); % Polynomial in xi
+    B_ = mypoly([-lambda/(2*ell), h/2]); % Polynomial in xi
 
     % Aproximation for the transfert function F(xi) = N(xi)/D(xi)
     N = P * Q; % Numerator
@@ -131,10 +131,10 @@ function [bodeOut, Fs_pade] = model_1d_pade(dataIn, h, padeOrder, varargin)
     %% Pade approximation for the front model (with loss)
 
     % Fonction polynomials (it is not from the quadripoles)
-    A_ = poly([lambda/ell, h]); % Polynomial in xi
-    B_ = poly([lambda/ell, -h]); % Polynomial in xi
-    C_ = poly([(lambda/ell)^2, h*lambda/ell 0]); % Polynomial in xi
-    D_ = poly([-(lambda/ell)^2, h*lambda/ell 0]); % Polynomial in xi
+    A_ = mypoly([lambda/ell, h]); % Polynomial in xi
+    B_ = mypoly([lambda/ell, -h]); % Polynomial in xi
+    C_ = mypoly([(lambda/ell)^2, h*lambda/ell 0]); % Polynomial in xi
+    D_ = mypoly([-(lambda/ell)^2, h*lambda/ell 0]); % Polynomial in xi
 
     % Aproximation for the transfert function F(xi) = N(xi)/D(xi)
     N = (P*P*A_) + (Q*Q*B_); % Numerator

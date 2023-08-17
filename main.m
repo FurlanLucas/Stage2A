@@ -2,11 +2,14 @@ clc;
 %% Main file to all analysis
 
 fprintf("<strong>MAIN FILE ANALYSIS</strong>\n\n");
-% Prendre la conversion de variables
+% Convert the data
 run("database\convertData.m");
 
-% Fait l'analyse fréquencielle
+% Do the frequential analysis
 run("freqAnalysis\main_freqAnalysis.m");
 
-% Fait l'analyse d'identification
+% System identification
 run("identification\main_identification.m");
+
+% Do the noise test
+run("noise\main_noise.m");

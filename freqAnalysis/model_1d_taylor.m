@@ -103,14 +103,14 @@ function [bodeOut, Fs_taylor] = model_1d_taylor(dataIn, h, taylorOrder, varargin
 
     % Approximation de Taylor
     n = taylorOrder:-1:0;
-    P = poly((1/2).^n ./ factorial(n)); % Aproximation e^(x) = P(xi)/Q(xi)
-    Q = poly((-1/2).^n ./ factorial(n)); % Aproximation e^(x) = P(xi)/Q(xi)
+    P = mypoly((1/2).^n ./ factorial(n)); % Aproximation e^(x) = P(xi)/Q(xi)
+    Q = mypoly((-1/2).^n ./ factorial(n)); % Aproximation e^(x) = P(xi)/Q(xi)
 
     %% Taylor approximation for the rear model (with loss)
 
     % Fonction polynomials (it is not from the quadripoles)
-    A_ = poly([lambda/(2*ell), h/2]); % Polynomial in xi
-    B_ = poly([-lambda/(2*ell), h/2]); % Polynomial in xi
+    A_ = mypoly([lambda/(2*ell), h/2]); % Polynomial in xi
+    B_ = mypoly([-lambda/(2*ell), h/2]); % Polynomial in xi
 
     % Aproximation for the transfert function F(xi) = N(xi)/D(xi)
     N = P * Q; % Numerator
@@ -133,10 +133,10 @@ function [bodeOut, Fs_taylor] = model_1d_taylor(dataIn, h, taylorOrder, varargin
     %% Taylor approximation for the front model (with loss)
 
     % Fonction polynomials (it is not from the quadripoles)
-    A_ = poly([lambda/ell, h]); % Polynomial in xi
-    B_ = poly([lambda/ell, -h]); % Polynomial in xi
-    C_ = poly([(lambda/ell)^2, h*lambda/ell 0]); % Polynomial in xi
-    D_ = poly([-(lambda/ell)^2, h*lambda/ell 0]); % Polynomial in xi
+    A_ = mypoly([lambda/ell, h]); % Polynomial in xi
+    B_ = mypoly([lambda/ell, -h]); % Polynomial in xi
+    C_ = mypoly([(lambda/ell)^2, h*lambda/ell 0]); % Polynomial in xi
+    D_ = mypoly([-(lambda/ell)^2, h*lambda/ell 0]); % Polynomial in xi
 
     % Aproximation for the transfert function F(xi) = N(xi)/D(xi)
     N = (P*P*A_) + (Q*Q*B_); % Numerator

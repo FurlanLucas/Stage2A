@@ -13,7 +13,7 @@ function objout = mpower(objin, n)
     
     % Simplest case
     if n == 0
-        objout = poly(1);
+        objout = mypoly(1);
         return
     elseif n == 1
         objout = objin;
@@ -27,6 +27,6 @@ function objout = mpower(objin, n)
         end
     end
 
-    objout = poly(R);
+    objout = mypoly(R);
 
 end

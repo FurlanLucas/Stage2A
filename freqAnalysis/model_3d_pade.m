@@ -157,7 +157,7 @@ function [bodeOut, Fs_pade] = model_3d_pade(dataIn, h, padeOrder, ...
 
     % Aproximation e^(x) = P(xi)/Q(xi)
     [Q,P] = padecoef(1, padeOrder);
-    P = poly(P); Q = poly(Q); % Change from vectors to poly variables
+    P = mypoly(P); Q = mypoly(Q); % Change from vectors to poly variables
 
     % Sorties (initialization)
     Fs_pade_ev = {zeros(size(w)), zeros(size(w))}; % Vector with the solutions
@@ -200,8 +200,8 @@ function [bodeOut, Fs_pade] = model_3d_pade(dataIn, h, padeOrder, ...
     %% Pade approximation for the 3D rear face model 
 
     % Fonction polynomials (it is not from the quadripoles)   
-    A_ = poly([lambda_x/(2*ell), hx2/2]); % Polynomial in xi
-    B_ = poly([-lambda_x/(2*ell), hx2/2]); % Polynomial in xi
+    A_ = mypoly([lambda_x/(2*ell), hx2/2]); % Polynomial in xi
+    B_ = mypoly([-lambda_x/(2*ell), hx2/2]); % Polynomial in xi
 
     for n = 0:seriesOrder % Serie en y
         Y = cos(alpha(n+1)*y) + ...
@@ -240,10 +240,10 @@ function [bodeOut, Fs_pade] = model_3d_pade(dataIn, h, padeOrder, ...
     %% Pade approximation for the 3D front face model 
 
     % Fonction polynomials (it is not from the quadripoles)  
-    A_ = poly([lambda_x/ell, hx2]); % Polynomial in xi
-    B_ = poly([lambda_x/ell, -hx2]); % Polynomial in xi
-    C_ = poly([(lambda_x/ell)^2, hx2*lambda_x/ell 0]); % Polynomial in xi
-    D_ = poly([-(lambda_x/ell)^2, hx2*lambda_x/ell 0]); % Polynomial in xi
+    A_ = mypoly([lambda_x/ell, hx2]); % Polynomial in xi
+    B_ = mypoly([lambda_x/ell, -hx2]); % Polynomial in xi
+    C_ = mypoly([(lambda_x/ell)^2, hx2*lambda_x/ell 0]); % Polynomial in xi
+    D_ = mypoly([-(lambda_x/ell)^2, hx2*lambda_x/ell 0]); % Polynomial in xi
 
     for n = 0:seriesOrder % Serie en y
         Y = cos(alpha(n+1)*y) + ...

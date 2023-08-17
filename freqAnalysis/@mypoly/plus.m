@@ -23,6 +23,6 @@ function objout = plus(objin1, objin2)
     R = new_P + new_Q;
 
     % Output
-    objout = poly(R);
+    objout = mypoly(R);
 
 end

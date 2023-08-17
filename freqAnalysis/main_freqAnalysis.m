@@ -3,10 +3,11 @@ clear; close all;
 figDir = 'outFig';            % Directory for output figures
 analysisName = 'sys1_isoBas'; % Analysis name
 expNumber = 1;                % Number for the experiment to be used
-orders = [1 5 10];            % Orders for Pade an Taylor approximations
+orders = [1 6 10];            % Orders for Pade an Taylor approximations
 colors = ['r','b','g','m'];   % Graph colors
-h_comp = [10, 20];            % Values for h (compare)
+h_comp = [7, 25];             % Values for h (compare)
 h = 17;                       % Final value for h
+Ts = 100e-3;                  % [s] Time sampling (discretization of tf)
 
 fprintf("<strong>Frequency analysis</strong>\n");
 
@@ -42,8 +43,8 @@ end
 
 disp("One-dimentional analysis for different h values.");
 
-results_1d1 = model_1d(expData, 5);
-results_1d2 = model_1d(expData, 25);
+results_1d1 = model_1d(expData, h_comp(1));
+results_1d2 = model_1d(expData, h_comp(2));
 
 % Figure in english
 fig = figure; subplot(2,1,1); hold on;
@@ -212,6 +213,43 @@ xlabel("Fr\'{e}quence (rad/s)", Interpreter='latex', FontSize=15);
 set(thPlot, 'displayName', "Th\'{e}orique");
 saveas(fig, figDir + "\" + analysisName + "\ordersTaylor_1d_front_fr.eps", 'epsc');
 sgtitle({"Fonction $F_f(s)$ avec", "l'approximation de Taylor en 1D"}, ...
+    Interpreter='latex', FontSize=20);
+
+%% Comparison between Taylor and Pade (rear face)
+
+disp("Comparison between Taylor and Pade.");
+
+results_1d_th = model_1d(expData, h); % Theorical result
+results_1d1 = model_1d_taylor(expData, h);
+results_1d2 = model_1d_pade(expData, h);
+
+% Figure in english
+fig = figure; subplot(2,1,1); hold on;
+plot(results_1d1.w, 20*log10(results_1d1.mag{1}), 'b', ...
+    LineWidth=1.4, DisplayName="Taylor"); 
+plot(results_1d2.w, 20*log10(results_1d2.mag{1}), '--r', ...
+    LineWidth=1.4, DisplayName="Pad\'{e}");
+thPlot = plot(results_1d_th.w, 20*log10(results_1d_th.mag{1}), 'k', ...
+    LineWidth=1.4, DisplayName="Theorical"); 
+ylabel("Magnitude (dB)", Interpreter='latex', FontSize=15);
+legend('Location', 'southwest', Interpreter='latex', FontSize=15); 
+grid minor; hold off; set(gca, 'XScale', 'log'); subplot(2,1,2); hold on;
+plot(results_1d1.w, results_1d1.phase{1}*180/pi, 'b', LineWidth=1.4); 
+plot(results_1d2.w, results_1d2.phase{1}*180/pi, '--r', LineWidth=1.4); 
+plot(results_1d_th.w, results_1d_th.phase{1}*180/pi, 'k', LineWidth=1.4); 
+ylabel("Phase (deg)", Interpreter='latex', FontSize=15);
+xlabel("Frequency (rad/s)", Interpreter='latex', FontSize=15);
+set(gca, 'XScale', 'log'); hold off; grid minor;
+saveas(fig, figDir + "\" + analysisName + "\compaire_taylorpade_en.eps", 'epsc');
+
+% Figure in french
+xlabel("Fr\'{e}quence (rad/s)", Interpreter='latex', FontSize=15);
+subplot(2,1,1); grid minor;
+ylabel("Module (dB)", Interpreter='latex', FontSize=15);
+set(gca, 'XScale', 'log'); hold off; grid minor;
+set(thPlot, 'displayName', "Th\'{e}orique");
+saveas(fig, figDir + "\" + analysisName + "\compaire_taylorpade_fr.eps", 'epsc');
+sgtitle("Fonction $F_b(s)$ th\'{e}orique en 1D",'Interpreter','latex', ...
     Interpreter='latex', FontSize=20);
 
 %% 2D/3D analysis (comparison with 1D)
@@ -404,6 +442,17 @@ set(thPlot, 'displayName', "Th\'{e}orique");
 saveas(fig, figDir + "\" + analysisName + "\ordersTaylor_3d_front_fr.eps", 'epsc');
 sgtitle({"Fonction $F_f(s)$ avec", "l'approximation de Taylor en" + type}, ...
     Interpreter='latex', FontSize=20);
+
+%% Write some data to tables (latex)
+
+table2tex(expData);
+
+% Taylor 1D
+[~, Fs_taylor_1d] = model_1d_taylor(expData, h, 6);
+tf2tex(Fs_taylor_1d{1}, "\\widetilde{G}_\\phi(s)", 'G_1d_taylor_cont');
+tf2tex(c2d(Fs_taylor_1d{1}, Ts, 'zoh'), "\\widetilde{G}_\\phi(s)", ...
+    'G_1d_taylor_disc');
+
 
 %% Fin de l'analyse
 msg = 'Press any key to continue...';

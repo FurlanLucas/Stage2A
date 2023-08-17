@@ -156,8 +156,8 @@ function [bodeOut, Fs_taylor] = model_3d_taylor(dataIn, h, taylorOrder, ...
 
     % Aproximation e^(x) = P(xi)/Q(xi)
     n = taylorOrder:-1:0;
-    P = poly((1/2).^n ./ factorial(n)); % Change from vectors to poly variables
-    Q = poly((-1/2).^n ./ factorial(n)); % Change from vectors to poly variables
+    P = mypoly((1/2).^n ./ factorial(n)); % Change from vectors to poly variables
+    Q = mypoly((-1/2).^n ./ factorial(n)); % Change from vectors to poly variables
 
     % Sorties (initialization)
     Fs_taylor_ev = {zeros(size(w)), zeros(size(w))}; % Vector with the solutions
@@ -202,8 +202,8 @@ function [bodeOut, Fs_taylor] = model_3d_taylor(dataIn, h, taylorOrder, ...
     %% Taylor approximation for the 3D rear face model 
 
     % Fonction polynomials (it is not from the quadripoles)   
-    A_ = poly([lambda_x/(2*ell), hx2/2]); % Polynomial in xi
-    B_ = poly([-lambda_x/(2*ell), hx2/2]); % Polynomial in xi
+    A_ = mypoly([lambda_x/(2*ell), hx2/2]); % Polynomial in xi
+    B_ = mypoly([-lambda_x/(2*ell), hx2/2]); % Polynomial in xi
 
     for n = 0:seriesOrder % Serie en y
         Y = cos(alpha(n+1)*y) + ...
@@ -243,10 +243,10 @@ function [bodeOut, Fs_taylor] = model_3d_taylor(dataIn, h, taylorOrder, ...
     %% Taylor approximation for the 3D front face model 
 
     % Fonction polynomials (it is not from the quadripoles)  
-    A_ = poly([lambda_x/ell, hx2]); % Polynomial in xi
-    B_ = poly([lambda_x/ell, -hx2]); % Polynomial in xi
-    C_ = poly([(lambda_x/ell)^2, hx2*lambda_x/ell 0]); % Polynomial in xi
-    D_ = poly([-(lambda_x/ell)^2, hx2*lambda_x/ell 0]); % Polynomial in xi
+    A_ = mypoly([lambda_x/ell, hx2]); % Polynomial in xi
+    B_ = mypoly([lambda_x/ell, -hx2]); % Polynomial in xi
+    C_ = mypoly([(lambda_x/ell)^2, hx2*lambda_x/ell 0]); % Polynomial in xi
+    D_ = mypoly([-(lambda_x/ell)^2, hx2*lambda_x/ell 0]); % Polynomial in xi
 
     for n = 0:seriesOrder % Serie en y
         Y = cos(alpha(n+1)*y) + ...

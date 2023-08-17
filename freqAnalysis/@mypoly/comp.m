@@ -26,17 +26,17 @@ function R = comp(obj, P)
     %% Entrées
 
     if isa(P, 'double')
-        P = poly(P);
+        P = mypoly(P);
     end
 
     %% Main
 
     Q = obj;
-    R = poly;
+    R = mypoly;
     n = Q.order+1;
 
     for i = 0:n-1
-        R = R + poly(Q.coef(n-i)) * (P^i);
+        R = R + mypoly(Q.coef(n-i)) * (P^i);
     end
 
 end

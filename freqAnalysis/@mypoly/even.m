@@ -7,5 +7,5 @@ function R = even(obj)
 
     %% Main
     pos = mod(fliplr(1:obj.order+1),2) == 0;
-    R = poly(obj.coef(pos));
+    R = mypoly(obj.coef(pos));
 end

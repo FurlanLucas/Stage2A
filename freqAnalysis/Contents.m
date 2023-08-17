@@ -20,6 +20,6 @@
 %   bisec                   - Bisection method to find functions zeros
 %   rep                     - Generates other report figures (secondary)
 %   J_roots                 - Roots of Bessel functions of first kind
-%   poly                    - Contains all the information for poly class
+%   mypoly                  - Contains all the information for poly class
 %
 % See also sysDataType, thermalData.

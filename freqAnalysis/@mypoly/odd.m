@@ -6,5 +6,5 @@ function R = odd(obj)
     % R(x^2) = xP(x).
     %% Main
     pos = mod(fliplr(1:obj.order+1),2) == 1;
-    R = poly(obj.coef(pos));
+    R = mypoly(obj.coef(pos));
 end
