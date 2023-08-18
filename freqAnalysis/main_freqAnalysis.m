@@ -449,9 +449,15 @@ table2tex(expData);
 
 % Taylor 1D
 [~, Fs_taylor_1d] = model_1d_taylor(expData, h, 6);
-tf2tex(Fs_taylor_1d{1}, "\\widetilde{G}_\\phi(s)", 'G_1d_taylor_cont');
-tf2tex(c2d(Fs_taylor_1d{1}, Ts, 'zoh'), "\\widetilde{G}_\\phi(s)", ...
-    'G_1d_taylor_disc');
+tf2tex(Fs_taylor_1d{1}, "\\widetilde{G}_\\varphi", 'G_1d_taylor_cont', 5);
+tf2tex(c2d(Fs_taylor_1d{1}, Ts, 'zoh'), "\\widetilde{G}_\\varphi", ...
+    'G_1d_taylor_disc', 5);
+
+% Pade 1D
+[~, Fs_pade_1d] = model_1d_pade(expData, h, 6);
+tf2tex(Fs_pade_1d{1}, "\\widetilde{G}_\\varphi", 'G_1d_pade_cont', 5);
+tf2tex(c2d(Fs_pade_1d{1}, Ts, 'zoh'), "\\widetilde{G}_\\varphi", ...
+    'G_1d_pade_disc', 5);
 
 
 %% Fin de l'analyse

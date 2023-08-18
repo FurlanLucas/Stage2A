@@ -15,11 +15,17 @@
 %   model_3d_pade           - Pade approximation for 3D model
 %   model_3d_taylor         - Taylor approximation for 3D model
 %
+% Repport
+%   eigenValueRoots         - Shows the grph of eigen value roots
+%   table2tex               - Creates the tex tables for the repport
+%   tf2tex                  - Creates a tex equation using a tf as input
+%
 % Other files
 %   main_freqAnalysis       - Do 1D and 2D/3D analysis at once (main file)
 %   bisec                   - Bisection method to find functions zeros
-%   rep                     - Generates other report figures (secondary)
 %   J_roots                 - Roots of Bessel functions of first kind
 %   mypoly                  - Contains all the information for poly class
+%   outFig                  - Output figure directory
+%   texOut                  - Output tex files directory
 %
 % See also sysDataType, thermalData.
