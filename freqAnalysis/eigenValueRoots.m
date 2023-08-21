@@ -56,10 +56,9 @@ xlabel("$x$", Interpreter="latex", FontSize=17);
 ylabel("Amplitude", Interpreter="latex", FontSize=17);
 legend(Location="SouthWest",Interpreter="latex", FontSize=17); 
 grid minor;
-saveas(fig, figDir+"\"+analysisName+"\roots_bessel_fr.eps", 'epsc');
+saveas(fig, figDir+"\"+analysisName+"\roots_bessel_en.eps", 'epsc');
 
 % Figure in french
-set(p, "DisplayName", "Racines trouv\'{e}es");
-grid minor;
-saveas(fig, figDir+"\"+analysisName+"\roots_bessel_en.eps", 'epsc');
+set(p, "DisplayName", "Racines trouv\'{e}es"); grid minor;
+saveas(fig, figDir+"\"+analysisName+"\roots_bessel_fr.eps", 'epsc');
 title("Calcule des racines",Interpreter="latex", FontSize=23);
