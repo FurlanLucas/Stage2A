@@ -56,7 +56,7 @@ xlabel("$x$", Interpreter="latex", FontSize=17);
 ylabel("Amplitude", Interpreter="latex", FontSize=17);
 legend(Location="SouthWest",Interpreter="latex", FontSize=17); 
 grid minor;
-saveas(fig, figDir+"\"+analysisName+"\roots_bessel.eps", 'epsc');
+saveas(fig, figDir+"\"+analysisName+"\roots_bessel_fr.eps", 'epsc');
 
 % Figure in french
 set(p, "DisplayName", "Racines trouv\'{e}es");

@@ -204,8 +204,8 @@ function compare_results(dataIn, varargin)
     h(3) = plot(NaN, NaN, '--b', DisplayName="Taylor 1D", LineWidth=2.5);
 
     % Finite difference 1D
-    plot(t_findif1d/60, y_findif1d{1}, ':c', LineWidth=2.5);
-    h(4) = plot(NaN,NaN, ':c', DisplayName="Diff. finite 2D", LineWidth=2.5);
+    plot(t_findif1d/60, y_findif1d{1}, ':g', LineWidth=2.5);
+    h(4) = plot(NaN,NaN, ':g', DisplayName="Diff. finite 2D", LineWidth=2.5);
 
     % Final graph settings
     xlabel("Temps (min)", Interpreter="latex", FontSize=17);
@@ -226,8 +226,8 @@ function compare_results(dataIn, varargin)
         MarkerSize=7, MarkerFaceColor='k');
 
     % Pade 3D
-    plot(t/60, ymulti_pade{1}, '-.g', LineWidth=2.5);
-    h(2) = plot(NaN,NaN, '-.g', DisplayName="Pade "+type,LineWidth=2.5);
+    plot(t/60, ymulti_pade{1}, '-.y', LineWidth=2.5);
+    h(2) = plot(NaN,NaN, '-.y', DisplayName="Pade "+type,LineWidth=2.5);
 
     % Taylor 3D
     plot(t/60, ymulti_taylor{1}, '--m', LineWidth=2.5);
@@ -264,8 +264,8 @@ function compare_results(dataIn, varargin)
     h(3) = plot(NaN, NaN, '--b', DisplayName="Taylor 1D", LineWidth=2.5);
 
     % Finite difference 1D
-    plot(t_findif1d/60, y_findif1d{2}, ':y', LineWidth=2.5);
-    h(4) = plot(NaN,NaN, ':y', DisplayName="Diff. finite 1D", LineWidth=2.5);
+    plot(t_findif1d/60, y_findif1d{2}, ':g', LineWidth=2.5);
+    h(4) = plot(NaN,NaN, ':g', DisplayName="Diff. finite 1D", LineWidth=2.5);
 
     % Final graph settings
     xlabel("Temps (min)", Interpreter="latex", FontSize=17);
@@ -286,8 +286,8 @@ function compare_results(dataIn, varargin)
         MarkerSize=7, MarkerFaceColor='k');
 
     % Pade 3D
-    plot(t/60, ymulti_pade{2}, '-.g', LineWidth=2.5);
-    h(2) = plot(NaN,NaN, '-.g', DisplayName="Pade "+type,LineWidth=2.5);
+    plot(t/60, ymulti_pade{2}, '-.y', LineWidth=2.5);
+    h(2) = plot(NaN,NaN, '-.y', DisplayName="Pade "+type,LineWidth=2.5);
 
     % Taylor 3D
     plot(t/60, ymulti_taylor{2}, '--m', LineWidth=2.5);
