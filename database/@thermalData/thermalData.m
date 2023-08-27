@@ -78,15 +78,5 @@ classdef thermalData
         % Get method
         get(obj);
 
-        % Add a new dataset
-        function obj = add(obj, y_front, y_back, v, phi, t)   
-            obj.Ne = obj.Ne+1;
-            obj.y_front{obj.Ne} = y_front;
-            obj.y_back{obj.Ne} = y_back;
-            obj.v{obj.Ne} = v;
-            obj.phi{obj.Ne} = phi;
-            obj.t{obj.Ne} = t;
-        end
-
     end
 end

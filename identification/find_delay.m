@@ -1,34 +1,34 @@
 function nk = find_delay(dataIn)
-    %% FIND_DELAY
+    %% find_delay
     %
-    % Analyse du delay dy système nk. Il va returner le delay comme une
-    % structure avec.
+    % Find the system delay.
 
-    %% Entrées
+    %% Inputs
     
-    % Paramètres de la simulation
-    figDir = 'outFig';                     % [-] Dossier pour les figures ;
-    colors = ['r','g','b','y'];            % [-] Couleurs des graphiques ;
-    linSty = ["-"; "--"; "-."; ":"]; % [-] Type de trace ;
+    % Fixed inputs
+    figDir = 'outFig';                     % Output figures directory
+    colors = ['r','g','b','y'];            % Figure colors
+    linSty = ["-"; "--"; "-."; ":"];       % Figure line styles
 
-    n_data = size(dataIn, 4);
+    %% Main analysis
+    for i = 1:dataIn.Ne
 
-    %% Main partie
-    for i = 1:n_data
-
-        % Avec la function delayest
+        % Get the ith data
         data = getexp(dataIn, i);
+        data.y = data.y(:,1); % Take one output only
+
+        % Delay est method
         nk = delayest(data);
         fprintf("\tPour le jeux %s : nk = %d ;\n", ...
             data.ExperimentName{1}, nk);
 
-        % Graphiquement
+        % Graphics
         h = impulseest(data);
         figure, showConfidence(impulseplot(h))
     end
     disp(' ');
 
-    %% Sortie
+    %% Output
     nk = 0;
 
 end

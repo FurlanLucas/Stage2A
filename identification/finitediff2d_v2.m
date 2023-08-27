@@ -1,9 +1,10 @@
 function [y, timeOut] = finitediff2d_v2(dataIn, timeIn, phiIn, h, Mx, Mr, N)
-    %% finitediff2D
+    %% finitediff2d_v2
     %
     % Function that implements the finite difference method in a 2D
     % analysis of the heat equation with a axisymetric system. It is used
-    % the implicit method.
+    % the implicit method. Unlike the finitediff2d function, a more complex
+    % geometry is used and the hole is considered.
     %
     % Calls
     %

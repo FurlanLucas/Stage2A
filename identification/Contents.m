@@ -7,6 +7,7 @@
 % Pure numerical time analysis
 %   finitediff1d            - Finite differences implemented in 1D
 %   finitediff2d            - Finite differences implemented in 2D
+%   finitediff2d_v2         - Finite differences implemented in 2D V2
 % 
 % System identification files
 %   find_delay              - Find the system delay

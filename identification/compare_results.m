@@ -54,14 +54,14 @@ function compare_results(dataIn, varargin)
     %   analysis only. The default value is 15.
     %
     % See also model_1d_taylor, model_1d_taylor, finitediff1d, sysDataType,
-    % iddata.
-    
-    %% Entrées
+    % iddata.    
 
-    % Entrées immuables
+    %% Inputs
+
+    % Fixed inputs
     figDir = 'outFig';
 
-    % Entrées defaults
+    % Defaults inputs
     hx2 = 15;   % [W/(m²K)] Heat transfer coefficient in x2 surface
     hy1 = 15;   % [W/(m²K)] Heat transfer coefficient in y1 surface   
     hy2 = 15;   % [W/(m²K)] Heat transfer coefficient in y2 surface
@@ -73,7 +73,7 @@ function compare_results(dataIn, varargin)
     seriesOrder = 10;    % Order for the series approximation (2D and 3D)
     analysisNumber = 1;  % Number of the dataset to be used.
     
-    % Prendre les entrées optionnelles
+    % Optional inputs
     for i = 1:length(varargin)
         switch varargin{i}
             case 'h' % All heat coefficients
@@ -118,9 +118,9 @@ function compare_results(dataIn, varargin)
         dataIn.sysData.takeArea;
     phimultiD = dataIn.phi{analysisNumber};
     t = dataIn.t{analysisNumber}/1e3; % Time vector
-    in_test = dataIn.v{analysisNumber}.^2 * ...
-        (dataIn.sysData.R/((dataIn.sysData.R_ + dataIn.sysData.R)^2));
-    in_test = in_test/dataIn.sysData.takeResArea;
+    phiV = dataIn.v{analysisNumber}.^2 * ...
+        (dataIn.sysData.R/((dataIn.sysData.R_ + dataIn.sysData.R)^2)) ...
+        /dataIn.sysData.takeResArea;
 
     % Take the multidimensional general case
     if strcmp(dataIn.sysData.Geometry, "Cylinder")
@@ -137,7 +137,7 @@ function compare_results(dataIn, varargin)
         type = "3D";
     end
 
-    %% Main
+    %% Main (simulations)
 
     % Simulation for Pade in 1D
     fprintf("\tSimulation for Pade model in 1D.\n");
@@ -182,13 +182,15 @@ function compare_results(dataIn, varargin)
             phimultiD, t); % Front surface
     end
 
-    %dataIn.sysData.ell = 10e-3;
-    %test = max(phimultiD)*ones(size(phimultiD));
     % Simulation with finite difference in 2D
     fprintf("\tSimulation pour differences finites en 2D.\n");
-    [y_findif2d, t_findif2d]  = finitediff2d_v2(dataIn.sysData, t, ...
-        in_test, [hx2 hr2], 11, 70, 1e5);
-        %ones(size(t))*1e4, [hx2 hr2], 16, 70, 1e5);
+    [y_findif2d, t_findif2d]  = finitediff2d(dataIn.sysData, t, ...
+        phimultiD, [hx2 hr2], 11, 70, 1e5);
+
+    % Simulation with finite difference in 2D v2
+    fprintf("\tSimulation pour differences finites en 2D.\n");
+    [y_findif2d_v2, t_findif2d_v2]  = finitediff2d_v2(dataIn.sysData, t, ...
+        phiV, [hx2 hr2], 11, 70, 1e5);
 
     %% Compairison between 1D analysis and experimental results for rear face
 
@@ -250,7 +252,29 @@ function compare_results(dataIn, varargin)
     leg = legend(h,Location="southeast", Interpreter="latex", FontSize=17);
     leg.ItemTokenSize = [30, 70]; grid minor;
     saveas(fig, figDir + "\" + dataIn.sysData.Name + ...
-        "\compare_theorical_rear_3D", 'epsc');
+        "\compare_theorical_rear_2D", 'epsc');
+
+    % V2
+    fig = figure; hold on; h = [];
+
+    % Theorical values
+    plot(t/60, dataIn.y_back{analysisNumber}, 'ok', LineWidth=0.1, ...
+        MarkerFaceColor='k', MarkerSize=.8);
+    h(1) = plot(NaN, NaN, 'ok', DisplayName="Donn\'{e}es", ...
+        MarkerSize=7, MarkerFaceColor='k');
+
+    % Finite difference 3D
+    plot(t_findif2d_v2/60, y_findif2d_v2{1}, ':c', LineWidth=2.5);
+    h(2) = plot(NaN,NaN, ':c', DisplayName="Diff. finite", LineWidth=2.5);
+
+    % Final graph settings
+    xlabel("Temps (min)", Interpreter="latex", FontSize=17);
+    ylabel("Temperature ($^\circ$C)", Interpreter="latex", FontSize=17);
+    leg = legend(h,Location="southeast", Interpreter="latex", FontSize=17);
+    leg.ItemTokenSize = [30, 70]; grid minor;
+    saveas(fig, figDir + "\" + dataIn.sysData.Name + ...
+        "\compare_theorical_rear_2D_v2", 'epsc');
+
 
     %% Compairison between 1D analysis and experimental results for front face
 
@@ -310,6 +334,27 @@ function compare_results(dataIn, varargin)
     leg = legend(h,Location="southeast", Interpreter="latex", FontSize=17);
     leg.ItemTokenSize = [30, 70]; grid minor;
     saveas(fig, figDir + "\" + dataIn.sysData.Name + ...
-        "\compare_theorical_front_3D", 'epsc');
+        "\compare_theorical_front_2D", 'epsc');
+
+    % V2
+    fig = figure; hold on; h = [];
+
+    % Theorical values
+    plot(t/60, dataIn.y_back{analysisNumber}, 'ok', LineWidth=0.1, ...
+        MarkerFaceColor='k', MarkerSize=.8);
+    h(1) = plot(NaN, NaN, 'ok', DisplayName="Donn\'{e}es", ...
+        MarkerSize=7, MarkerFaceColor='k');
+
+    % Finite difference 3D
+    plot(t_findif2d_v2/60, y_findif2d_v2{2}, ':c', LineWidth=2.5);
+    h(2) = plot(NaN,NaN, ':c', DisplayName="Diff. finite", LineWidth=2.5);
+
+    % Final graph settings
+    xlabel("Temps (min)", Interpreter="latex", FontSize=17);
+    ylabel("Temperature ($^\circ$C)", Interpreter="latex", FontSize=17);
+    leg = legend(h,Location="southeast", Interpreter="latex", FontSize=17);
+    leg.ItemTokenSize = [30, 70]; grid minor;
+    saveas(fig, figDir + "\" + dataIn.sysData.Name + ...
+        "\compare_theorical_rear_2D_v2", 'epsc');
 
 end
