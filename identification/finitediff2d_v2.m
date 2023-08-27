@@ -1,4 +1,4 @@
-function [y, timeOut] = finitediff2d(dataIn, timeIn, phiIn, h, Mx, Mr, N)
+function [y, timeOut] = finitediff2d_v2(dataIn, timeIn, phiIn, h, Mx, Mr, N)
     %% finitediff2D
     %
     % Function that implements the finite difference method in a 2D
@@ -49,12 +49,20 @@ function [y, timeOut] = finitediff2d(dataIn, timeIn, phiIn, h, Mx, Mr, N)
     Rmax = dataIn.Size; % [m] Termocouple size
     r0 = dataIn.ResSize; % [m] Resistance size
 
+    %
+    rr0 = 10e-3; 
+    ell2 = 5e-3;
+
     % Finite differences
     dt = timeIn(end)/(N-1);
-    dx = ell/(Mx-1);
+    dx = (ell + ell2)/(Mx-1);
+    aux = (0:Mx-1)*dx; Mx2 = sum(aux > ell);
+    Mx = Mx-Mx2;
     dr = Rmax/(Mr-1);
 
     r = (0:Mr-1)*dr; % Radius vector (position in r direction)
+    r2 = r(r>=rr0);
+    Mr2 = length(r2);
     timeOut = (0:N-1)*dt; % New time vector
     phi = interp1(timeIn, phiIn, timeOut).* (r' <= r0); % New heat flux vector
 
@@ -68,16 +76,17 @@ function [y, timeOut] = finitediff2d(dataIn, timeIn, phiIn, h, Mx, Mr, N)
     fprintf("\t\tAnalysis at 00%%.\n");
 
     % initialize variables
-    T = zeros(Mx*Mr, 1);
+    T = [zeros(Mx*Mr, 1); zeros(Mx2*Mr2,1)];
     y_back = zeros(1,N);
     y_front = zeros(1,N);
 
     count = 0;
     for n = 2:N
-        A = zeros(Mx*Mr);
-        B = zeros(Mx*Mr);
-        c = zeros(Mx*Mr, 1);
+        A = zeros(Mx*Mr+Mx2*Mr2);
+        B = zeros(Mx*Mr+Mx2*Mr2);
+        c = zeros(Mx*Mr+Mx2*Mr2,1);
 
+        % Main part
         for i = 1:Mr
             for j=1:Mx
                 pos = i + Mr*(j-1);
@@ -114,14 +123,27 @@ function [y, timeOut] = finitediff2d(dataIn, timeIn, phiIn, h, Mx, Mr, N)
 
                 % Superior boundary in x (within in r) ......... 3
                 elseif (j == Mx) && (i ~= 1) && (i ~= Mr)
-                    B(pos, pos-1) = R2 - R1;
-                    B(pos, pos) = 2 + 2*R1 + 2*R3 + R3*(2*dx*hx/lambda_x);
-                    B(pos, pos+1) = -R1 - R2;
-                    B(pos, pos-Mr) = -2*R3;
-                    A(pos, pos-1) = R1 - R2;
-                    A(pos, pos) = 2 - 2*R1 - 2*R3 - R3*(2*dx*hx/lambda_x);
-                    A(pos, pos+1) = R1 + R2;
-                    A(pos, pos-Mr) = 2*R3;
+                    if r(i) < rr0      % Thermocouple
+                        B(pos, pos-1) = R2 - R1;
+                        B(pos, pos) = 2 + 2*R1 + 2*R3 + R3*(2*dx*hx/lambda_x);
+                        B(pos, pos+1) = -R1 - R2;
+                        B(pos, pos-Mr) = -2*R3;
+                        A(pos, pos-1) = R1 - R2;
+                        A(pos, pos) = 2 - 2*R1 - 2*R3 - R3*(2*dx*hx/lambda_x);
+                        A(pos, pos+1) = R1 + R2;
+                        A(pos, pos-Mr) = 2*R3;
+                    else        % Between cylinders                        
+                        B(pos, pos-1) = R2 - R1;
+                        B(pos, pos) = 2 + 2*R1 + 2*R3;
+                        B(pos, pos+1) = -R1 - R2;
+                        B(pos, pos-Mr) = -R3;
+                        B(pos, pos+Mr2) = -R3;
+                        A(pos, pos-1) = R1 - R2;
+                        A(pos, pos) = 2 - 2*R1 - 2*R3;
+                        A(pos, pos+1) = R1 + R2;
+                        A(pos, pos-Mr) = R3;
+                        A(pos, pos+Mr2) = R3;
+                    end
 
                 % Inferior boundary in r (within in x) ....... 4
                 elseif (i == 1) && (j ~= 1) && (j ~= Mx)
@@ -156,7 +178,7 @@ function [y, timeOut] = finitediff2d(dataIn, timeIn, phiIn, h, Mx, Mr, N)
                     c(pos) = R3*2*dx*( (phi(i, n) + phi(i, n-1) )...
                                           )/lambda_x;
                   
-                % Inferior boundary in x ans supeior in r . 7
+                % Inferior boundary in x and superior in r . 7
                 elseif (j == 1) && (i == Mr)
                     B(pos, pos-1) = -2*R1;
                     B(pos, pos) = 2 + 2*R1 + 2*R3 + (R1+R2)*(2*dr*hr/lambda_r);
@@ -167,7 +189,7 @@ function [y, timeOut] = finitediff2d(dataIn, timeIn, phiIn, h, Mx, Mr, N)
                     c(pos) = R3*2*dx*( (phi(i, n) + phi(i, n-1) )...
                                           )/lambda_x;
 
-                % Inferior boundary in r and superior in x .8
+                % Inferior boundary in r and superior in x . 8
                 elseif (i == 1) && (j == Mx)
                     B(pos, pos) = 2 + 2*R1 + 2*R3 + R3*(2*dx*hx/lambda_x);
                     B(pos, pos+1) = -2*R1;
@@ -178,14 +200,14 @@ function [y, timeOut] = finitediff2d(dataIn, timeIn, phiIn, h, Mx, Mr, N)
 
                 % Superior boundary in r and x
                 elseif (i == Mr) && (j == Mx)
-                    B(pos, pos-1) = -2*R1;
-                    B(pos, pos) = 2 + 2*R1 + 2*R3 + (R1+R2)*(2*dr*hr/lambda_r)...
-                        + R3*(2*dx*hx/lambda_x);
-                    B(pos, pos-Mr) = -2*R3;
+                    B(pos, pos-1) = - 2*R1;
+                    B(pos, pos) = 2 + 2*R1 + 2*R3 + (R1+R2)*(2*dr*hr/lambda_r);
+                    B(pos, pos-Mr) = -R3;
+                    B(pos, pos+Mr2) = -R3;
                     A(pos, pos-1) = 2*R1;
-                    A(pos, pos) = 2 - 2*R1 - 2*R3 - (R1+R2)*(2*dr*hr/lambda_r)...
-                        - R3*(2*dx*hx/lambda_x);
-                    A(pos, pos-Mr) = 2*R3;
+                    A(pos, pos) = 2 - 2*R1 - 2*R3 - (R1+R2)*(2*dr*hr/lambda_r);
+                    A(pos, pos-Mr) = R3;
+                    A(pos, pos+Mr2) = R3;
                 else
                     error("There is a non-specified element.");
                 end
@@ -193,6 +215,91 @@ function [y, timeOut] = finitediff2d(dataIn, timeIn, phiIn, h, Mx, Mr, N)
                 
             end
         end
+
+        % Main part for second cylinder
+        for i = 1:Mr2
+            for j=1:Mx2
+                pos = Mx*Mr + i + Mr2*(j-1);
+                
+                R1 = a*dt/(dr^2);
+                R2 = a*dt/(2*r2(i)*dr);
+                R3 = a*dt/(dx^2);
+                
+                % Within the mash
+                if (i > 1) && (i < Mr2) && (j >= 1) && (j < Mx2)
+                    B(pos, pos-1) = R2 - R1;
+                    B(pos, pos) = 2 + 2*R1 + 2*R3;
+                    B(pos, pos+1) = -R1 - R2;
+                    B(pos, pos-Mr2) = -R3;
+                    B(pos, pos+Mr2) = -R3;
+                    A(pos, pos-1) = R1 - R2;
+                    A(pos, pos) = 2 - 2*R1 - 2*R3;
+                    A(pos, pos+1) = R1 + R2;
+                    A(pos, pos-Mr2) = R3;
+                    A(pos, pos+Mr2) = R3;
+
+                % Superior boundary in x (within in r)
+                elseif (j == Mx2) && (i ~= 1) && (i ~= Mr2)
+                    B(pos, pos-1) = R2 - R1;
+                    B(pos, pos) = 2 + 2*R1 + 2*R3 + R3*(2*dx*hx/lambda_x);
+                    B(pos, pos+1) = -R1 - R2;
+                    B(pos, pos-Mr2) = -2*R3;
+                    A(pos, pos-1) = R1 - R2;
+                    A(pos, pos) = 2 - 2*R1 - 2*R3 - R3*(2*dx*hx/lambda_x);
+                    A(pos, pos+1) = R1 + R2;
+                    A(pos, pos-Mr2) = 2*R3;
+
+                % Inferior boundary in r (within in x)
+                elseif (i == 1) && (j ~= Mx2)
+                    B(pos, pos) = 2 + 2*R1 + 2*R3 - (R1+R2)*(2*dr*hr/lambda_r);
+                    B(pos, pos+1) = - 2*R1;
+                    B(pos, pos-Mr2) = -R3;
+                    B(pos, pos+Mr2) = -R3;
+                    A(pos, pos) = 2 - 2*R1 - 2*R3 + (R1+R2)*(2*dr*hr/lambda_r);
+                    A(pos, pos+1) = 2*R1;
+                    A(pos, pos-Mr2) = R3;
+                    A(pos, pos+Mr2) = R3;
+
+                % Superior boundary in r (within in x)
+                elseif (i == Mr2) && (j ~= Mx2)
+                    B(pos, pos-1) = - 2*R1;
+                    B(pos, pos) = 2 + 2*R1 + 2*R3 + (R1+R2)*(2*dr*hr/lambda_r);
+                    B(pos, pos-Mr2) = -R3;
+                    B(pos, pos+Mr2) = -R3;
+                    A(pos, pos-1) = 2*R1;
+                    A(pos, pos) = 2 - 2*R1 - 2*R3 - (R1+R2)*(2*dr*hr/lambda_r);
+                    A(pos, pos-Mr2) = R3;
+                    A(pos, pos+Mr2) = R3;
+
+                % Inferior boundary in r and superior in x
+                elseif (i == 1) && (j == Mx2)
+                    B(pos, pos) = 2 + 2*R1 + 2*R3 - (R1+R2)*(2*dr*hr/lambda_r)...
+                        + R3*(2*dx*hx/lambda_x);
+                    B(pos, pos+1) = -2*R1;
+                    B(pos, pos-Mr2) = -2*R3;
+                    A(pos, pos) = 2 - 2*R1 - 2*R3 + (R1+R2)*(2*dr*hr/lambda_r)...
+                        - R3*(2*dx*hx/lambda_x);
+                    A(pos, pos+1) = 2*R1;
+                    A(pos, pos-Mr2) = 2*R3;
+
+                % Superior boundary in r and x
+                elseif (i == Mr2) && (j == Mx2)
+                    B(pos, pos-1) = -2*R1;
+                    B(pos, pos) = 2 + 2*R1 + 2*R3 + (R1+R2)*(2*dr*hr/lambda_r)...
+                        + R3*(2*dx*hx/lambda_x);
+                    B(pos, pos-Mr2) = -2*R3;
+                    A(pos, pos-1) = 2*R1;
+                    A(pos, pos) = 2 - 2*R1 - 2*R3 - (R1+R2)*(2*dr*hr/lambda_r)...
+                        - R3*(2*dx*hx/lambda_x);
+                    A(pos, pos-Mr2) = 2*R3;
+                else
+                    error("There is a non-specified element.");
+                end
+
+                
+            end
+        end
+
 
         % Display the current status
         p = floor(100*n/N);

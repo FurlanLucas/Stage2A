@@ -28,7 +28,7 @@ validData = expData.getexp(setdiff(1:n_data, identNumber));
 
 % Compaire the experimental results with the theorical models
 disp("Comparison with theorical and numerical results.");
-compare_results(expData, h=20);
+compare_results(expData, h=12);
 
 % Delay analysis
 disp("Delay analysis.");

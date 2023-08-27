@@ -6,7 +6,7 @@ expNumber = 1;                % Number for the experiment to be used
 orders = [1 6 10];            % Orders for Pade an Taylor approximations
 colors = ['r','b','g','m'];   % Graph colors
 h_comp = [7, 25];             % Values for h (compare)
-h = 17;                       % Final value for h
+h = 17;                       % [W/m²K] Final value for h
 Ts = 100e-3;                  % [s] Time sampling (discretization of tf)
 
 fprintf("<strong>Frequency analysis</strong>\n");

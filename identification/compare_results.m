@@ -68,9 +68,9 @@ function compare_results(dataIn, varargin)
     hz1 = 15;   % [W/(m²K)] Heat transfer coefficient in z1 surface
     hz2 = 15;   % [W/(m²K)] Heat transfer coefficient in z2 surface
     hr2 = 15;   % [W/(m²K)] Heat transfer coefficient in r2 surface
-    taylorOrder = 10;   % Order for Taylor approximation
-    padeOrder = 10;     % Order for Pade approximation
-    seriesOrder = 10;   % Order for the series approximation (2D and 3D)
+    taylorOrder = 10;    % Order for Taylor approximation
+    padeOrder = 10;      % Order for Pade approximation
+    seriesOrder = 10;    % Order for the series approximation (2D and 3D)
     analysisNumber = 1;  % Number of the dataset to be used.
     
     % Prendre les entrées optionnelles
@@ -118,6 +118,9 @@ function compare_results(dataIn, varargin)
         dataIn.sysData.takeArea;
     phimultiD = dataIn.phi{analysisNumber};
     t = dataIn.t{analysisNumber}/1e3; % Time vector
+    in_test = dataIn.v{analysisNumber}.^2 * ...
+        (dataIn.sysData.R/((dataIn.sysData.R_ + dataIn.sysData.R)^2));
+    in_test = in_test/dataIn.sysData.takeResArea;
 
     % Take the multidimensional general case
     if strcmp(dataIn.sysData.Geometry, "Cylinder")
@@ -166,6 +169,7 @@ function compare_results(dataIn, varargin)
     end
 
     % Simulation pour Taylor en 3D/2D
+    %dataIn.sysData.ell = 15e-3;
     fprintf("\tSimulation for Taylor model in " + type + ".\n");
     [~,Fsmulti_taylor] = model_multi_taylor(dataIn, seriesOrder, ...
         taylorOrder);
@@ -178,10 +182,13 @@ function compare_results(dataIn, varargin)
             phimultiD, t); % Front surface
     end
 
+    %dataIn.sysData.ell = 10e-3;
+    %test = max(phimultiD)*ones(size(phimultiD));
     % Simulation with finite difference in 2D
     fprintf("\tSimulation pour differences finites en 2D.\n");
-    [y_findif2d, t_findif2d]  = finitediff2d(dataIn.sysData, t, ...
-        phimultiD, [hx2 hr2], 10, 70, 1e5);
+    [y_findif2d, t_findif2d]  = finitediff2d_v2(dataIn.sysData, t, ...
+        in_test, [hx2 hr2], 11, 70, 1e5);
+        %ones(size(t))*1e4, [hx2 hr2], 16, 70, 1e5);
 
     %% Compairison between 1D analysis and experimental results for rear face
 
@@ -205,7 +212,7 @@ function compare_results(dataIn, varargin)
 
     % Finite difference 1D
     plot(t_findif1d/60, y_findif1d{1}, ':g', LineWidth=2.5);
-    h(4) = plot(NaN,NaN, ':g', DisplayName="Diff. finite 2D", LineWidth=2.5);
+    h(4) = plot(NaN,NaN, ':g', DisplayName="Diff. finite 1D", LineWidth=2.5);
 
     % Final graph settings
     xlabel("Temps (min)", Interpreter="latex", FontSize=17);
