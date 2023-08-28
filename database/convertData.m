@@ -2,7 +2,7 @@ function convertData()
     %% convertData
     %
     % File to convert the raw data to a set of .m data to be used in the
-    % analysis.
+    % analysis. The last data is the simulation for reentry.
     %
     % Calls
     %
@@ -31,7 +31,7 @@ function convertData()
         % Search in the directory
         pos = contains(allFileNames, sysData(i).Name);
         fileNames = allFileNames(pos);
-        n_files = sum(pos)-1;
+        n_files = sum(pos);
     
         % For each file
         for j = 1:n_files
