@@ -51,11 +51,17 @@ function convertData()
             % Transforme the outputs in variation of outputs
             y_front = sysData(i).setOutputFront(toVar(y_front));
             y_back = sysData(i).setOutputBack(toVar(y_back));
+
+            % Heat flux by by tension
+            phiV = v.^2 * ...
+                (sysData(i).R/((sysData(i).R_ + sysData(i).R)^2)) ...
+                /sysData(i).takeResArea;
             
             % Other information
             expData.y_front{j} = y_front;
             expData.y_back{j} = y_back;
             expData.v{j} = v;
+            %expData.phi{j} = phiV;
             expData.phi{j} = phi/(sysData(i).Vq*1e-6);
             expData.t{j} = t;
             

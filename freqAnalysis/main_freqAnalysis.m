@@ -76,7 +76,7 @@ sgtitle("Fonction $F_b(s)$ th\'{e}orique en 1D",'Interpreter','latex', ...
 %% Pade approximation orders figure
 
 disp("Pade approximation in 1D.");
-results_1d_th = model_1d(expData, h); % Theorical result
+results_1d_th = model_1d(expData, h); % Theoretical result
 
 % Rear face model (english)
 fig = figure;
@@ -95,7 +95,7 @@ xlabel("Frequency (rad/s)", Interpreter='latex', FontSize=15);
 set(gca, 'XScale', 'log'); grid minor;
 subplot(2,1,1); grid minor; set(gca, 'XScale', 'log');
 thPlot = semilogx(results_1d_th.w, 20*log10(results_1d_th.mag{1}), 'k', ...
-    LineWidth=1.4, DisplayName="Theorical");  
+    LineWidth=1.4, DisplayName="Theoretical");  
 leg = legend(Location='southwest', Interpreter='latex', FontSize=15, ...
     NumColumns=2); 
 leg.ItemTokenSize = [20, 18];
@@ -128,7 +128,7 @@ xlabel("Frequency (rad/s)", Interpreter='latex', FontSize=15);
 set(gca, 'XScale', 'log'); grid minor;
 subplot(2,1,1); grid minor; set(gca, 'XScale', 'log');
 thPlot = semilogx(results_1d_th.w, 20*log10(results_1d_th.mag{2}), 'k', ...
-    LineWidth=1.4, DisplayName="Theorical");  
+    LineWidth=1.4, DisplayName="Theoretical");  
 leg = legend(Location='northeast', Interpreter='latex', FontSize=15, ...
     NumColumns=2); 
 leg.ItemTokenSize = [20, 18];
@@ -147,7 +147,7 @@ sgtitle({"Fonction $F_b(s)$ avec", "l'approximation de Pade en 1D"}, ...
 %% Taylor approximation orders figure
 
 disp("Taylor approximation in 1D.");
-results_1d_th = model_1d(expData, h); % Theorical result
+results_1d_th = model_1d(expData, h); % Theoretical result
 
 % Rear face model (english)
 fig = figure;
@@ -166,7 +166,7 @@ xlabel("Frequency (rad/s)", Interpreter='latex', FontSize=15);
 set(gca, 'XScale', 'log'); grid minor;
 subplot(2,1,1); grid minor; set(gca, 'XScale', 'log');
 thPlot = semilogx(results_1d_th.w, 20*log10(results_1d_th.mag{1}), 'k', ...
-    LineWidth=1.4, DisplayName="Theorical");  
+    LineWidth=1.4, DisplayName="Theoretical");  
 leg = legend(Location='southwest', Interpreter='latex', FontSize=15, ...
     NumColumns=2); 
 leg.ItemTokenSize = [20, 18];
@@ -199,7 +199,7 @@ xlabel("Frequency (rad/s)", Interpreter='latex', FontSize=15);
 set(gca, 'XScale', 'log'); grid minor;
 subplot(2,1,1); grid minor; set(gca, 'XScale', 'log');
 thPlot = semilogx(results_1d_th.w, 20*log10(results_1d_th.mag{2}), 'k', ...
-    LineWidth=1.4, DisplayName="Theorical");  
+    LineWidth=1.4, DisplayName="Theoretical");  
 leg = legend(Location='northeast', Interpreter='latex', FontSize=15, ...
     NumColumns=2); 
 leg.ItemTokenSize = [20, 18];
@@ -219,7 +219,7 @@ sgtitle({"Fonction $F_f(s)$ avec", "l'approximation de Taylor en 1D"}, ...
 
 disp("Comparison between Taylor and Pade.");
 
-results_1d_th = model_1d(expData, h); % Theorical result
+results_1d_th = model_1d(expData, h); % Theoretical result
 results_1d1 = model_1d_taylor(expData, h);
 results_1d2 = model_1d_pade(expData, h);
 
@@ -230,7 +230,7 @@ plot(results_1d1.w, 20*log10(results_1d1.mag{1}), 'b', ...
 plot(results_1d2.w, 20*log10(results_1d2.mag{1}), '--r', ...
     LineWidth=1.4, DisplayName="Pad\'{e}");
 thPlot = plot(results_1d_th.w, 20*log10(results_1d_th.mag{1}), 'k', ...
-    LineWidth=1.4, DisplayName="Theorical"); 
+    LineWidth=1.4, DisplayName="Theoretical"); 
 ylabel("Magnitude (dB)", Interpreter='latex', FontSize=15);
 legend('Location', 'southwest', Interpreter='latex', FontSize=15); 
 grid minor; hold off; set(gca, 'XScale', 'log'); subplot(2,1,2); hold on;
@@ -312,7 +312,7 @@ xlabel("Frequency (rad/s)", Interpreter='latex', FontSize=15);
 set(gca, 'XScale', 'log'); grid minor;
 subplot(2,1,1); grid minor; set(gca, 'XScale', 'log');
 thPlot = semilogx(results_multi.w, 20*log10(results_multi.mag{1}), 'k', ...
-    LineWidth=1.4, DisplayName="Theorical");  
+    LineWidth=1.4, DisplayName="Theoretical");  
 leg = legend(Location='southwest', Interpreter='latex', FontSize=15, ...
     NumColumns=2); 
 leg.ItemTokenSize = [20, 18];
@@ -348,7 +348,7 @@ xlabel("Frequency (rad/s)", Interpreter='latex', FontSize=15);
 set(gca, 'XScale', 'log'); grid minor;
 subplot(2,1,1); grid minor; set(gca, 'XScale', 'log');
 thPlot = semilogx(results_multi.w, 20*log10(results_multi.mag{2}), 'k', ...
-    LineWidth=1.4, DisplayName="Theorical");  
+    LineWidth=1.4, DisplayName="Theoretical");  
 leg = legend(Location='northeast', Interpreter='latex', FontSize=15, ...
     NumColumns=2); 
 leg.ItemTokenSize = [20, 18];
@@ -390,7 +390,7 @@ xlabel("Frequency (rad/s)", Interpreter='latex', FontSize=15);
 set(gca, 'XScale', 'log'); grid minor;
 subplot(2,1,1); grid minor; set(gca, 'XScale', 'log');
 thPlot = semilogx(results_multi.w, 20*log10(results_multi.mag{1}), 'k', ...
-    LineWidth=1.4, DisplayName="Theorical");  
+    LineWidth=1.4, DisplayName="Theoretical");  
 leg = legend(Location='southwest', Interpreter='latex', FontSize=15, ...
     NumColumns=2); 
 leg.ItemTokenSize = [20, 18];
@@ -427,7 +427,7 @@ xlabel("Frequency (rad/s)", Interpreter='latex', FontSize=15);
 set(gca, 'XScale', 'log'); grid minor;
 subplot(2,1,1); grid minor; set(gca, 'XScale', 'log');
 thPlot = semilogx(results_multi.w, 20*log10(results_multi.mag{2}), 'k', ...
-    LineWidth=1.4, DisplayName="Theorical");  
+    LineWidth=1.4, DisplayName="Theoretical");  
 leg = legend(Location='northeast', Interpreter='latex', FontSize=15, ...
     NumColumns=2); 
 leg.ItemTokenSize = [20, 18];
