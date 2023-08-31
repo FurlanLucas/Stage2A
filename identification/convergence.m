@@ -1,53 +1,50 @@
 function models = convergence(dataIn, maxOrder, delayOrders, varargin)
-    %% CONVERGENCE
+    %% convergence
     %
-    % Fonction faite pour vérifier la convergence des modèles analysés. La
-    % fonction utilise quatre modéles polynomials différentes : les modèles
-    % OE, ARX, ARMAX et BJ. La sortie models est une struct avec les
-    % informations des modèles.
+    % Function that verifies the model convergence for each noise structure
+    % choosen: OE, ARX, ARMAX et BJ. The output is a structure with the
+    % idpolys for each model.
     %
-    % ENTRÉES :
-    %
-    %   - dataIn : variable iddata avec l'entrée qui va être simulée. Les
-    %   information des coefficients thermiques du material et les autres
-    %   carachteristiques comme la masse volumique sont estoquées dans le
-    %   champs UserData dedans dataIn. Il sera estoqué comme sysDataType.
-    %
-    %   - maxOrder : define l'ordre maximale pour la vérification de la
-    %   convergence.
-    %
-    %   - delayOrders : informe l'ordre du retar dans l'analyse. Si il est
-    %   un scalaire, la analyse sera faite pour nk = delayOrders. Si il est
-    %   un vecteur, l'analyse sera faite pour nk = 1:delayOrders,
-    %   length(delayOrders) analyses en total.
-    %
-    % EXAMPLE D'APPELL :
-    %
-    %   compare_results(dataIn, maxOrder, delayOrders)) : prendre l'analyse
-    %   de convergence pour le retard specifié en delayOrders jusqu'à ordre
-    %   definie en maxOrders
-    %
-    %   compare_results(__, options) : pour données des autres options à
-    %   l'analyse.
-    %
-    % OPTIONS :
+    % Calls
     %   
-    %   minOrder : ordre minimale pour laquelle l'analyse de convergence va
-    %   être faite. Par défault minOrder = 1.
+    %   models = convergence(dataIn, maxOrder, delayOrders): take the
+    %   models with the best convergence in the analysis for a maximum
+    %   order of maxOrder and for the delayOrders specified.
     %
-    % See also arx, oe, armax, bj, iddata.
+    %   models = convergence(__, options): take the optional arguments.
+    %
+    % Inputs
+    % 
+    %   dataIn: thermalData variable with all the information for the
+    %   system that will be simulated. The thermal coefficients are within
+    %   the field sysData. It is not possible also use a structure in this
+    %   case;
+    %
+    %   maxOrder: integer to specify the maximum order for the models. It
+    %   will use the same order for the numerator and denominator of both
+    %   system and noise's models.
+    %
+    %   delayOrders: vector of integer with all the delay values to be
+    %   analysed.
+    %
+    % Outputs
+    %
+    %   models: struct with the idpolys given as the best result. Each
+    %   field has the name of the noise structure.
+    %
+    % See also arx, oe, armax, bj, iddata, thermalData
 
-    %% Entrées
+    %% Inputs
     
-    % Paramètres de la simulation
-    figDir = 'outFig';                     % [-] Dossier pour les figures ;
-    colors = ['r','g','b','y'];            % [-] Couleurs des graphiques ;
-    linSty = ["-"; "--"; "-."; ":"];       % [-] Type de trace ;
+    % Figure options
+    figDir = 'outFig';                     % Output figures directory
+    colors = ['r','g','b','y'];            % Figure colors
+    linSty = ["-"; "--"; "-."; ":"];       % Figure line styles
 
-    % Entrées defaults
+    % Defaults inputs
     minOrder = 1;
     
-    % Prendre les entrées optionnelles
+    % Optional inputs
     if ~isempty(varargin)
         for arg = 1:length(varargin)
             switch varargin{arg,1}
@@ -64,25 +61,28 @@ function models = convergence(dataIn, maxOrder, delayOrders, varargin)
         end
     end
     
-    %% Preparation de données et fichiers
+    %% Directories verification and variables config
 
-    analysisName = dataIn.UserData.name;
+    analysisName = dataIn.Name;
     if not(isfolder(figDir + "\" + analysisName))
         mkdir(figDir + "\" + analysisName);
     end
     
-    % Paramètres des modèles (simulation au lieu de la prediction)
+    % Model parameters
     arxOpt = arxOptions('Focus', 'simulation');
     armaxOpt = armaxOptions('Focus', 'simulation');
     bjOpt = bjOptions('Focus', 'simulation');
     
-    % Initialization des variables
+    % Init variables
     J_oe = zeros(maxOrder-minOrder+1, 3);
     J_arx = zeros(maxOrder-minOrder+1, 3);
     J_armax = zeros(maxOrder-minOrder+1, 3);
     J_bj = zeros(maxOrder-minOrder+1, 3);
+
+    % Transform the data to get a single output system
+    dataIn.y = dataIn.y(:,1); % Take one output only
     
-    %% Convergence d'ordre des modèles
+    %% Model orders convergence
     
     figLossFunc = figure;
     figFPE = figure;
@@ -91,13 +91,13 @@ function models = convergence(dataIn, maxOrder, delayOrders, varargin)
     for i = 1:length(delayOrders)
         for order = minOrder:maxOrder
     
-            % Modèle ARX
+            % ARX model
             sysARX = arx(dataIn, [order, order+1, delayOrders(i)], arxOpt);
             J_arx(order-minOrder+1, 1) = mag2db(sysARX.report.Fit.LossFcn);
             J_arx(order-minOrder+1, 2) = sysARX.report.Fit.FPE;  
             J_arx(order-minOrder+1, 3) = sysARX.report.Fit.AIC; 
     
-            % Initialisation de la optimization (non linéaire)
+            % Init optimization (non linear)
             if order == minOrder
                 sys_init_oe = idpoly(1, sysARX.B, 1, 1, sysARX.A, ...
                     sysARX.NoiseVariance, sysARX.Ts);
@@ -114,14 +114,14 @@ function models = convergence(dataIn, maxOrder, delayOrders, varargin)
                     [sysBJ.D 0],[sysBJ.F 0],sysBJ.NoiseVariance, sysBJ.Ts);
             end
     
-            % Modèle OE
+            % OE model
             sys_init_oe.TimeUnit = 'milliseconds';
             sysOE = oe(dataIn, sys_init_oe);
             J_oe(order-minOrder+1, 1) = 20*log10(sysOE.report.Fit.LossFcn);
             J_oe(order-minOrder+1, 2) = sysOE.report.Fit.FPE;  
             J_oe(order-minOrder+1, 3) = sysOE.report.Fit.AIC; 
     
-            % Modèle ARMAX
+            % ARMAX model
             sys_init_armax.TimeUnit = 'milliseconds';
             sysARMAX = armax(dataIn, sys_init_armax, armaxOpt);
             J_armax(order-minOrder+1, 1) = ...
@@ -129,7 +129,7 @@ function models = convergence(dataIn, maxOrder, delayOrders, varargin)
             J_armax(order-minOrder+1, 2) = sysARMAX.report.Fit.FPE;
             J_armax(order-minOrder+1, 3) = sysARMAX.report.Fit.AIC;
     
-            % Modèle BJ
+            % BJ model
             sys_init_bj.TimeUnit = 'milliseconds';
             sysBJ = bj(dataIn, sys_init_bj, bjOpt);
             J_bj(order-minOrder+1, 1) = mag2db(sysBJ.report.Fit.LossFcn);
@@ -137,7 +137,7 @@ function models = convergence(dataIn, maxOrder, delayOrders, varargin)
             J_bj(order-minOrder+1, 3) = sysBJ.report.Fit.AIC;
         end
     
-        % Critère d'erreur
+        % Error criteria
         figure(figLossFunc);
         subplot(4, 1, 1);  hold on;
         plot(minOrder:maxOrder,  J_oe(:, 1), colors(i), ...
@@ -153,7 +153,7 @@ function models = convergence(dataIn, maxOrder, delayOrders, varargin)
         plot(minOrder:maxOrder, J_bj(:, 1), colors(i), ...
             LineStyle=linSty(i), LineWidth=1.4, HandleVisibility='off');
     
-        % Critère FPE
+        % FPE criteria
         figure(figFPE);
         subplot(4, 1, 1);  hold on;
         plot(minOrder:maxOrder,  J_oe(:, 2), colors(i), ...
@@ -169,7 +169,7 @@ function models = convergence(dataIn, maxOrder, delayOrders, varargin)
         plot(minOrder:maxOrder, J_bj(:, 2), colors(i), ...
             LineStyle=linSty(i), LineWidth=1.4, HandleVisibility='off');
     
-        % Critère AIC
+        % AIC criteria
         figure(figAIC);
         subplot(4, 1, 1);  hold on;
         plot(minOrder:maxOrder,  J_oe(:, 3), colors(i), ...LineStyle=linSty(i), ...
@@ -186,7 +186,7 @@ function models = convergence(dataIn, maxOrder, delayOrders, varargin)
             LineWidth=1.4, HandleVisibility='off');
     end
     
-    % Figure pour l'erreur d'équation (configurations graphiques finales)
+    % Figure for equation error (final configuration)
     figure(figLossFunc);
     subplot(4, 1, 1);  hold off; grid minor;
     legend(Interpreter="latex", FontSize=17, Location="best");
@@ -204,7 +204,7 @@ function models = convergence(dataIn, maxOrder, delayOrders, varargin)
     sgtitle("Analyse de convergence pour l'erreur d'\'{e}quation", ...
         Interpreter="latex", FontSize=20);
     
-    % Figure pour l'erreur FPE (configurations graphiques finales)
+    % Figure for FPE error (final configuration)
     figure(figFPE)
     subplot(4, 1, 1);  hold off; grid minor;
     legend(Interpreter="latex", FontSize=17, Location="best");
@@ -221,7 +221,7 @@ function models = convergence(dataIn, maxOrder, delayOrders, varargin)
     sgtitle("Analyse de convergence pour l'erreur FPE", ...
         Interpreter="latex", FontSize=20);
     
-    % Figure pour l'erreur AIC (configurations graphiques finales)
+    % Figure for AIC error (final configuration)
     figure(figAIC);
     subplot(4, 1, 1);  hold off; grid minor;
     legend(Interpreter="latex", FontSize=17, Location="best");
@@ -238,7 +238,7 @@ function models = convergence(dataIn, maxOrder, delayOrders, varargin)
     sgtitle("Analyse de convergence pour l'erreur AIC", ...
         Interpreter="latex", FontSize=20);
 
-    %% Résultat
+    %% Outputs
     models.ARX = sysARX;
     models.ARMAX = sysARMAX;
     models.BJ = sysBJ;

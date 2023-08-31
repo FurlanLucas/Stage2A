@@ -43,7 +43,7 @@ function [y, timeOut] = finitediff2d_v2(dataIn, timeIn, phiIn, h, Mx, Mr, N)
 
     %% Inputs
 
-    ell = dataIn.ell;
+    ell = dataIn.ell; % [m] Thermocouple length
     a = dataIn.a;   % [m^2/s] Thermal diffusivity
     lambda_x = dataIn.lambda; % [W/mK] Thermal conductivity in x direction
     lambda_r = dataIn.lambda; % [W/mK] Thermal conductivity in r direction
@@ -305,19 +305,20 @@ function [y, timeOut] = finitediff2d_v2(dataIn, timeIn, phiIn, h, Mx, Mr, N)
         % Display the current status
         p = floor(100*n/N);
         if p > count
-            fprintf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b");
-            fprintf("\t\tAnalysis at %2d%%.\n", p);
+            fprintf("\b\b\b\b\b");
+            fprintf("%2d%%.\n", p);
             count = count + 1;
         end
 
         % Take the results
         T = B\(A*T + c);
-        y_back(n) = T(Mr*Mx-Mr+1);
+                    y_back(n) = T(Mr*Mx-Mr+1);
         y_front(n) = T(1);
 
     end % end for
 
     %% Output
     y = {y_back, y_front};
+    fprintf("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b");
 
 end % end function

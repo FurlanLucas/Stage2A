@@ -39,7 +39,7 @@ function [y, timeOut] = finitediff1d(dataIn, timeIn, phiIn, h, M, N)
     %% Inputs
 
     % Thermal coefficients and geometry
-    ell = dataIn.ell;
+    ell = dataIn.ell; % [m] Thermocouple length
     a = dataIn.a;
     lambda = dataIn.lambda;
 

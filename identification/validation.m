@@ -1,50 +1,47 @@
 function resid = validation(dataIn, models, varargin)
-    %% VALIDATION
+    %% validation
     %
-    % Il fait la validation des models identifiés en models avec les 
-    % données disponible en dataIn. La validation des données seront faite
-    % avec la autocorrélation d'erreur d'équation et aussi avec
-    % l'intercorrélation entre l'erreur d'équation et l'entrée de flux de
-    % chaleur.
+    % Function to validate the models identified in convergence. It will be
+    % used the data in dataIn to calculate the autocorrelation and
+    % intercorrelation between the error estimative and input command.
     %
-    % EXAMPLE D'APPELL :
+    % Calls
     %
-    %   validation(dataIn, models) : pour analyser les données experimental
-    %   dedans dataIn. dataIn doit être une variable du type iddata avec un
-    %   champs UserData comme sysDataType.
+    %   resid = validation(dataIn, models): validate the models in the
+    %   structure models, using the data avaiable in dataIn. It will be
+    %   used all the datasets except for the first one;
     %
-    %   compare_results(__, options) : pour données des autres options à
-    %   l'analyse.
+    %   resid = validation(__, options): take the optional arguments.
     %
-    % EENTRÉES :
-    % 
-    %   - dataIn : variable iddata avec l'entrée qui va être simulée. Les
-    %   information des coefficients thermiques du material et les autres
-    %   carachteristiques comme la masse volumique sont estoquées dans le
-    %   champs UserData dedans dataIn. Il sera estoqué comme sysDataType.
+    % Inputs
     %
-    %   models : modèles identifiés dans l'analyse de convergence. Il doit
-    %   être une variable du type struct avec un champ par chaque modèle
-    %   identifié. Donc :
-    %       models.ARX : modèle ARX identifié.
-    %       models.OE : modèle AOE identifié.
-    %       models.ARMAX : modèle ARMAX identifié.
-    %       models.BJ : modèle BJ identifié.
+    %   dataIn: thermalData variable with all the information for the
+    %   system that will be simulated.
     %
-    % OPTIONS :
+    %   models: struct with the models to be validated. For instance, with
+    %   the filds named: ARX, OE, ARMAX and BJ.
     %
-    %   setExp : Configure les experiments qui doivent être analysé. Le
-    %   résultat obtenu avec validation(dataIn, models, setExp=[1,2]) est
-    %   le même que avec validation(getexp(dataIn, [1,2]), models).
+    % Outputs
     %
-    % See compare_results, iddata, sysDataType.
+    %   resid: residue from the analysis.
+    %
+    % Aditional options
+    %
+    %   setExp: set the number of experiments to be used in the validation
+    %   analysis. The result of validation(dataIn, models, setExp=[1,2]) is
+    %   the same of validation(getexp(dataIn, [1,2]), models).
+    %
+    % See convergence, iddata, sysDataType, thermalData.
 
-    %% Entrées
+    %% Inputs
 
-    figDir = 'outFig';        % [-] Emplacement pour les figures générées ;
-    analysisName = dataIn.UserData.name; % [-] Non de l'analyse ; 
+    figDir = 'outFig';          % Directory for output figures
+    analysisName = dataIn.Name; % Analysis name 
+    M = 25;                     % Max lag to the correlation
+    prob = 5.5758;              % Propability for 99 %
+    Mksize = 3;                 % Marker size
 
-    % Prendre les entrées optionnelles
+    % Optional inputs
     if ~isempty(varargin)
         for arg = 1:length(varargin)
             switch varargin{arg,1}
@@ -55,166 +52,189 @@ function resid = validation(dataIn, models, varargin)
         end
     end
 
-    % Modèles identifiées
-    n_data = size(dataIn, 4); % Numéro des analyses de validation
+    % Identified models
+    n_data = size(dataIn, 4); % Number of experiments 
     sysARX = models.ARX;
     sysOE= models.OE;
     sysARMAX = models.ARMAX;
-    sysBJ = models.BJ;
+    sysBJ = models.BJ;    
 
-    
-
-    %% Main figure (general comparaison)
-   
-    figTemps = figure; % Création de la Figure du temps
-    figCorr = figure; % Création de la Figure des correlations
-    
-    % Données de validation;
+    % Main part
     for i = 1:n_data
+        fprintf("\tAnalysis for set %s.\n",dataIn.ExperimentName{i});
         validData = getexp(dataIn, i);
-        validData.y = validData.y;
-        Ruu = xcorr(validData.u);
+        validData.y = validData.y(:,1); % Take one output only
+        t = validData.SamplingInstants/60e3; % Temps en minutes
+        y = validData.y; % Vrai sortie (mesurée)
+        N = length(validData.y);
+
+        % Input correlation
+        Ruu = xcorr(validData.u, M, 'biased');
         
-        % Modèle OE
+        %% OE model
         y_oe = lsim(sysOE, validData.u);
         e_oe = validData.y - y_oe;
-        Ree_oe = xcorr(e_oe);
-        Rue_oe = xcorr(e_oe, validData.u);
+        [Ree_oe, Lee_oe] = xcorr(e_oe, M, 'biased');
+        [Rue_oe, Lue_oe] = xcorr(e_oe, validData.u, M, 'biased');
+        P1_oe = abs(Ruu' * Ree_oe);
+
+        % Confidence region
+        confRauto = prob/sqrt(N);
+        confRinter = prob*sqrt(P1_oe)/sqrt(Ree_oe(M+1)*Ruu(M+1)*N);
+
+        % Correlation figure (OE model)
+        fig = figure;
+        subplot(1, 2, 1); hold on; grid minor;
+        stem(Lee_oe, Ree_oe/Ree_oe(M+1), 'or', MarkerSize=Mksize, ...
+            MarkerFaceColor='r');
+        patch([xlim fliplr(xlim)], confRauto*[1 1 -1 -1], 'black', ...
+            FaceColor='black', FaceAlpha=0.1, EdgeColor='none');
+        ylabel("Amplitude", Interpreter='latex', FontSize=17);
+        title("Autocorr\'{e}lation $R_{\epsilon}$", ...
+            Interpreter='latex', FontSize=17);
+        hold off; subplot(1, 2, 2); hold on; grid minor;
+        stem(Lue_oe, Rue_oe/sqrt(Ree_oe(M+1)*Ruu(M+1)),'or', ...
+            MarkerSize=Mksize, MarkerFaceColor='r');
+        patch([xlim fliplr(xlim)], confRinter*[1 1 -1 -1], 'black', ...
+            FaceColor='black', FaceAlpha=0.1, EdgeColor='none');
+        title("Intercorr\'{e}lation $R_{u\epsilon}$", ...
+            Interpreter='latex', FontSize=17);
+        saveas(fig, figDir+"\"+analysisName + "\valid_correlation_OE_"...
+            + num2str(i) + ".eps", 'epsc');
+        sgtitle("Mod\'{e}le OE (jeux " + num2str(i) + ")", ...
+            Interpreter='latex', FontSize=23);
     
-        % Modèle ARX
+        %% ARX model
         y_arx = lsim(sysARX, validData.u);
         e_arx = validData.y - y_arx;
         noiseModel = idpoly(1,sysARX.A,1,1,1,sysARX.NoiseVariance,sysARX.Ts);
         e_arx = lsim(noiseModel, e_arx);
-        Ree_arx = xcorr(e_arx);
-        Rue_arx = xcorr(e_arx, validData.u);
+        [Ree_arx, Lee_arx] = xcorr(e_arx, M, 'biased');
+        [Rue_arx, Lue_arx] = xcorr(e_arx, validData.u, M, 'biased');
+        P1_arx = abs(Ruu' * Ree_arx);
+
+        % Confidence region
+        confRauto = prob/sqrt(N);
+        confRinter = prob*sqrt(P1_arx)/sqrt(Ree_arx(M+1)*Ruu(M+1)*N);
+
+        % Correlation figure (ARX model)
+        fig = figure;
+        subplot(1, 2, 1); hold on; grid minor;
+        stem(Lee_arx, Ree_arx/Ree_arx(M+1), 'or', MarkerSize=Mksize, ...
+            MarkerFaceColor='r');
+        patch([xlim fliplr(xlim)], confRauto*[1 1 -1 -1], 'black', ...
+            FaceColor='black', FaceAlpha=0.1, EdgeColor='none');
+        ylabel("Amplitude", Interpreter='latex', FontSize=17);
+        title("Autocorr\'{e}lation $R_{\epsilon}$", ...
+            Interpreter='latex', FontSize=17);
+        hold off; subplot(1, 2, 2); hold on; grid minor;
+        stem(Lue_arx, Rue_arx/sqrt(Ree_arx(M+1)*Ruu(M+1)), 'or', ...
+            MarkerSize=Mksize, MarkerFaceColor='r');
+        patch([xlim fliplr(xlim)], confRinter*[1 1 -1 -1], 'black', ...
+            FaceColor='black', FaceAlpha=0.1, EdgeColor='none');
+        title("Intercorr\'{e}lation $R_{u\epsilon}$", ...
+            Interpreter='latex', FontSize=17);
+        saveas(fig, figDir+"\"+analysisName + "\valid_correlation_ARX_"...
+            + num2str(i) + ".eps", 'epsc');
+        sgtitle("Mod\'{e}le ARX (jeux " + num2str(i) + ")", ...
+            Interpreter='latex', FontSize=23);
     
-        % Modèle ARMAX
+        %% ARMAX model
         y_armax = lsim(sysARMAX, validData.u);
         e_armax = validData.y - y_armax;
         noiseModel = idpoly(1,sysARMAX.A,1,1,sysARMAX.C, ...
             sysARMAX.NoiseVariance,sysARMAX.Ts);
         e_armax = lsim(noiseModel, e_armax);
-        Ree_armax = xcorr(e_armax);
-        Rue_armax = xcorr(e_armax, validData.u);
+        [Ree_armax, Lee_armax] = xcorr(e_armax, M, 'biased');
+        [Rue_armax, Lue_armax] = xcorr(e_armax, validData.u, M, 'biased');
+        P1_armax = abs(Ruu' * Ree_armax);
 
-        % Modèle BJ
+        % Confidence region
+        confRauto = prob/sqrt(N);
+        confRinter = prob*sqrt(P1_armax)/sqrt(Ree_armax(M+1)*Ruu(M+1)*N);
+
+        % % Correlation figure (ARMAX model)
+        fig = figure;
+        subplot(1, 2, 1); hold on; grid minor;
+        stem(Lee_armax, Ree_armax/Ree_armax(M+1), 'or', ...
+            MarkerSize=Mksize, MarkerFaceColor='r');
+        patch([xlim fliplr(xlim)], confRauto*[1 1 -1 -1], 'black', ...
+            FaceColor='black', FaceAlpha=0.1, EdgeColor='none');
+        ylabel("Amplitude", Interpreter='latex', FontSize=17);
+        title("Autocorr\'{e}lation $R_{\epsilon}$", ...
+            Interpreter='latex', FontSize=17);
+        hold off; subplot(1, 2, 2); hold on; grid minor;
+        stem(Lue_armax, Rue_armax/sqrt(Ree_armax(M+1)*Ruu(M+1)), 'or', ...
+            MarkerSize=Mksize, MarkerFaceColor='r');
+        patch([xlim fliplr(xlim)], confRinter*[1 1 -1 -1], 'black', ...
+            FaceColor='black', FaceAlpha=0.1, EdgeColor='none');
+        title("Intercorr\'{e}lation $R_{u\epsilon}$", ...
+            Interpreter='latex', FontSize=17);
+        saveas(fig, figDir+"\"+analysisName +"\valid_correlation_ARMAX_"...
+            + num2str(i) + ".eps", 'epsc');
+        sgtitle("Mod\'{e}le ARMAX (jeux " + num2str(i) + ")", ...
+            Interpreter='latex', FontSize=23);
+
+        %% BJ model
         y_bj = lsim(sysBJ, validData.u);
         e_bj = validData.y - y_bj;
         noiseModel = idpoly(sysBJ.C,sysBJ.D,1,1,1, ...
             sysBJ.NoiseVariance, sysBJ.Ts);
         e_bj = lsim(noiseModel, e_bj);
-        Ree_bj = xcorr(e_bj);
-        Rue_bj = xcorr(e_bj, validData.u);
+        [Ree_bj, Lee_bj] = xcorr(e_bj, M, 'biased');
+        [Rue_bj, Lue_bj] = xcorr(e_bj, validData.u, M, 'biased');
+        P1_bj = abs(Ruu' * Ree_bj);
+
+        % Confidence region
+        confRauto = prob/sqrt(N);
+        confRinter = prob*sqrt(P1_bj/(Ree_bj(M+1)*Ruu(M+1)*N));
+
+        % % Correlation figure (BJ model)
+        fig = figure;
+        subplot(1, 2, 1); hold on; grid minor;
+        stem(Lee_bj, Ree_bj/Ree_bj(M+1), 'or', MarkerSize=Mksize, ...
+            MarkerFaceColor='r');
+        patch([xlim fliplr(xlim)], confRauto*[1 1 -1 -1], 'black', ...
+            FaceColor='black', FaceAlpha=0.1, EdgeColor='none');
+        ylabel("Amplitude", Interpreter='latex', FontSize=17);
+        title("Autocorr\'{e}lation $R_{\epsilon}$", ...
+            Interpreter='latex', FontSize=17);
+        hold off; subplot(1, 2, 2); hold on; grid minor;
+        stem(Lue_bj,Rue_bj/sqrt(Ree_bj(M+1)*Ruu(M+1)),'or', ...
+            MarkerSize=Mksize, MarkerFaceColor='r');
+        patch([xlim fliplr(xlim)], confRinter*[1 1 -1 -1], 'black', ...
+            FaceColor='black', FaceAlpha=0.1, EdgeColor='none');
+        title("Intercorr\'{e}lation $R_{u\epsilon}$", ...
+            Interpreter='latex', FontSize=17);
+        saveas(fig, figDir + "\"+analysisName + "\valid_correlation_BJ_"...
+            + num2str(i) + ".eps", 'epsc');
+        sgtitle("Mod\'{e}le BJ (jeux " + num2str(i) + ")", ...
+            Interpreter='latex', FontSize=23);
     
-        % Figure des données (temps)
-        figure(figTemps.Number);
-        subplot(n_data, 1, i); hold on;
-        plot(validData.SamplingInstants/60e3, validData.y, 'k', ...
-            LineWidth=1.4, DisplayName="Donn\'{e}es");
-        plot(validData.SamplingInstants/60e3, y_oe, "-r", LineWidth=2, ...
-            DisplayName='Mod\`{e}le OE');
-        plot(validData.SamplingInstants/60e3, y_arx, "-.g", LineWidth=2, ...
-            DisplayName='Mod\`{e}le ARX');
-        plot(validData.SamplingInstants/60e3, y_armax, "-.b", ...
-            LineWidth=2, DisplayName='Mod\`{e}le ARMAX');
-        plot(validData.SamplingInstants/60e3, y_bj, ":y", ...
-            LineWidth=2, DisplayName='Mod\`{e}le BJ');
+        %% Time data figure
+        fig = figure; hold on;
+        plot(t, y, 'k',LineWidth=1.4,DisplayName="Donn\'{e}es");
+        plot(t, y_oe, "-r",LineWidth=2,DisplayName='Mod\`{e}le OE');
+        plot(t, y_arx, "--g",LineWidth=2,DisplayName='Mod\`{e}le ARX');
+        plot(t, y_armax, "-.b",LineWidth=2,DisplayName='Mod\`{e}le ARMAX');
+        plot(t, y_bj, ":y",LineWidth=2, DisplayName='Mod\`{e}le BJ');
         grid minor; 
         ylabel("Data "+num2str(i), Interpreter='latex', FontSize=17);
-    
-        % Figure des autocorrelations
-        figure(figCorr.Number);
-        subplot(n_data, 2, i*2-1); hold on; grid minor
-        plot(Ree_oe/Ree_oe(length(e_oe)), 'or', MarkerSize=1);
-        plot(Ree_arx/Ree_arx(length(e_arx)), 'og', MarkerSize=1);
-        plot(Ree_armax/Ree_armax(length(e_armax)), 'ob', MarkerSize=1);
-        plot(Ree_bj/Ree_bj(length(e_bj)), 'oy', MarkerSize=1);
-        patch([xlim fliplr(xlim)], 2.17*[1 1 -1 -1]/sqrt(length(e_oe)), ...
-            'black','FaceColor', 'black', 'FaceAlpha', 0.1);
-        ylabel("Data "+num2str(i), Interpreter='latex', FontSize=17);
-    
-        % Figure des intercorrelations
-        subplot(n_data, 2, i*2); hold on; grid minor;
-        plot(Rue_arx/(Ree_arx(length(e_arx))*Ruu(length(e_arx))), 'og', ...
-            MarkerSize=1, DisplayName="Mod\`{e}le ARMAX", MarkerFaceColor='g');
-        plot(Rue_armax/(Ree_armax(length(e_armax))*Ruu(length(e_armax))), 'ob', ...
-            MarkerSize=1, DisplayName="Mod\`{e}le ARX", MarkerFaceColor='b');
-        plot(Rue_oe/(Ree_oe(length(e_oe))*Ruu(length(e_oe))), 'or', ...
-            MarkerSize=1, DisplayName="Mod\`{e}le OE", MarkerFaceColor='r');
-        plot(Rue_bj/(Ree_bj(length(e_bj))*Ruu(length(e_bj))), 'oy', ...
-            MarkerSize=1, DisplayName="Mod\`{e}le BJ", MarkerFaceColor='y');
-        patch([xlim fliplr(xlim)], 2.17*[1 1 -1 -1]/sqrt(length(e_oe)), ...
-            'black', 'FaceColor', 'black', 'FaceAlpha', 0.1, 'HandleVisibility', 'off');
-        ylim(min(4*2.17/sqrt(length(e_oe)), 1)*[-1, 1]);
-    end
-    
-    % Figure - configurations graphiques finales
-    hold off;
-    xlabel("Intercorr\'{e}lation $R_{ue}$", Interpreter='latex', FontSize=17);
-    [~,objh] = legend(Interpreter="latex", FontSize=12, Location="northwest");
-    objhl = findobj(objh, 'type', 'line'); %// objects of legend of type line
-    set(objhl, 'Markersize', 10); %// set marker size as desired
-    subplot(n_data, 2, i*2-1);
-    xlabel("Autocorr\'{e}lation $R_{ee}$", Interpreter='latex', FontSize=17);
-    figCorr.Position = [389 32 751 652];
-    saveas(figCorr, figDir+"\"+analysisName+"\corr.eps");
-    sgtitle({"Residues pour les donn\'{e}es", "de validation"}, ...
-        Interpreter="latex", FontSize=20);
-    figure(figTemps.Number);
-    xlabel('Temps (min)', Interpreter='latex', FontSize=17);
-    legend(Interpreter="latex", FontSize=12, Location="northwest");
-    saveas(figTemps, figDir+"\"+analysisName+"\valid_poly.eps", 'epsc');
-    sgtitle({"Donn\'{e}es de validation pour le", "mod\'{e}le OE "}, ...
-        Interpreter="latex", FontSize=20);
+        legend(Location='southeast', Interpreter='latex', FontSize=17);
+        saveas(fig, figDir + "\" + analysisName + "\comp_temps" ...
+            + num2str(i) + ".eps", 'epsc');       
 
-    % Resultats
+        if i == n_data
+            msg = 'Press any key to continue...';
+            input(msg);
+            fprintf(repmat('\b', 1, length(msg)+1));
+        end
+
+        % Close all figures
+        close all;
+    end
+
+    % Résultats (a être implanté)
     resid = NaN;
-
-
-    %% Main figure (general comparaison inverse) 
-
-    figInv = figure;
-
-    % Données de validation;
-    for i = 1:n_data
-        validData = getexp(dataIn, i);
-        validData.y = validData.y;
-        
-        % Modèle OE
-        invOE = idpoly(sysOE.B/sysOE.B(1),sysOE.F/sysOE.B(1),1,1,1,sysOE.NoiseVariance,sysOE.Ts);
-        y_oe = lsim(invOE, validData.y);
-    
-        % Modèle ARX
-        invARX = idpoly(sysARX.B/sysARX.B(1),sysARX.A/sysARX.B(1),1,1,1,sysARX.NoiseVariance, ...
-            sysARX.Ts);
-        y_arx = lsim(invARX, validData.y);
-    
-        % Modèle ARMAX
-        invARMAX = idpoly(sysARMAX.B/sysARMAX.B(1),sysARMAX.A/sysARMAX.B(1),1,1,1, ...
-            sysARMAX.NoiseVariance, sysARMAX.Ts);
-        y_armax = lsim(invARMAX, validData.y);
-
-        % Modèle BJ
-        invBJ = idpoly(sysBJ.B/sysBJ.B(1),sysBJ.F/sysBJ.B(1),1,1,1, ...
-            sysBJ.NoiseVariance, sysBJ.Ts);
-        y_bj = lsim(invBJ, validData.y);
-    
-        % Figure des données (temps)
-        figure(figInv.Number);
-        subplot(n_data, 1, i); hold on;
-        plot(validData.SamplingInstants/60e3, validData.u, 'k', ...
-            LineWidth=1.4, DisplayName="Donn\'{e}es");
-        plot(validData.SamplingInstants/60e3, y_oe, "-r", LineWidth=2, ...
-            DisplayName='Mod\`{e}le OE');
-        plot(validData.SamplingInstants/60e3, y_arx, "-.g", LineWidth=2, ...
-            DisplayName='Mod\`{e}le ARX');
-        plot(validData.SamplingInstants/60e3, y_armax, "-.b", ...
-            LineWidth=2, DisplayName='Mod\`{e}le ARMAX');
-        plot(validData.SamplingInstants/60e3, y_bj, ":y", ...
-            LineWidth=2, DisplayName='Mod\`{e}le BJ');
-        grid minor; 
-        ylabel("Data "+num2str(i), Interpreter='latex', FontSize=17);
-    end
 
 end

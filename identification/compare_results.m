@@ -169,7 +169,6 @@ function compare_results(dataIn, varargin)
     end
 
     % Simulation pour Taylor en 3D/2D
-    %dataIn.sysData.ell = 15e-3;
     fprintf("\tSimulation for Taylor model in " + type + ".\n");
     [~,Fsmulti_taylor] = model_multi_taylor(dataIn, seriesOrder, ...
         taylorOrder);
@@ -183,18 +182,18 @@ function compare_results(dataIn, varargin)
     end
 
     % Simulation with finite difference in 2D
-    fprintf("\tSimulation pour differences finites en 2D.\n");
+    fprintf("\tFinites diffences in 2D.\n");
     [y_findif2d, t_findif2d]  = finitediff2d(dataIn.sysData, t, ...
-        phimultiD, [hx2 hr2], 11, 70, 1e5);
+        phimultiD, [hx2 hr2], 11, 10, 1e5);
 
     % Simulation with finite difference in 2D v2
-    fprintf("\tSimulation pour differences finites en 2D.\n");
+    fprintf("\tFinites diffences in 2D (V2).\n");
     [y_findif2d_v2, t_findif2d_v2]  = finitediff2d_v2(dataIn.sysData, t, ...
-        phiV, [hx2 hr2], 11, 70, 1e5);
+        phimultiD, [hx2 hr2], 11, 10, 1e5);
 
     %% Compairison between 1D analysis and experimental results for rear face
 
-    fprintf("\tShowing results.\n\n");
+    fprintf("\tShowing results.\n");
 
     fig = figure; hold on;
 
@@ -356,5 +355,8 @@ function compare_results(dataIn, varargin)
     leg.ItemTokenSize = [30, 70]; grid minor;
     saveas(fig, figDir + "\" + dataIn.sysData.Name + ...
         "\compare_theorical_rear_2D_v2", 'epsc');
+
+    %% Ending and outputs
+    fprintf(repmat('\b', 1, 264));
 
 end

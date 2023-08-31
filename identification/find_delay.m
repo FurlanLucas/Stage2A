@@ -10,6 +10,9 @@ function nk = find_delay(dataIn)
     colors = ['r','g','b','y'];            % Figure colors
     linSty = ["-"; "--"; "-."; ":"];       % Figure line styles
 
+    %% Init variables
+    nk = zeros(dataIn.Ne, 1);
+
     %% Main analysis
     for i = 1:dataIn.Ne
 
@@ -18,9 +21,9 @@ function nk = find_delay(dataIn)
         data.y = data.y(:,1); % Take one output only
 
         % Delay est method
-        nk = delayest(data);
-        fprintf("\tPour le jeux %s : nk = %d ;\n", ...
-            data.ExperimentName{1}, nk);
+        nk(i) = delayest(data);
+        fprintf("\tFor set number %s : nk = %d;\n", ...
+            data.ExperimentName{1}, nk(i));
 
         % Graphics
         h = impulseest(data);
@@ -28,7 +31,11 @@ function nk = find_delay(dataIn)
     end
     disp(' ');
 
-    %% Output
+    %% Fin de l'analyse
+    msg = 'Press any key to continue...';
+    input(msg);
+    fprintf(repmat('\b', 1, length(msg)+3));
+    close all;
     nk = 0;
 
 end
