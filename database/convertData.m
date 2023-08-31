@@ -68,7 +68,8 @@ function convertData()
         end   
         
         % Save the thermoData variable
-        expData.Ne = n_files;
+        steadyState = strfind(allFileNames, 'S0');
+        expData.Ne = n_files - length([steadyState{:}]) - 1;
         save(dirOutputName + "\" +sysData(i).Name, "expData");
     end
 
