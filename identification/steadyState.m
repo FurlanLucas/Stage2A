@@ -68,7 +68,8 @@ function h = steadyState(dataIn, varargin)
     ylabel("Input tension (V)", Interpreter="latex", FontSize=17);
     xlabel("Time (min)",Interpreter="latex",FontSize=17);
     grid minor; fig.Position = [385 108 611 462];
-    saveas(fig, "Chenge_to_flux.eps", 'epsc');
+    saveas(fig, figDir + "\" + analysisName + "\" + ...
+        "Change_to_flux_en.eps", 'epsc');    
 
     % French
     ylabel({"Tension", "d'entr\'{e}e (V)"}, Interpreter="latex", ...
@@ -77,6 +78,8 @@ function h = steadyState(dataIn, varargin)
     subplot(2, 1, 1);
     ylabel({"Flux de chaleur", "en d'entr\'{e}e $(W/m^2)$"}, ...
         Interpreter="latex", FontSize=17);
+    saveas(fig, figDir + "\" + analysisName + "\" + ...
+        "Change_to_flux_fr.eps", 'epsc');    
 
     %% Steady state figure
 
@@ -87,17 +90,17 @@ function h = steadyState(dataIn, varargin)
 
     % English
     fig = figure();
-    plot(t/60e3, y, 'b', LineWidth=0.5); grid minor;
+    plot(t/3600e3, y, 'b', LineWidth=0.5); grid minor;
     ylabel("Temperature ($^\circ$C)", Interpreter="latex", ...
         FontSize=17);
-    xlabel("Time (min)",Interpreter="latex",FontSize=17);
+    xlabel("Time (h)",Interpreter="latex",FontSize=17);
     saveas(fig, figDir + "\" + analysisName + "\" + ...
         "steadyState_en.eps", 'epsc');    
 
     % French
     ylabel("Temp\'{e}rature ($^\circ$C)", Interpreter="latex", ...
         FontSize=17);
-    xlabel("Temps (min)",Interpreter="latex",FontSize=17);
+    xlabel("Temps (h)",Interpreter="latex",FontSize=17);
     saveas(fig, figDir + "\" + analysisName + "\" + ...
         "steadyState_fr.eps", 'epsc');    
 
