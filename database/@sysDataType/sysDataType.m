@@ -78,6 +78,8 @@ classdef sysDataType
         rho = 0;                % [kg/m³] Termocouple dentsity
         cp = 0;                 % [J/kgK] Specific heat with constant pressure
         ell = 0;                % [m] Depth of the termocouple
+        ell2 = 0;               % [m] Hole depth of the termocouple
+        rH = 0;                 % [m] Hole radius
         Ytr_back = 0;           % [uV/K] Thermocouple coefficient (rear)
         Ytr_front = 0;          % [uV/K] Thermocouple coefficient (front)
     end
@@ -165,6 +167,22 @@ classdef sysDataType
                 error("The depth has to be positive and non-zero.");
             end
             obj.ell = ell;
+        end
+
+        % Set the depth value (x position) - hole
+        function obj = set.ell2(obj, ell2)
+            if (ell2 <= 0)
+                error("The depth has to be positive and non-zero.");
+            end
+            obj.ell2 = ell2;
+        end
+
+        % Set the hole radius
+        function obj = set.rH(obj, rH)
+            if (rH <= 0)
+                error("The radious has to be positive and non-zero.");
+            end
+            obj.rH = rH;
         end
 
         % Change tension into heat flux

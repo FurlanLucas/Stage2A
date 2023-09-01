@@ -44,15 +44,13 @@ function [y, timeOut] = finitediff2d_v2(dataIn, timeIn, phiIn, h, Mx, Mr, N)
     %% Inputs
 
     ell = dataIn.ell; % [m] Thermocouple length
+    ell2 = dataIn.ell2; % [m] Hole size
     a = dataIn.a;   % [m^2/s] Thermal diffusivity
     lambda_x = dataIn.lambda; % [W/mK] Thermal conductivity in x direction
     lambda_r = dataIn.lambda; % [W/mK] Thermal conductivity in r direction
     Rmax = dataIn.Size; % [m] Termocouple size
     r0 = dataIn.ResSize; % [m] Resistance size
-
-    %
-    rr0 = 10e-3; 
-    ell2 = 5e-3;
+    rr0 = dataIn.rH; % [m] Hole radious
 
     % Finite differences
     dt = timeIn(end)/(N-1);

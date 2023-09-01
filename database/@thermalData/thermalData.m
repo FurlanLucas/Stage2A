@@ -33,6 +33,10 @@ classdef thermalData
     %
     % Methodes
     %
+    %   phiV: 1xNe cell with the measured heat flux samples in volts, giving
+    %   by the resistence current and tension, Ne being the number of 
+    %   experiments;
+    %
     %   getexp(id) : take a experiment data set as an iddata for the system
     %   identification analysis. The data id will be taken;
     %
@@ -74,6 +78,9 @@ classdef thermalData
 
         % Take a data set as iddata (for input analysis)
         dataOut = getexpAlim(obj, id);
+
+        % Take the heat flux by tension
+        phi = phiV(obj);
 
         % Get method
         get(obj);
