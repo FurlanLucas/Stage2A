@@ -1,7 +1,7 @@
 clear; close all;
 %% Inputs and definitions
 figDir = 'outFig';            % Directory for output figures
-analysisName = 'sys1_isoBas'; % Analysis name
+analysisName = 'sys2_resFlu'; % Analysis name
 expNumber = 1;                % Number for the experiment to be used
 orders = [1 6 10];            % Orders for Pade an Taylor approximations
 colors = ['r','b','g','m'];   % Graph colors
@@ -73,7 +73,7 @@ saveas(fig, figDir + "\" + analysisName + "\compaire_h1d_fr.eps", 'epsc');
 sgtitle("Fonction $F_b(s)$ th\'{e}orique en 1D",'Interpreter','latex', ...
     Interpreter='latex', FontSize=20);
 
-%% Pade approximation orders figure
+%% Pade approximation orders in 1D
 
 disp("Pade approximation in 1D.");
 results_1d_th = model_1d(expData, h); % Theoretical result
@@ -129,7 +129,7 @@ set(gca, 'XScale', 'log'); grid minor;
 subplot(2,1,1); grid minor; set(gca, 'XScale', 'log');
 thPlot = semilogx(results_1d_th.w, 20*log10(results_1d_th.mag{2}), 'k', ...
     LineWidth=1.4, DisplayName="Theoretical");  
-leg = legend(Location='northeast', Interpreter='latex', FontSize=15, ...
+leg = legend(Location='southwest', Interpreter='latex', FontSize=15, ...
     NumColumns=2); 
 leg.ItemTokenSize = [20, 18];
 ylabel("Magnitude (dB)", Interpreter='latex', FontSize=15);
@@ -144,7 +144,7 @@ saveas(fig, figDir + "\" + analysisName + "\ordersPade_1d_front_fr.eps", 'epsc')
 sgtitle({"Fonction $F_b(s)$ avec", "l'approximation de Pade en 1D"}, ...
     Interpreter='latex', FontSize=20);
 
-%% Taylor approximation orders figure
+%% Taylor approximation orders in 1D
 
 disp("Taylor approximation in 1D.");
 results_1d_th = model_1d(expData, h); % Theoretical result
@@ -200,7 +200,7 @@ set(gca, 'XScale', 'log'); grid minor;
 subplot(2,1,1); grid minor; set(gca, 'XScale', 'log');
 thPlot = semilogx(results_1d_th.w, 20*log10(results_1d_th.mag{2}), 'k', ...
     LineWidth=1.4, DisplayName="Theoretical");  
-leg = legend(Location='northeast', Interpreter='latex', FontSize=15, ...
+leg = legend(Location='southwest', Interpreter='latex', FontSize=15, ...
     NumColumns=2); 
 leg.ItemTokenSize = [20, 18];
 ylabel("Magnitude (dB)", Interpreter='latex', FontSize=15);
@@ -349,7 +349,7 @@ set(gca, 'XScale', 'log'); grid minor;
 subplot(2,1,1); grid minor; set(gca, 'XScale', 'log');
 thPlot = semilogx(results_multi.w, 20*log10(results_multi.mag{2}), 'k', ...
     LineWidth=1.4, DisplayName="Theoretical");  
-leg = legend(Location='northeast', Interpreter='latex', FontSize=15, ...
+leg = legend(Location='southwest', Interpreter='latex', FontSize=15, ...
     NumColumns=2); 
 leg.ItemTokenSize = [20, 18];
 ylabel("Magnitude (dB)", Interpreter='latex', FontSize=15);
@@ -405,7 +405,7 @@ subplot(2,1,2);
 xlabel("Fr\'{e}quence (rad/s)", Interpreter='latex', FontSize=15);
 set(thPlot, 'displayName', "Th\'{e}orique");
 saveas(fig, figDir + "\" + analysisName + "\ordersTaylor_3d_rear_fr.eps", 'epsc');
-sgtitle({"Fonction $F_b(s)$ avec", "l'approximation de Taylor en" + type}, ...
+sgtitle({"Fonction $F_b(s)$ avec", "l'approximation de Taylor en " + type}, ...
     Interpreter='latex', FontSize=20);
 
 % Front face model (english)
@@ -428,7 +428,7 @@ set(gca, 'XScale', 'log'); grid minor;
 subplot(2,1,1); grid minor; set(gca, 'XScale', 'log');
 thPlot = semilogx(results_multi.w, 20*log10(results_multi.mag{2}), 'k', ...
     LineWidth=1.4, DisplayName="Theoretical");  
-leg = legend(Location='northeast', Interpreter='latex', FontSize=15, ...
+leg = legend(Location='southwest', Interpreter='latex', FontSize=15, ...
     NumColumns=2); 
 leg.ItemTokenSize = [20, 18];
 ylabel("Magnitude (dB)", Interpreter='latex', FontSize=15);

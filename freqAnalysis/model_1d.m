@@ -98,7 +98,7 @@ function bodeOut = model_1d(dataIn, h, varargin)
     phase_th{1} = angle(Fs_th);
 
     % Front face
-    Fs_th = (A + B*h)./(C + A*h);
+    Fs_th = 1./(A + B*h);
     mag_th{2} = abs(Fs_th);
     phase_th{2} = angle(Fs_th);
 

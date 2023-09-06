@@ -156,7 +156,7 @@ function bodeOut = model_2d(dataIn, h, seriesOrder, varargin)
         Fs_2D{1} = Fs_2D{1} + Fs_eval * (R/Nalpha(n+1))*int_R;
 
         % Front face
-        Fs_eval = (A + B*hx2)./(C + A*hx2);
+        Fs_eval = 1./(A + B*hx2);
         Fs_2D{2} = Fs_2D{2} + Fs_eval * (R/Nalpha(n+1))*int_R;
 
     end

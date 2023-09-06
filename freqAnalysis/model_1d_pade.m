@@ -104,7 +104,7 @@ function [bodeOut, Fs_pade] = model_1d_pade(dataIn, h, padeOrder, varargin)
     [Q,P] = padecoef(1, padeOrder); % Aproximation e^(x) = P(xi)/Q(xi)
     P = mypoly(P); Q = mypoly(Q); % Change from vectors to mypoly variables
 
-    %% Pade approximation for the rear model (with loss)
+    %% Pade approximation for the rear model (loss included)
 
     % Fonction polynomials (it is not from the quadripoles)
     A_ = mypoly([lambda/(2*ell), h/2]); % Polynomial in xi
@@ -115,8 +115,8 @@ function [bodeOut, Fs_pade] = model_1d_pade(dataIn, h, padeOrder, varargin)
     D = (P*P*A_) + (Q*Q*B_); % Denominator
 
     % Change to the original Laplace variable s = (a/e^2)xi
-    N = N.odd.comp([ell^2/a 0]);
-    D = D.odd.comp([ell^2/a 0]);    
+    N = N.even.comp([ell^2/a 0]);
+    D = D.even.comp([ell^2/a 0]);    
 
     % Unicity of F(s) (d0 = 1)
     N.coef = N.coef/D.coef(end); 
@@ -128,21 +128,19 @@ function [bodeOut, Fs_pade] = model_1d_pade(dataIn, h, padeOrder, varargin)
     phase_pade{1} = angle(F_approx_ev);
     Fs_pade{1} = tf(N.coef, D.coef);
 
-    %% Pade approximation for the front model (with loss)
+    %% Pade approximation for the front model (loss included)
 
     % Fonction polynomials (it is not from the quadripoles)
-    A_ = mypoly([lambda/ell, h]); % Polynomial in xi
-    B_ = mypoly([lambda/ell, -h]); % Polynomial in xi
-    C_ = mypoly([(lambda/ell)^2, h*lambda/ell 0]); % Polynomial in xi
-    D_ = mypoly([-(lambda/ell)^2, h*lambda/ell 0]); % Polynomial in xi
+    A_ = mypoly([1/2, h*ell/(2*lambda)]); % Polynomial in xi
+    B_ = mypoly([1/2, -h*ell/(2*lambda)]); % Polynomial in xi
 
     % Aproximation for the transfert function F(xi) = N(xi)/D(xi)
-    N = (P*P*A_) + (Q*Q*B_); % Numerator
-    D = (P*P*C_) + (Q*Q*D_); % Denominator
+    N = P*Q*mypoly([1,0]); % Numerator
+    D = (P*P*A_) + (Q*Q*B_); % Denominator
 
     % Change to the original Laplace variable s = (a/e^2)xi
-    N = N.even.comp([ell^2/a 0]);
-    D = D.even.comp([ell^2/a 0]);
+    N = N.odd.comp([ell^2/a 0]);
+    D = D.odd.comp([ell^2/a 0]);
 
     % Unicity of F(s) (d0 = 1)
     N.coef = N.coef/D.coef(end); 

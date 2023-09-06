@@ -182,8 +182,8 @@ function [bodeOut, Fs_pade] = model_2d_pade(dataIn, h, padeOrder, ...
         D = (P*P*A_) + (Q*Q*B_); % Denominator
     
         % Change to the original Laplace variable s = (a/e^2)xi
-        N = N.odd.comp([ell^2/a_x (alpha(n+1)*ell)^2]);
-        D = D.odd.comp([ell^2/a_x (alpha(n+1)*ell)^2]);    
+        N = N.even.comp([ell^2/a_x (alpha(n+1)*ell)^2]);
+        D = D.even.comp([ell^2/a_x (alpha(n+1)*ell)^2]);    
     
         % Unicity of F(s) (d0 = 1)
         N.coef = N.coef/D.coef(end); 
@@ -202,21 +202,19 @@ function [bodeOut, Fs_pade] = model_2d_pade(dataIn, h, padeOrder, ...
     %% Pade approximation for the 2D front face model 
     
     % Fonction polynomials (it is not from the quadripoles)
-    A_ = mypoly([lambda_x/ell, hx2]); % Polynomial in xi
-    B_ = mypoly([lambda_x/ell, -hx2]); % Polynomial in xi
-    C_ = mypoly([(lambda_x/ell)^2, hx2*lambda_x/ell 0]); % Polynomial in xi
-    D_ = mypoly([-(lambda_x/ell)^2, hx2*lambda_x/ell 0]); % Polynomial in xi
+    A_ = mypoly([1/2, hx2*ell/(2*lambda_x)]); % Polynomial in xi
+    B_ = mypoly([1/2, -hx2*ell/(2*lambda_x)]); % Polynomial in xi
 
     for n = 0:seriesOrder % Serie en r
         R = besselj(0, r*alpha(n+1));
 
         % Aproximation for the transfert function F(xi) = N(xi)/D(xi)
-        N = (P*P*A_) + (Q*Q*B_); % Numerator
-        D = (P*P*C_) + (Q*Q*D_); % Denominator
+        N = P*Q*mypoly([1,0]); % Numerator
+        D = (P*P*A_) + (Q*Q*B_); % Denominator
     
         % Change to the original Laplace variable s = (a/e^2)xi
-        N = N.even.comp([ell^2/a_x (alpha(n+1)*ell)^2]);
-        D = D.even.comp([ell^2/a_x (alpha(n+1)*ell)^2]);    
+        N = N.odd.comp([ell^2/a_x (alpha(n+1)*ell)^2]);
+        D = D.odd.comp([ell^2/a_x (alpha(n+1)*ell)^2]);    
     
         % Unicity of F(s) (d0 = 1)
         N.coef = N.coef/D.coef(end); 
