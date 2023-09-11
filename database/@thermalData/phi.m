@@ -1,4 +1,4 @@
-function phi = phiV(obj)
+function phi = phi(obj)
     %% phiV
     %
     %   Work as a atributte, giving the same output as obj.phi, but

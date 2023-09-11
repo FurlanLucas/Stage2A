@@ -55,7 +55,6 @@ classdef thermalData
         Ne = 0;                   % [-] Number of experiments
         t = {};                   % [ms] Time samples
         v = {};                   % [V] Input tension
-        phi = {};                 % [W/m²] Heat flux
         y_front = {};             % [°C] Temperature in the front face
         y_back = {};              % [°C] Température in the rear fece
         sysData = sysDataType;    % [-] System data
@@ -80,7 +79,7 @@ classdef thermalData
         dataOut = getexpAlim(obj, id);
 
         % Take the heat flux by tension
-        phi = phiV(obj);
+        phi = phi(obj);
 
         % Get method
         get(obj);

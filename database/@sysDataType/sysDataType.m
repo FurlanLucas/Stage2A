@@ -185,9 +185,6 @@ classdef sysDataType
             obj.rH = rH;
         end
 
-        % Change tension into heat flux
-        phi = toFlux(obj, v)
-
         % Change tension into temperature (front face)
         y = setOutputFront(obj, in)
 

@@ -38,26 +38,25 @@ function convertData()
     
             % Lists all files
             opts = delimitedTextImportOptions("Delimiter", '\t', ...
-                'VariableNames', {'t','y_back','v','phi','y_front'});
+                'VariableNames', {'t','y_back','v','y_front','phi'});
             dataRead = readtable(dirInputName + "\" + fileNames{j}, opts); 
     
             % Transform table into array
             t = str2double(strrep(dataRead.t(4:end,1), ',', '.'));
             y_back = str2double(strrep(dataRead.y_back(4:end),',','.'));
             v = str2double(strrep(dataRead.v(4:end,1), ',', '.'));
-            phi = str2double(strrep(dataRead.phi(4:end,1), ',', '.'));
             y_front = str2double(strrep(dataRead.y_front(4:end), ',','.'));            
             
             % Transforme the outputs in variation of outputs
             y_front = sysData(i).setOutputFront(toVar(y_front));
             y_back = sysData(i).setOutputBack(toVar(y_back));
+            v = toVar(v);
 
             
             % Other information
             expData.y_front{j} = y_front;
             expData.y_back{j} = y_back;
             expData.v{j} = v;
-            expData.phi{j} = phi;
             expData.t{j} = t;
             
         end   
