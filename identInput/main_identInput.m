@@ -1,11 +1,12 @@
 clc; clear; close all;
 %% Entrées et configurations
 figDir = 'outFig';                   % Figure output directory
-fileDir = 'outCsv';                   % File output directory
+fileDir = 'outCsv';                  % File output directory
 inputFileName = 'reentryData1.csv';  % Input file name
 outputFileName = 'outFile1.csv';     % Output file name
 analysisName = 'sys1_resFlu';        % Analysis name
-fs = 10;                              % [s] Sampling frequency
+fs = 10;                             % [s] Sampling frequency
+maxPhi = 10e3;                       % [W/m²] Maximum heat flux
 
 %% Output directory verification and multidimentional analysis
 
@@ -25,6 +26,7 @@ load("..\database\convertedData\" + analysisName + ".mat");
 
 % Take from csv
 [phi, t] = takeExpFlux(inputFileName);
+phi = maxPhi*phi/max(phi); % Normalize with respect to the maximum
 
 % Figure EN
 fig = figure;

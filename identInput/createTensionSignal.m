@@ -7,7 +7,6 @@ function [signal, t_out] = createTensionSignal(sysData, phi, t, fs)
 
     %% Entrées
     medianOrder = 5;            % Median filter order
-    maxPhi = 10e3;              % [W/m²] Maximum heat flux
 
     % Données de sortie
     t_out = 0:1/fs:t(end);
@@ -17,7 +16,6 @@ function [signal, t_out] = createTensionSignal(sysData, phi, t, fs)
     % Heat flux data
     phi = medfilt1(phi, medianOrder);
     phi = interp1(t, phi, t_out);
-    phi = maxPhi*phi/max(phi); % Normalize with respect to the maximum
 
     % Tension
     signal = sqrt(phi*sysData.takeResArea/sysData.R)*(sysData.R_ + ...
