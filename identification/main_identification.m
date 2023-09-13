@@ -1,9 +1,9 @@
 clear; close all;
 %% Inputs and definitions
 figDir = 'outFig';            % Directory for output figures
-analysisName = 'sys1_isoBas'; % Analysis name
-identNumber = 1;                % Number for the experiment to be used
-maxOrderConv = 5;            % Maximum order for the convergence analysis 
+analysisName = 'sys1_resFlu'; % Analysis name
+identNumber = 1;              % Number for the experiment to be used
+maxOrderConv = 6;            % Maximum order for the convergence analysis 
 delayOrders = [0 20 10];      % Delay orders value
 
 fprintf("<strong>Identification analysis</strong>\n");
@@ -27,24 +27,26 @@ validData = expData.getexp(setdiff(1:expData.Ne, identNumber));
 
 % Compaire the experimental results with the theorical models
 disp("Comparison with theorical and numerical results.");
-compare_results(expData, h=17);
+compare_results(expData, h=7);
 
 % Delay analysis
 disp("Delay analysis.");
 delay = find_delay(expData); close all;
 
 % Steady-state
-disp("Steady state-analysis.");
-steadyState(expData);
+disp("Steady-state analysis.");
+%steadyState(expData);
 
 % Analysis for the convergence of models
 disp("Convergence analysis.");
-models = convergence(identData, maxOrderConv, 0);
+modelsBack = convergence(identData, maxOrderConv, 0, type=1);
+modelsFront = convergence(identData, maxOrderConv, 0, type=2);
 
 % Residuals analysis
 disp("Analysis for the residuals.");
-residues = validation(validData, models);
+residuesBack = validation(validData, modelsBack, type=1);
+residuesFront = validation(validData, modelsFront, type=2);
 
 % Model inversion
 disp("Inverting models ARX and ARMAX");
-inversion(expData, models);
+resid = inversion(expData, modelsBack, modelsFront);

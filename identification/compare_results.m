@@ -71,7 +71,8 @@ function compare_results(dataIn, varargin)
     taylorOrder = 10;    % Order for Taylor approximation
     padeOrder = 10;      % Order for Pade approximation
     seriesOrder = 10;    % Order for the series approximation (2D and 3D)
-    analysisNumber = 1;  % Number of the dataset to be used.
+    analysisNumber = 1;  % Number of the dataset to be used
+    lossFactor = 0.2;   % Heat flux loss factor
     
     % Optional inputs
     for i = 1:length(varargin)
@@ -114,13 +115,15 @@ function compare_results(dataIn, varargin)
     %% Other variables for the analysis
 
     % Take normalization with respect to the area ratio
-    phi1D = dataIn.phi{analysisNumber} * dataIn.sysData.takeResArea/...
-        dataIn.sysData.takeArea;
-    phimultiD = dataIn.phi{analysisNumber};
+    phi1D = dataIn.phi{analysisNumber} * (1-lossFactor) * ...
+        dataIn.sysData.takeResArea/dataIn.sysData.takeArea;
+    phimultiD = dataIn.phi{analysisNumber} * (1-lossFactor);
     t = dataIn.t{analysisNumber}/1e3; % Time vector
-    phiV = dataIn.v{analysisNumber}.^2 * ...
-        (dataIn.sysData.R/((dataIn.sysData.R_ + dataIn.sysData.R)^2)) ...
-        /dataIn.sysData.takeResArea;
+
+    % Mass factor
+    ell = dataIn.sysData.ell;
+    mfac = pi*(dataIn.sysData.Size^2 - dataIn.sysData.rH^2) * ...
+        dataIn.sysData.ell2 / dataIn.sysData.takeArea;
 
     % Take the multidimensional general case
     if strcmp(dataIn.sysData.Geometry, "Cylinder")
@@ -141,6 +144,7 @@ function compare_results(dataIn, varargin)
 
     % Simulation for Pade in 1D
     fprintf("\tSimulation for Pade model in 1D.\n");
+    dataIn.sysData.ell = ell + mfac;
     [~, Fs1d_pade] = model_1d_pade(dataIn, hx2, padeOrder);
     y1d_pade{1} = lsim(Fs1d_pade{1}, phi1D, t); % Rear surface
     y1d_pade{2} = lsim(Fs1d_pade{2}, phi1D, t); % Front surface
@@ -180,16 +184,17 @@ function compare_results(dataIn, varargin)
         ymulti_taylor{2} = ymulti_taylor{2} + lsim(Fsmulti_taylor{i, 2}, ...
             phimultiD, t); % Front surface
     end
-
+    % 
     % Simulation with finite difference in 2D
     fprintf("\tFinites diffences in 2D.\n");
     [y_findif2d, t_findif2d]  = finitediff2d(dataIn.sysData, t, ...
-        phimultiD, [hx2 hr2], 11, 10, 1e5);
+        phimultiD, [hx2 hr2], 11, 70, 1e5);
 
     % Simulation with finite difference in 2D v2
+    dataIn.sysData.ell = ell;
     fprintf("\tFinites diffences in 2D (V2).\n");
     [y_findif2d_v2, t_findif2d_v2]  = finitediff2d_v2(dataIn.sysData, t, ...
-        phimultiD, [hx2 hr2], 11, 10, 1e5);
+        phimultiD, [hx2 hr2], 20, 70, 1e5);
 
     %% Compairison between 1D analysis and experimental results for rear face
 
@@ -200,146 +205,114 @@ function compare_results(dataIn, varargin)
     % Theorical values
     plot(t/60, dataIn.y_back{analysisNumber}, 'ok', LineWidth=0.1, ...
         MarkerFaceColor='k', MarkerSize=.8);
-    h(1) = plot(NaN, NaN, 'ok', DisplayName="Donn\'{e}es", ...
+    h(1) = plot(NaN, NaN, 'ok', DisplayName="Exp. data", ...
         MarkerSize=7, MarkerFaceColor='k');
 
     % Pade 1D
     plot(t/60, y1d_pade{1}, '-.r', LineWidth=2.5);
-    h(2) = plot(NaN, NaN, '-.r', DisplayName="Pade 1D", LineWidth=2.5);
+    h(2) = plot(NaN, NaN, '-.r', DisplayName="Pade", LineWidth=2.5);
 
     % Taylor 1D
     plot(t/60, y1d_taylor{1}, '--b', LineWidth=2.5);
-    h(3) = plot(NaN, NaN, '--b', DisplayName="Taylor 1D", LineWidth=2.5);
+    h(3) = plot(NaN, NaN, '--b', DisplayName="Taylor", LineWidth=2.5);
 
     % Finite difference 1D
     plot(t_findif1d/60, y_findif1d{1}, ':g', LineWidth=2.5);
-    h(4) = plot(NaN,NaN, ':g', DisplayName="Diff. finite 1D", LineWidth=2.5);
+    h(4) = plot(NaN,NaN, ':g', DisplayName="Finite diff.", LineWidth=2.5);
 
-    % Final graph settings
-    xlabel("Temps (min)", Interpreter="latex", FontSize=17);
+    % Final graph settings (en)
+    xlabel("Time (min)", Interpreter="latex", FontSize=17);
     ylabel("Temperature ($^\circ$C)", Interpreter="latex", FontSize=17);
     leg = legend(h,Location="southeast", Interpreter="latex", FontSize=17);
     leg.ItemTokenSize = [30, 70]; grid minor;
     saveas(fig, figDir + "\" + dataIn.sysData.Name + ...
-        "\compare_theorical_rear_1D", 'epsc');
+        "\compare_theorical_rear_1D_en", 'epsc');
+
+    % Final graph settings (fr)
+    set(h(1), 'DisplayName', "Donn\'{e}es");
+    set(h(4), 'DisplayName', "Finite diff.");
+    xlabel("Temps (min)", Interpreter="latex", FontSize=17);
+    ylabel("Temp\'{e}rature ($^\circ$C)", Interpreter="latex", FontSize=17);
+    saveas(fig, figDir + "\" + dataIn.sysData.Name + ...
+        "\compare_theorical_rear_1D_fr", 'epsc');
+    title("Analyse 1D", Interpreter="latex", FontSize=23);
     
-    %% Compairison between 3D analysis and experimental results for rear face
+    %% Compairison between 2D analysis and experimental results for rear face
 
     fig = figure; hold on;
 
     % Theorical values
     plot(t/60, dataIn.y_back{analysisNumber}, 'ok', LineWidth=0.1, ...
         MarkerFaceColor='k', MarkerSize=.8);
-    h(1) = plot(NaN, NaN, 'ok', DisplayName="Donn\'{e}es", ...
+    h(1) = plot(NaN, NaN, 'ok', DisplayName="Exp. data", ...
         MarkerSize=7, MarkerFaceColor='k');
 
     % Pade 3D
     plot(t/60, ymulti_pade{1}, '-.y', LineWidth=2.5);
-    h(2) = plot(NaN,NaN, '-.y', DisplayName="Pade "+type,LineWidth=2.5);
+    h(2) = plot(NaN,NaN, '-.y', DisplayName="Pade",LineWidth=2.5);
 
     % Taylor 3D
     plot(t/60, ymulti_taylor{1}, '--m', LineWidth=2.5);
-    h(3) = plot(NaN, NaN, '--m', DisplayName="Taylor "+type, LineWidth=2.5);
+    h(3) = plot(NaN, NaN, '--m', DisplayName="Taylor", LineWidth=2.5);
 
     % Finite difference 3D
     plot(t_findif2d/60, y_findif2d{1}, ':c', LineWidth=2.5);
-    h(4) = plot(NaN,NaN, ':c', DisplayName="Diff. finite 2D", LineWidth=2.5);
+    h(4) = plot(NaN,NaN, ':c', DisplayName="Finite diff.", LineWidth=2.5);
 
     % Final graph settings
-    xlabel("Temps (min)", Interpreter="latex", FontSize=17);
+    xlabel("Time (min)", Interpreter="latex", FontSize=17);
     ylabel("Temperature ($^\circ$C)", Interpreter="latex", FontSize=17);
     leg = legend(h,Location="southeast", Interpreter="latex", FontSize=17);
     leg.ItemTokenSize = [30, 70]; grid minor;
     saveas(fig, figDir + "\" + dataIn.sysData.Name + ...
-        "\compare_theorical_rear_2D", 'epsc');
+        "\compare_theorical_rear_2D_en", 'epsc');
 
-    % V2
+    % Final graph settings (fr)
+    set(h(1), 'DisplayName', "Donn\'{e}es");
+    set(h(4), 'DisplayName', "Finite diff.");
+    xlabel("Temps (min)", Interpreter="latex", FontSize=17);
+    ylabel("Temp\'{e}rature ($^\circ$C)", Interpreter="latex", FontSize=17);
+    saveas(fig, figDir + "\" + dataIn.sysData.Name + ...
+        "\compare_theorical_rear_2D_fr", 'epsc');
+    title("Analyse 2D", Interpreter="latex", FontSize=23);
+
+    %% Compairison between 2DV2 analysis and experimental results for rear face
+
     fig = figure; hold on; h = [];
 
     % Theorical values
     plot(t/60, dataIn.y_back{analysisNumber}, 'ok', LineWidth=0.1, ...
         MarkerFaceColor='k', MarkerSize=.8);
-    h(1) = plot(NaN, NaN, 'ok', DisplayName="Donn\'{e}es", ...
+    h(1) = plot(NaN, NaN, 'ok', DisplayName="Exp. data", ...
         MarkerSize=7, MarkerFaceColor='k');
 
     % Finite difference 3D
     plot(t_findif2d_v2/60, y_findif2d_v2{1}, ':c', LineWidth=2.5);
-    h(2) = plot(NaN,NaN, ':c', DisplayName="Diff. finite", LineWidth=2.5);
+    h(2) = plot(NaN,NaN, ':c', DisplayName="Finite diff. 2D", LineWidth=2.5);
 
     % Final graph settings
-    xlabel("Temps (min)", Interpreter="latex", FontSize=17);
+    xlabel("Time (min)", Interpreter="latex", FontSize=17);
     ylabel("Temperature ($^\circ$C)", Interpreter="latex", FontSize=17);
     leg = legend(h,Location="southeast", Interpreter="latex", FontSize=17);
     leg.ItemTokenSize = [30, 70]; grid minor;
     saveas(fig, figDir + "\" + dataIn.sysData.Name + ...
-        "\compare_theorical_rear_2D_v2", 'epsc');
+        "\compare_theorical_rear_2D_v2_en", 'epsc');
 
-
-    %% Compairison between 1D analysis and experimental results for front face
-
-    fig = figure; hold on;
-
-    % Theorical values
-    plot(t/60, dataIn.y_front{analysisNumber}, 'ok', LineWidth=0.1, ...
-        MarkerFaceColor='k', MarkerSize=.8);
-    h(1) = plot(NaN, NaN, 'ok', DisplayName="Donn\'{e}es", ...
-        MarkerSize=7, MarkerFaceColor='k');
-
-    % Pade 1D
-    plot(t/60, y1d_pade{2}, '-.r', LineWidth=2.5);
-    h(2) = plot(NaN, NaN, '-.r', DisplayName="Pade 1D", LineWidth=2.5);
-
-    % Taylor 1D
-    plot(t/60, y1d_taylor{2}, '--b', LineWidth=2.5);
-    h(3) = plot(NaN, NaN, '--b', DisplayName="Taylor 1D", LineWidth=2.5);
-
-    % Finite difference 1D
-    plot(t_findif1d/60, y_findif1d{2}, ':g', LineWidth=2.5);
-    h(4) = plot(NaN,NaN, ':g', DisplayName="Diff. finite 1D", LineWidth=2.5);
-
-    % Final graph settings
+    % Final graph settings (fr)
+    set(h(1), 'DisplayName', "Donn\'{e}es");
+    set(h(2), 'DisplayName', "Finite diff.");
     xlabel("Temps (min)", Interpreter="latex", FontSize=17);
-    ylabel("Temperature ($^\circ$C)", Interpreter="latex", FontSize=17);
-    leg = legend(h,Location="southeast", Interpreter="latex", FontSize=17);
-    leg.ItemTokenSize = [30, 70]; grid minor;
+    ylabel("Temp\'{e}rature ($^\circ$C)", Interpreter="latex", FontSize=17);
     saveas(fig, figDir + "\" + dataIn.sysData.Name + ...
-        "\compare_theorical_front_1D", 'epsc');
+        "\compare_theorical_rear_2D_v2_fr", 'epsc');
+    title("Analyse 2D", Interpreter="latex", FontSize=23);
 
-    %% Compairison between 3D analysis and experimental results for front face
+    %% Compairison between 2DV2 analysis and experimental results for front face
 
-    fig = figure; hold on;
-
-    % Theorical values
-    plot(t/60, dataIn.y_front{analysisNumber}, 'ok', LineWidth=0.1, ...
-        MarkerFaceColor='k', MarkerSize=.8);
-    h(1) = plot(NaN, NaN, 'ok', DisplayName="Donn\'{e}es", ...
-        MarkerSize=7, MarkerFaceColor='k');
-
-    % Pade 3D
-    plot(t/60, ymulti_pade{2}, '-.y', LineWidth=2.5);
-    h(2) = plot(NaN,NaN, '-.y', DisplayName="Pade "+type,LineWidth=2.5);
-
-    % Taylor 3D
-    plot(t/60, ymulti_taylor{2}, '--m', LineWidth=2.5);
-    h(3) = plot(NaN, NaN, '--m', DisplayName="Taylor "+type, LineWidth=2.5);
-
-    % Finite difference 3D
-    plot(t_findif2d/60, y_findif2d{2}, ':c', LineWidth=2.5);
-    h(4) = plot(NaN,NaN, ':c', DisplayName="Diff. finite 2D", LineWidth=2.5);
-
-    % Final graph settings
-    xlabel("Temps (min)", Interpreter="latex", FontSize=17);
-    ylabel("Temperature ($^\circ$C)", Interpreter="latex", FontSize=17);
-    leg = legend(h,Location="southeast", Interpreter="latex", FontSize=17);
-    leg.ItemTokenSize = [30, 70]; grid minor;
-    saveas(fig, figDir + "\" + dataIn.sysData.Name + ...
-        "\compare_theorical_front_2D", 'epsc');
-
-    % V2
     fig = figure; hold on; h = [];
 
     % Theorical values
-    plot(t/60, dataIn.y_back{analysisNumber}, 'ok', LineWidth=0.1, ...
+    plot(t/60, dataIn.y_front{analysisNumber}, 'ok', LineWidth=0.1, ...
         MarkerFaceColor='k', MarkerSize=.8);
     h(1) = plot(NaN, NaN, 'ok', DisplayName="Donn\'{e}es", ...
         MarkerSize=7, MarkerFaceColor='k');
@@ -354,9 +327,23 @@ function compare_results(dataIn, varargin)
     leg = legend(h,Location="southeast", Interpreter="latex", FontSize=17);
     leg.ItemTokenSize = [30, 70]; grid minor;
     saveas(fig, figDir + "\" + dataIn.sysData.Name + ...
-        "\compare_theorical_rear_2D_v2", 'epsc');
+        "\compare_theorical_front_2D_v2_en", 'epsc');
+
+    % Final graph settings (fr)
+    set(h(1), 'DisplayName', "Donn\'{e}es");
+    set(h(2), 'DisplayName', "Finite diff.");
+    xlabel("Temps (min)", Interpreter="latex", FontSize=17);
+    ylabel("Temp\'{e}rature ($^\circ$C)", Interpreter="latex", FontSize=17);
+    saveas(fig, figDir + "\" + dataIn.sysData.Name + ...
+        "\compare_theorical_front_2D_v2_fr", 'epsc');
+    title("Analyse 2D", Interpreter="latex", FontSize=23);
 
     %% Ending and outputs
     fprintf(repmat('\b', 1, 264));
+
+    msg = 'Press enter to continue...';
+    input(msg);
+    fprintf(repmat('\b', 1, length(msg)+3));
+    close all;
 
 end

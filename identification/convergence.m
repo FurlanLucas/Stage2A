@@ -43,6 +43,7 @@ function models = convergence(dataIn, maxOrder, delayOrders, varargin)
 
     % Defaults inputs
     minOrder = 1;
+    type = 1;
     
     % Optional inputs
     if ~isempty(varargin)
@@ -56,7 +57,10 @@ function models = convergence(dataIn, maxOrder, delayOrders, varargin)
                             "plus petite que celui pour l'ordre" + ...
                             "maximale.");
                     end
-                    break;                    
+                    break;
+                case ("type")
+                    type = varargin{arg, 2};
+                    break;
             end
         end
     end
@@ -80,7 +84,7 @@ function models = convergence(dataIn, maxOrder, delayOrders, varargin)
     J_bj = zeros(maxOrder-minOrder+1, 3);
 
     % Transform the data to get a single output system
-    dataIn.y = dataIn.y(:,1); % Take one output only
+    dataIn.y = dataIn.y(:,type); % Take one output only
     
     %% Model orders convergence
     
