@@ -1,58 +1,53 @@
 clc; clear; close all;
 %% Entrées et configurations
-figDir = 'outFig';         % [-] Emplacement pour les figures générées ;
-fileDataName = 'reentryData.csv'; % [-] Nom du fichier des données ;
-analysisName = 'sys1_isoBas';  % [-] Non de l'analyse a être réalisé ;
-maxOrderConv = 10;   % [-] Ordre maximale dans l'analyse de convergence ; 
-delayOrders = 1;               % [-] Ordre de retard à être analysée ;
-identNumber = 1;               % [-] Num. du experiment (identification) ;
-validNumber = 2;               % [-] Num. du experiment (validation) ;
-fs = 1;                        % [s] Fréquence d'échantillonage ;
+figDir = 'outFig';                   % Figure output directory
+fileDir = 'outCsv';                   % File output directory
+inputFileName = 'reentryData1.csv';  % Input file name
+outputFileName = 'outFile1.csv';     % Output file name
+analysisName = 'sys1_resFlu';        % Analysis name
+fs = 10;                              % [s] Sampling frequency
 
-%% Données expérimentales et sorties
+%% Output directory verification and multidimentional analysis
 
-if not(isfolder(figDir + "\" + analysisName))
-    mkdir(figDir + "\" + analysisName);
+if not(isfolder(figDir))
+    mkdir(figDir);
 end
 
+if not(isfolder(fileDir))
+    mkdir(fileDir);
+end
 
-%% Prendre les données de l'Onera et ceux expérimentales
-
-disp("Prends les données d'entrée.");
-%addpath('..\dataBase'); % Pour prendre la base de données
+disp("Loading variables.");
+addpath('..\dataBase'); % Pour prendre la base de données
 load("..\database\convertedData\" + analysisName + ".mat");
-expData = transformInput(expData);
 
-% Données d'identification
-identData = getexp(expData, identNumber);
+%% Flight data
 
-% Données de l'Onera
-[phi, t] = takeExpFlux(fileDataName);
+% Take from csv
+[phi, t] = takeExpFlux(inputFileName);
 
-%% Identification du retard
+% Figure EN
+fig = figure;
+plot(t/60, phi, 'r', Linewidth=1.5);
+grid minor;
+xlabel("Time (min)", Interpreter="latex", FontSize=17);
+ylabel("Heat flux (W/m$^2$)",Interpreter="latex",FontSize=17);
+saveas(fig, figDir + "\dataInterpolated.eps", 'epsc');
+title("Input heat flux", Interpreter="latex", FontSize=23);
 
-disp("Identification du retard.");
-delay = find_delay(identData);
 
-%% Identification de la dynamique du capteur
+%% Take the inverse
 
-disp("Analyse de convergence.");
-models = convergence(identData, maxOrderConv, delay);
-close all;
+[tension, t] = createTensionSignal(expData.sysData, phi, t, fs);
+toFile(tension, fileDir+"\"+outputFileName);
 
-%% Validation des données
+% Figure
+fig = figure;
+plot(t/60, tension, 'r', Linewidth=1.5);
+grid minor;
+xlabel("Time (min)", Interpreter="latex", FontSize=17);
+ylabel("Input tension (V)",Interpreter="latex",FontSize=17);
+saveas(fig, figDir + "\dataInterpolated.eps", 'epsc');
+title("Input generation", Interpreter="latex", FontSize=23);
 
-disp("Analyse de convergence.");
-resid = validation(expData, models);
-
-%% Inverse
-
-disp("Analyse des modèles inverses.");
-inversedModels = inverse(models, getexp(expData, 2));
-close all;
-
-%% Test l'inverse et cree la sortie
-
-disp("Cree les donnees inverses.");
-signal = createTensionSignal(inversedModels, phi, t, fs);
-
+%% Out
