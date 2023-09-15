@@ -52,18 +52,15 @@ function convertData()
             y_back = sysData(i).setOutputBack(toVar(y_back));
             v = toVar(v);
 
-            
-            % Other information
-            expData.y_front{j} = y_front;
-            expData.y_back{j} = y_back;
-            expData.v{j} = v;
-            expData.t{j} = t;
+            expData = expData.add(t, v, y_back, y_front);
             
         end   
         
+        % Other responses in the database
+        expData.isReentry = contains(allFileNames(pos), 'reentry');
+        expData.isStep = contains(allFileNames(pos), 'step');
+
         % Save the thermoData variable
-        steadyState = strfind({allFileNames{pos}}, 'S0');
-        expData.Ne = n_files - length([steadyState{:}]) - 1;
         save(dirOutputName + "\" +sysData(i).Name, "expData");
     end
 

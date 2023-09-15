@@ -10,6 +10,12 @@ classdef thermalData
     %   type associeted with it;
     %
     %   Ne: number of experiments realised;
+    %
+    %   isStep: boolean vector Ne x 1 to check if the current data is a step
+    %   response or not;
+    %
+    %   isReentry: boolean vector Ne x 1 to check if the current data is a 
+    %   response to reentry data or not;
     %   
     %   t: 1xNe cell with time samples in milliseconds, Ne being the number
     %   of experiments;
@@ -51,6 +57,13 @@ classdef thermalData
 
     %% Proprerties ----------------------------------------------------------------
     properties
+        Notes = {};               % [-] User notes.
+        isStep = [];              % [bool] Step data control
+        isReentry = [];           % [bool] Reentry data control
+    end 
+
+    % Read only
+    properties  (SetAccess = private)        
         Name = 'Empty';           % [-] Analysis name
         Ne = 0;                   % [-] Number of experiments
         t = {};                   % [ms] Time samples
@@ -58,8 +71,7 @@ classdef thermalData
         y_front = {};             % [°C] Temperature in the front face
         y_back = {};              % [°C] Température in the rear fece
         sysData = sysDataType;    % [-] System data
-        Notes = {};               % [-] User notes.
-    end 
+    end
 
     %% Methods --------------------------------------------------------------------
     methods
@@ -68,7 +80,7 @@ classdef thermalData
         function obj = thermalData(sysData)
             if nargin == 1
                 obj.Name = sysData.Name;
-                obj.sysData = sysData;
+                obj.sysData = sysData;                
             end
         end
 
@@ -83,6 +95,9 @@ classdef thermalData
 
         % Get method
         get(obj);
+
+        % Add a new experiment
+        objOut = add(obj, t, v, y_back, y_front);
 
     end
 end
