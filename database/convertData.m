@@ -48,10 +48,15 @@ function convertData()
             y_front = str2double(strrep(dataRead.y_front(4:end), ',','.'));            
             
             % Transforme the outputs in variation of outputs
-            y_front = sysData(i).setOutputFront(toVar(y_front));
-            y_back = sysData(i).setOutputBack(toVar(y_back));
-            v = toVar(v);
+            y_front = sysData(i).setOutputFront(y_front);
+            y_back = sysData(i).setOutputBack(y_back);
 
+            % To variation
+            ts = t(2)-t(1);
+            y_back = toVariation(y_back, 10e3/ts);
+            y_front = toVariation(y_front, 10e3/ts);
+
+            % Add data
             expData = expData.add(t, v, y_back, y_front);
             
         end   

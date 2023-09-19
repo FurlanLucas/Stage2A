@@ -1,5 +1,5 @@
-function out = toVar(in, samplesNorm)
-    %% toVar
+function out = toVariation(in, samplesNorm)
+    %% toVariation
     %
     % Change the variable to a variation format (with respect to the first
     % measure. in order to avoid noise influence, a mean value is taken for 
