@@ -32,6 +32,14 @@ function models = convergence(dataIn, maxOrder, delayOrders, varargin)
     %   models: struct with the idpolys given as the best result. Each
     %   field has the name of the noise structure.
     %
+    % Aditional options
+    %
+    %   minOrder: minimal order for the convergence analysis;
+    %
+    %   type: identifies the outputdata to be considered. By default,
+    %   type=1 specifies that will be used the back measured temperature
+    %   and type=2 specifies the front temperature.
+    %
     % See also arx, oe, armax, bj, iddata, thermalData
 
     %% Inputs
@@ -42,7 +50,7 @@ function models = convergence(dataIn, maxOrder, delayOrders, varargin)
     linSty = ["-"; "--"; "-."; ":"];       % Figure line styles
 
     % Defaults inputs
-    minOrder = 1;
+    minOrder = 3;
     type = 1;
     
     % Optional inputs
@@ -105,7 +113,7 @@ function models = convergence(dataIn, maxOrder, delayOrders, varargin)
             if order == minOrder
                 sys_init_oe = idpoly(1, sysARX.B, 1, 1, sysARX.A, ...
                     sysARX.NoiseVariance, sysARX.Ts);
-                sys_init_armax = idpoly(1, sysARX.B, [1 0], 1, sysARX.A, ...
+                sys_init_armax = idpoly(sysARX.A, sysARX.B, [1 0], 1, 1, ...
                     sysARX.NoiseVariance, sysARX.Ts);
                 sys_init_bj = idpoly(1, sysARX.B, [1 0], [1 0], ...
                     sysARX.A, sysARX.NoiseVariance, sysARX.Ts);
@@ -121,7 +129,7 @@ function models = convergence(dataIn, maxOrder, delayOrders, varargin)
             % OE model
             sys_init_oe.TimeUnit = 'milliseconds';
             sysOE = oe(dataIn, sys_init_oe);
-            J_oe(order-minOrder+1, 1) = 20*log10(sysOE.report.Fit.LossFcn);
+            J_oe(order-minOrder+1, 1) = mag2db(sysOE.report.Fit.LossFcn);
             J_oe(order-minOrder+1, 2) = sysOE.report.Fit.FPE;  
             J_oe(order-minOrder+1, 3) = sysOE.report.Fit.AIC; 
     
@@ -188,6 +196,15 @@ function models = convergence(dataIn, maxOrder, delayOrders, varargin)
         subplot(4, 1, 4);  hold on;
         plot(minOrder:maxOrder, J_bj(:, 3), colors(i), LineStyle=linSty(i), ...
             LineWidth=1.4, HandleVisibility='off');
+
+        % Outputs
+        if i == ceil(length(delayOrders)/2)
+            models.ARX = sysARX;
+            models.ARMAX = sysARMAX;
+            models.BJ = sysBJ;
+            models.OE = sysOE;
+        end
+
     end
     
     % Figure for equation error (final configuration)
@@ -242,9 +259,4 @@ function models = convergence(dataIn, maxOrder, delayOrders, varargin)
     sgtitle("Analyse de convergence pour l'erreur AIC", ...
         Interpreter="latex", FontSize=20);
 
-    %% Outputs
-    models.ARX = sysARX;
-    models.ARMAX = sysARMAX;
-    models.BJ = sysBJ;
-    models.OE = sysOE;
 end
