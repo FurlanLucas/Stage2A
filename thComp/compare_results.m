@@ -72,7 +72,7 @@ function compare_results(dataIn, varargin)
     padeOrder = 10;      % Order for Pade approximation
     seriesOrder = 10;    % Order for the series approximation (2D and 3D)
     analysisNumber = 1;  % Number of the dataset to be used
-    lossFactor = 0.2;   % Heat flux loss factor
+    lossFactor = 0.2;    % Heat flux loss factor
     
     % Optional inputs
     for i = 1:length(varargin)
@@ -184,7 +184,7 @@ function compare_results(dataIn, varargin)
         ymulti_taylor{2} = ymulti_taylor{2} + lsim(Fsmulti_taylor{i, 2}, ...
             phimultiD, t); % Front surface
     end
-    % 
+    
     % Simulation with finite difference in 2D
     fprintf("\tFinites diffences in 2D.\n");
     [y_findif2d, t_findif2d]  = finitediff2d(dataIn.sysData, t, ...
