@@ -60,6 +60,7 @@ classdef thermalData
         Notes = {};               % [-] User notes.
         isStep = [];              % [bool] Step data control
         isReentry = [];           % [bool] Reentry data control
+        isSteady = [];            % [bool] Steady-state data control
     end 
 
     % Read only
