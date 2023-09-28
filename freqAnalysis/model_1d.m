@@ -1,4 +1,4 @@
-function bodeOut = model_1d(dataIn, h, varargin)
+function bodeOut = model_1d(sysData, h, varargin)
     %% model_1d
     %
     % One dimentional analysis of the theorical transfer function F(s) =
@@ -17,7 +17,7 @@ function bodeOut = model_1d(dataIn, h, varargin)
     %   dataIn: thermalData variable with all the information for the
     %   system that will be simulated. The thermal coefficients are within
     %   the field sysData. It is possible also use a structure with the
-    %   same fields as a sysDataType;
+    %   same fields as a sysDataType or a direct sysDataType itself;
     %
     %   h: heat transfer coefficient in W/(m²K).
     %
@@ -49,36 +49,33 @@ function bodeOut = model_1d(dataIn, h, varargin)
 
     % Verify the optional arguments
     for i=1:2:length(varargin)        
-        switch varargin{i}
-            % Minimum frequency
-            case 'wmin'
-                wmin = varargin{i+1};
-
-            % Maximum frequency
-            case 'wmax'      
-                wmax = varargin{i+1};
-
-            % Number of frequency points 
-            case 'wpoints'     
+        switch varargin{i}            
+            case 'wmin' % Minimum frequency  
+                wmin = varargin{i+1};          
+            case 'wmax' % Maximum frequency
+                wmax = varargin{i+1};           
+            case 'wpoints' % Number of frequency points
                 wpoints = varargin{i+1};
-
-            % Error
             otherwise
-                error("Option << " + varargin{i} + "is not available.");
+                error("Option '" + varargin{i} + "' is not available.");
         end
     end
 
     % Verify the input type
-    if isa(dataIn, 'thermalData')
-        lambda = dataIn.sysData.lambda; % [W/mK] Thermal conductivity
-        a = dataIn.sysData.a;           % [m²/s] Thermal conductivity
-        ell = dataIn.sysData.ell;       % [m] Thermal conductivity
-    elseif isa(dataIn, 'struct')
-        lambda = dataIn.lambda; % [W/mK] Thermal conductivity
-        a = dataIn.a;           % [m²/s] Thermal conductivity
-        ell = dataIn.ell;       % [m] Thermal conductivity
+    if isa(sysData, 'sysDataType')
+        lambda = sysData.lambda; % [W/mK] Thermal conductivity
+        a = sysData.a;           % [m²/s] Thermal conductivity
+        ell = sysData.ell;       % [m] Thermal conductivity
+    elseif isa(sysData, 'thermalData')        
+        lambda = sysData.sysData.lambda; % [W/mK] Thermal conductivity
+        a = sysData.sysData.a;           % [m²/s] Thermal conductivity
+        ell = sysData.sysData.ell;       % [m] Thermal conductivity
+    elseif isa(sysData, 'struct')
+        lambda = sysData.lambda; % [W/mK] Thermal conductivity
+        a = sysData.a;           % [m²/s] Thermal conductivity
+        ell = sysData.ell;       % [m] Thermal conductivity
     else
-        error("Input << dataIn >> is not valid.");
+        error("Input 'dataIn' is not valid.");
     end
 
     %% Other variables

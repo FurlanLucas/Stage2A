@@ -1,4 +1,4 @@
-function [bodeOut, Fs_taylor] = model_2d_taylor(dataIn, h, taylorOrder, ...
+function [bodeOut, Fs_taylor] = model_2d_taylor(sysData, h, taylorOrder, ...
     seriesOrder, varargin)
     %% model_2d_taylor
     %
@@ -33,7 +33,7 @@ function [bodeOut, Fs_taylor] = model_2d_taylor(dataIn, h, taylorOrder, ...
     %   dataIn: thermalData variable with all the information for the
     %   system that will be simulated. The thermal coefficients are within
     %   the field sysData. It is possible also use a structure with the
-    %   same fields as a sysDataType;
+    %   same fields as a sysDataType or a direct sysDataType itself;
     %
     %   h: vector of heat transfer coefficients in W/(m²K). The first one
     %   is the value for the rear face hx2 and the second one is to the
@@ -76,40 +76,39 @@ function [bodeOut, Fs_taylor] = model_2d_taylor(dataIn, h, taylorOrder, ...
 
     % Verify the optional arguments
     for i=1:2:length(varargin)        
-        switch varargin{i}
-            % Minimum frequency
-            case 'wmin'
-                wmin = varargin{i+1};
-
-            % Maximum frequency
-            case 'wmax'      
-                wmax = varargin{i+1};
-
-            % Number of frequency points 
-            case 'wpoints'     
-                wpoints = varargin{i+1};
-
-            % Error
+        switch varargin{i}            
+            case 'wmin' % Minimum frequency
+                wmin = varargin{i+1};            
+            case 'wmax' % Maximum frequency    
+                wmax = varargin{i+1};            
+            case 'wpoints' % Number of frequency points      
+                wpoints = varargin{i+1}; 
             otherwise
-                error("Option << " + varargin{i} + "is not available.");
+                error("Option '" + varargin{i} + "' is not available.");
         end
     end
 
     % Verify the input type
-    if isa(dataIn, 'thermalData')
-        lambda = dataIn.sysData.lambda; % [W/mK] Thermal conductivity
-        a = dataIn.sysData.a;           % [m²/s] Thermal conductivity
-        ell = dataIn.sysData.ell;       % [m] Thermal conductivity
-        Rmax = dataIn.sysData.Size;     % [m] Termocouple size
-        R0 = dataIn.sysData.ResSize;    % [m] Resistence size
-    elseif isa(dataIn, 'struct')
-        lambda = dataIn.lambda; % [W/mK] Thermal conductivity
-        a = dataIn.a;           % [m²/s] Thermal conductivity
-        ell = dataIn.ell;       % [m] Thermal conductivity
-        Rmax = dataIn.Size;     % [m] Termocouple size
-        R0 = dataIn.ResSize;    % [m] Resistence size
+    if isa(sysData, 'thermalData')
+        lambda = sysData.sysData.lambda; % [W/mK] Thermal conductivity
+        a = sysData.sysData.a;           % [m²/s] Thermal conductivity
+        ell = sysData.sysData.ell;       % [m] Thermal conductivity
+        Rmax = sysData.sysData.Size;     % [m] Termocouple size
+        R0 = sysData.sysData.ResSize;    % [m] Resistence size
+    elseif isa(sysData, 'sysDataType')
+        lambda = sysData.lambda; % [W/mK] Thermal conductivity
+        a = sysData.a;           % [m²/s] Thermal conductivity
+        ell = sysData.ell;       % [m] Thermal conductivity
+        Rmax = sysData.Size;     % [m] Termocouple size
+        R0 = sysData.ResSize;    % [m] Resistence size
+    elseif isa(sysData, 'struct')
+        lambda = sysData.lambda; % [W/mK] Thermal conductivity
+        a = sysData.a;           % [m²/s] Thermal conductivity
+        ell = sysData.ell;       % [m] Thermal conductivity
+        Rmax = sysData.Size;     % [m] Termocouple size
+        R0 = sysData.ResSize;    % [m] Resistence size
     else
-        error("Input << dataIn >> is not valid.");
+        error("Input 'dataIn' is not valid.");
     end
 
     % Take the series order
