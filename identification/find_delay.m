@@ -1,42 +1,32 @@
-function nk = find_delay(dataIn)
+function find_delay(dataIn, analysis, varargin)
     %% find_delay
     %
     % Find the system delay.
 
     %% Inputs
+
+    % Default options
+    type = 1;
     
-    % Fixed inputs
-    figDir = 'outFig';                     % Output figures directory
-    colors = ['r','g','b','y'];            % Figure colors
-    linSty = ["-"; "--"; "-."; ":"];       % Figure line styles
+    % Optional inputs
+    if ~isempty(varargin)
+        for arg = 1:length(varargin)
+            switch varargin{arg,1}
+                case ("type")
+                    type = varargin{arg, 2};
+                    break;
+            end
+        end
+    end
 
     %% Init variables
-    nk = zeros(dataIn.Ne, 1);
+    disp("Delay indentification for temperature in the rear face");
+    delay_matlabMethods(dataIn, analysis, 1);
+    delay_corrFFT(dataIn, analysis, 1);
 
-    %% Main analysis
-    for i = 1:dataIn.Ne
-
-        % Get the ith data
-        data = getexp(dataIn, i);
-        data.y = data.y(:,1); % Take one output only
-
-        % Delay est method
-        nk(i) = delayest(data);
-        fprintf("\tFor set number %s : nk = %d;\n", ...
-            data.ExperimentName{1}, nk(i));
-
-        % Graphics
-        h = impulseest(data);
-        figure, showConfidence(impulseplot(h))
-    end
-    disp(' ');
-
-    %% Fin de l'analyse
-    msg = 'Press any key to continue...';
-    input(msg);
-    fprintf(repmat('\b', 1, length(msg)+3));
-    close all;
-    nk = 0;
+    disp("Delay indentification for temperature in the front face");
+    delay_matlabMethods(dataIn, analysis, 2);
+    delay_corrFFT(dataIn, analysis, 2);
 
 end
 
