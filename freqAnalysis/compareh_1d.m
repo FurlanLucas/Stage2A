@@ -3,6 +3,29 @@ function compareh_1d(sysData, analysis, h_comp)
     %
     % Use the 1D analysis to compare the results for different values of 
     % heat transfer coefficient h.
+    %
+    % Calls
+    %
+    %   compareh_1d(sysData, analysis, h_comp): compares the bode diagram
+    %   for 1d analysis using the heat transfer coefficent defined in
+    %   h_comp;
+    %
+    % Inputs
+    %
+    %   sysData: system's data, giving as a sysDataType;
+    %
+    %   analysis: struct with analysis' name, graph colors and output
+    %   directories;
+    %
+    %   h: vector of heat transfer coefficients in W/(m²K). The first one
+    %   is the value for one dimensional analysis, the second is for the
+    %   multidimensional analysis. For instance, h=[hx, hx, hr1] for a 2d
+    %   analysis. If just one value is givin for a multidimensional
+    %   analysis, it will be assumed that all heat transfer coefficients
+    %   are equal. If just one value is giving, it will be the same for
+    %   both anaylis.
+    %
+    % See also Contents, thermalData, analysisSettings.
 
     %% Inputs
     analysisName = sysData.Name;

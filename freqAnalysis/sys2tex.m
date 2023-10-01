@@ -1,4 +1,4 @@
-function sys2tex(expData)
+function sys2tex(expData, analysis)
     %% systemDataTable
     %
     %   Creates tables for latex repport with system information.
@@ -7,7 +7,7 @@ function sys2tex(expData)
 
     %% Inputs
 
-    dirOut = 'texOut';
+    dirOut = analysis.figDir;
 
     %% System data
 

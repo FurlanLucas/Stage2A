@@ -1,12 +1,36 @@
 function comparePade_2d(sysData, analysis, h, orders)
     %% comparePade_2d
     %
+    % Simulate a comparison for different order of a Pade approximation for
+    % 2D model.
     %
+    % Calls:
+    %
+    %   comparePade_2d(sysData, analysis, h, orders): simulate the sysData
+    %   for the configurations in analysis with a heat transfer coefficient
+    %   h and for all orders in the last input.
+    %
+    % Inputs
+    %
+    %   sysData: system's data, giving as a sysDataType;
+    %
+    %   analysis: struct with analysis' name, graph colors and output
+    %   directories;
+    %
+    %   h: vector of heat transfer coefficients in W/(m²K). The first one
+    %   is the value for the rear face hx2 and the second one is to the
+    %   external surface in r direction hr2;
+    %
+    %   orders: vector of polynomial approximation orders.
+    %
+    % See also Contents, thermalData, analysisSettings.
+
 
     %% Inputs
     analysisName = sysData.Name;
     figDir = analysis.figDir;
     colors = analysis.colors;
+    seriesOrder = 6;
 
     % Choos the multidimenstional analysis to be used
     if strcmp(sysData.Geometry, "Cylinder") % 2D
@@ -22,7 +46,11 @@ function comparePade_2d(sysData, analysis, h, orders)
     end
 
     % Simulation
-    results_multi = model_multi(sysData, h*ones(1, 5));
+    if length(h)==1
+        results_multi = model_multi(sysData, h*ones(1,5));
+    else
+        results_multi = model_multi(sysData, h);
+    end
 
     %% Main code for heat flux transfer function 
     
@@ -30,7 +58,7 @@ function comparePade_2d(sysData, analysis, h, orders)
     fig = figure;
     for i=1:length(orders)
         results_multi_pade = model_multi_pade(sysData, h*ones(1, 5), ...
-            orders(i), 6);
+            orders(i), seriesOrder);
     
         subplot(2,1,1);
         semilogx(results_multi_pade.w, ...
@@ -72,7 +100,7 @@ function comparePade_2d(sysData, analysis, h, orders)
     fig = figure;
     for i=1:length(orders)
         results_multi_pade = model_multi_pade(sysData, h*ones(1, 5), ...
-            orders(i), 6);
+            orders(i), seriesOrder);
     
         subplot(2,1,1);
         semilogx(results_multi_pade.w, ...

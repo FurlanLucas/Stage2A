@@ -1,4 +1,4 @@
-function tf2tex(tf, variable, name, factorPower)
+function tf2tex(tf, analysis, variable, name, factorPower)
     %% tf2tex
     %
     % Writes a transfer function in latex form. It is used to repport tex
@@ -6,13 +6,14 @@ function tf2tex(tf, variable, name, factorPower)
     %
     % Calls
     %
-    %   tf2tex(tf, variable, name): creates a file named name.tex in the
-    %   tex files output directory with the expression of the transfer
+    %   tf2tex(tf, analysis, variable, name): creates a file named name.tex 
+    %   in the tex files output directory with the expression of the transfer
     %   function. The name of the transfer function is saved as name. A
-    %   label is created with name;
+    %   label is created with name. The analysis struct saves the output
+    %   file name;
     %
-    %   tf2tex(tf, variable, name): creates a file named name.tex in the
-    %   tex files output directory with the expression of the transfer
+    %   tf2tex(tf, analysis, variable, name): creates a file named name.tex 
+    %   in the tex files output directory with the expression of the transfer
     %   function. The name of the transfer function is saved as name. A
     %   label is created with name and a factor of 10^factorPower is used 
     %   in the numerator. The denominator is displayed as itself.
@@ -21,6 +22,8 @@ function tf2tex(tf, variable, name, factorPower)
     %
     %   tf: matlab transfer function variable to be written in tex file;
     %
+    %   analysis: analysis settings;
+    %
     %   variable: string with variable name to be created in the tex file;
     %
     %   name: name of the tex output file and the label for the equation;
@@ -28,10 +31,10 @@ function tf2tex(tf, variable, name, factorPower)
     %   factorPower: powerFactor to be applayed to the numerator, default
     %   value is 1.
     %
-    % See also main_freqAnalysis.
+    % See also Contents, analysisSettings.
 
     %% Inputs
-    dirOut = 'texOut';
+    dirOut = analysis.texDir;
 
     fileHandle = fopen(dirOut + "\" + name + ".tex", 'w');
     n_num = length(tf.Numerator{1});

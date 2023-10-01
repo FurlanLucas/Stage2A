@@ -1,7 +1,30 @@
 function compareTaylor_2d(sysData, analysis, h, orders)
     %% compareTaylor_2d
     %
+    % Simulate a comparison for different order of a Taylor approximation for
+    % 2D model.
     %
+    % Calls:
+    %
+    %   compareTaylor_2d(sysData, analysis, h, orders): simulate the sysData
+    %   for the configurations in analysis with a heat transfer coefficient
+    %   h and for all orders in the last input.
+    %
+    % Inputs
+    %
+    %   sysData: system's data, giving as a sysDataType;
+    %
+    %   analysis: struct with analysis' name, graph colors and output
+    %   directories;
+    %
+    %   h: vector of heat transfer coefficients in W/(m²K). The first one
+    %   is the value for the rear face hx2 and the second one is to the
+    %   external surface in r direction hr2;
+    %
+    %   orders: vector of polynomial approximation orders.
+    %
+    % See also Contents, thermalData, analysisSettings.
+
 
     %% Inputs
     analysisName = sysData.Name;

@@ -1,7 +1,33 @@
 function compareTaylor_1d(sysData, analysis, h, orders)
     %% compaireTaylor_1d
     %
-    % Simulate a comparison
+    % Simulate a comparison for different order of a Taylor approximation for
+    % 1D model.
+    %
+    % Calls:
+    %
+    %   compareTaylor_1d(sysData, analysis, h, orders): simulate the sysData
+    %   for the configurations in analysis with a heat transfer coefficient
+    %   h and for all orders in the last input.
+    %
+    % Inputs
+    %
+    %   sysData: system's data, giving as a sysDataType;
+    %
+    %   analysis: struct with analysis' name, graph colors and output
+    %   directories;
+    %
+    %   h: vector of heat transfer coefficients in W/(m²K). The first one
+    %   is the value for one dimensional analysis, the second is for the
+    %   multidimensional analysis. For instance, h=[hx, hx, hr1] for a 2d
+    %   analysis. If just one value is givin for a multidimensional
+    %   analysis, it will be assumed that all heat transfer coefficients
+    %   are equal. If just one value is giving, it will be the same for
+    %   both anaylis.
+    %
+    %   orders: vector of polynomial approximation orders.
+    %
+    % See also Contents, thermalData, analysisSettings.
 
     %% Inputs
     analysisName = sysData.Name;

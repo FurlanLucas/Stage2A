@@ -1,7 +1,28 @@
 function comparePadeTaylor(sysData, analysis, h)
     %% comparePadeTaylor
     %
-    % Compare the results of Pade and Taylor approximations
+    % Simulate a comparison for different order of a Pade and Taylor
+    % theoretical results for 1D models.
+    %
+    % Calls:
+    %
+    %   comparePadeTaylor(sysData, analysis, h): simulate the sysData
+    %   for the configurations in analysis with a heat transfer coefficient
+    %   h.
+    %
+    % Inputs
+    %
+    %   sysData: system's data, giving as a sysDataType;
+    %
+    %   analysis: struct with analysis' name, graph colors and output
+    %   directories;
+    %
+    %   h: vector of heat transfer coefficients in W/(m²K). The first one
+    %   is the value for the rear face hx2 and the second one is to the
+    %   external surface in r direction hr2;
+    %
+    % See also Contents, thermalData, analysisSettings.
+
 
     %% Inputs
     analysisName = sysData.Name;
