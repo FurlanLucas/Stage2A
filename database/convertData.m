@@ -62,9 +62,12 @@ function convertData()
         end   
         
         % Other responses in the database
-        expData.isReentry = contains(allFileNames(pos), 'reentry');
-        expData.isStep = contains(allFileNames(pos), 'step');
-        expData.isSteady = contains(allFileNames(pos), 'steady');
+        allExp = 1:n_files;
+        expData.isReentry = allExp(contains(allFileNames(pos), 'reentry'));
+        expData.isStep = allExp(contains(allFileNames(pos), 'step'));
+        expData.isSteady = allExp(contains(allFileNames(pos), 'steady'));
+        expData.isPRBS = setdiff(allExp, [expData.isStep, ...
+            expData.isSteady, expData.isReentry]);
 
         % Save the thermoData variable
         save(dirOutputName + "\" +sysData(i).Name, "expData");

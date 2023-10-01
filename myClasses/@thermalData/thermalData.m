@@ -11,11 +11,17 @@ classdef thermalData
     %
     %   Ne: number of experiments realised;
     %
-    %   isStep: boolean vector Ne x 1 to check if the current data is a step
-    %   response or not;
+    %   isPRBS: integer vector with the analysis number that corresponds to
+    %   PRBS as input;
     %
-    %   isReentry: boolean vector Ne x 1 to check if the current data is a 
-    %   response to reentry data or not;
+    %   isSteady: integer vector with the analysis number that corresponds to
+    %   a steady-state analysis
+    %
+    %   isStep: integer vector with the analysis number that corresponds to
+    %   all step responses;
+    %
+    %   isReentry: integer vector with the analysis number that corresponds to
+    %   all reentry responses;
     %   
     %   t: 1xNe cell with time samples in milliseconds, Ne being the number
     %   of experiments;
@@ -58,6 +64,7 @@ classdef thermalData
     %% Proprerties ----------------------------------------------------------------
     properties
         Notes = {};               % [-] User notes.
+        isPRBS = [];              % [bool] PRBS data control
         isStep = [];              % [bool] Step data control
         isReentry = [];           % [bool] Reentry data control
         isSteady = [];            % [bool] Steady-state data control
