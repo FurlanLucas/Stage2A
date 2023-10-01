@@ -11,10 +11,8 @@ fprintf("<strong>Frequency analysis</strong>\n");
 
 %% Output directory verification and multidimentional analysis
 
-analysis = analysisSettings(analysisName);
-
 disp("Loading variables.");
-
+analysis = analysisSettings(analysisName);
 load("..\database\convertedData\" + analysisName + ".mat");
 
 %% Main simulations

@@ -16,25 +16,28 @@
 %   model_3d_taylor         - Taylor approximation for 3D model
 %
 % Compare analysis (figure generation)
+%   compare_1d2d            - Compare the 1D and 2D analysis
 %   compareh_1d             - Compare tf for different h
 %   comparePade_1d          - Compare the Pade approximations in 1D
-%   compareTaylor_1d        - Compare the Taylor approximations in 1D
-%   comparePadeTaylor       - Compare the Taylor and Pade analysis
-%   compare_1d2d            - Compare the 1D and 2D analysis
 %   comparePade_2d          - Compare the Pade approximations in 2D
+%   comparePadeTaylor       - Compare the Taylor and Pade analysis
+%   compareTaylor_1d        - Compare the Taylor approximations in 1D
 %   compareTaylor_2d        - Compare the Taylor approximations in 2D
 %
 % Repport
 %   eigenValueRoots         - Shows the grph of eigen value roots
-%   table2tex               - Creates the tex tables for the repport
+%   sys2tex                 - Creates the tex tables for the repport
 %   tf2tex                  - Creates a tex equation using a tf as input
+%   writeTransferFunctions  - Write the transfer functions to output
+%   prec2table              - Write the precision in approximaitons to tex
 %
 % Other files
-%   main_freqAnalysis       - Do 1D and 2D/3D analysis at once (main file)
+%   main                    - Do 1D and 2D/3D analysis at once (main file)
+%   analysisSettings        - Set analysis options
 %   bisec                   - Bisection method to find functions zeros
 %   J_roots                 - Roots of Bessel functions of first kind
 %   mypoly                  - Contains all the information for poly class
-%   outFig                  - Output figure directory
-%   texOut                  - Output tex files directory
+%   figOut                  - Output figure directory (to be created)
+%   texOut                  - Output tex files directory (to be created)
 %
 % See also sysDataType, thermalData.
