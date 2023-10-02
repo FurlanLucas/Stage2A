@@ -1,4 +1,4 @@
-function h = steadyState(dataIn, varargin)
+function h = steadyState(dataIn, analysis, varargin)
     %% steadyState
     %
     % Function to estimate the value of the heat transfer coefficient based
@@ -15,101 +15,71 @@ function h = steadyState(dataIn, varargin)
     % Inputs
     %
     %   dataIn: thermalData variable with all the information for the
-    %   system that will be simulated.
+    %   system that will be simulated;
+    %
+    %   analysis: struct with analysis' name, graph colors and output
+    %   directories.
     %
     % Outputs
     %
-    %   h: heat transfer coefficient in W/(m²K).
+    %   h: vector N x 1 of heat transfer coefficients in W/(m²K), with N
+    %   the number of experiments identified as isSteady in thermalData.
     %
     % Aditional options
     %
-    %   M: number of samplings for taking the avarage.
+    %   M: number of samplings for taking the avarage;
     %
     % See also thermalData.
 
     %% Inputs
-    figDir = 'outFig';            % Directory for output figures
-    analysisName = dataIn.Name;   % Analysis name
-    M = 100;                      % Smaplings number for steady state
+    M = 100;  % Smaplings number for steady state
 
-    %% Directories verification and variables config
-
-    if not(isfolder(figDir + "\" + analysisName))
-        mkdir(figDir + "\" + analysisName);
-    end
-
-    % Optional inputs
-    if ~isempty(varargin)
-        for arg = 1:length(varargin)
-            switch varargin{arg,1}
-                case ("M")
-                    M = getexp(dataIn, varargin{arg, 2});
-                    break;
-            end
+    % Verify the optional arguments
+    for i=1:2:length(varargin)        
+        switch varargin{i}            
+            case 'M' % Number of samples to take the mean  
+                M = varargin{i+1};   
+            otherwise
+                error("Option '" + varargin{i} + "' is not available.");
         end
     end
 
-    %% Input dynamics
+    n_data = length(dataIn.isSteady);
+    h = zeros(n_data, 1);
 
-    % Take data
-    t = dataIn.t{dataIn.Ne};
-    phi = dataIn.phi{dataIn.Ne};
-    v = dataIn.v{dataIn.Ne};
+    %% Main
+    for i = 1:n_data
 
-    % English
-    fig = figure;
-    subplot(2, 1, 1);
-    plot(t/60e3, phi, 'r', LineWidth=1.5);
-    grid minor; 
-    ylabel({"Heat flux", "$(W/m^2)$"}, ...
-        Interpreter="latex", FontSize=17);
-    subplot(2, 1, 2);
-    plot(t/60e3, v, 'b', LineWidth=1.5);
-    ylabel("Input tension (V)", Interpreter="latex", FontSize=17);
-    xlabel("Time (min)",Interpreter="latex",FontSize=17);
-    grid minor; fig.Position = [385 108 611 462];
-    saveas(fig, figDir + "\" + analysisName + "\" + ...
-        "Change_to_flux_en.eps", 'epsc');    
-
-    % French
-    ylabel({"Tension", "d'entr\'{e}e (V)"}, Interpreter="latex", ...
-        FontSize=17);
-    xlabel("Temps (min)",Interpreter="latex",FontSize=17);
-    subplot(2, 1, 1);
-    ylabel({"Flux de chaleur", "en d'entr\'{e}e $(W/m^2)$"}, ...
-        Interpreter="latex", FontSize=17);
-    saveas(fig, figDir + "\" + analysisName + "\" + ...
-        "Change_to_flux_fr.eps", 'epsc');    
-
-    %% Steady state figure
-
-    % Take data
-    t = dataIn.t{dataIn.Ne+1};
-    phi = dataIn.phi{dataIn.Ne+1};
-    y = dataIn.y_back{dataIn.Ne+1};
-
-    % English
-    fig = figure();
-    plot(t/3600e3, y, 'b', LineWidth=0.5); grid minor;
-    ylabel("Temperature ($^\circ$C)", Interpreter="latex", ...
-        FontSize=17);
-    xlabel("Time (h)",Interpreter="latex",FontSize=17);
-    saveas(fig, figDir + "\" + analysisName + "\" + ...
-        "steadyState_en.eps", 'epsc');    
-
-    % French
-    ylabel("Temp\'{e}rature ($^\circ$C)", Interpreter="latex", ...
-        FontSize=17);
-    xlabel("Temps (h)",Interpreter="latex",FontSize=17);
-    saveas(fig, figDir + "\" + analysisName + "\" + ...
-        "steadyState_fr.eps", 'epsc');    
-
-
-    %% Heat transfer coefficient
-
-    PHI = mean(phi(end-M:end));
-    TEMP = mean(y(end-M:end));
-    h = dataIn.sysData.takeResArea*PHI/(dataIn.sysData.takeArea*TEMP);    
+        % Input data
+        y = dataIn.y_back{dataIn.isSteady(i)};
+        t = dataIn.t{dataIn.isSteady(i)};
+        phi = dataIn.phi{dataIn.isSteady(i)};
+    
+        % Steady state figure in english
+        fig = figure();
+        plot(t/3600e3, y, 'b', LineWidth=0.5); grid minor;
+        ylabel("Temperature ($^\circ$C)", Interpreter="latex", ...
+            FontSize=17);
+        xlabel("Time (h)",Interpreter="latex",FontSize=17);
+        saveas(fig, analysis.figDir + "\" + analysis.name + "\" + ...
+            "steadyState_en.eps", 'epsc');    
+    
+        % Steady state figure in french
+        ylabel("Temp\'{e}rature ($^\circ$C)", Interpreter="latex", ...
+            FontSize=17);
+        xlabel("Temps (h)",Interpreter="latex",FontSize=17);
+        saveas(fig, analysis.figDir + "\" + analysis.name + "\" + ...
+            "steadyState_fr.eps", 'epsc');    
+    
+    
+        %% Heat transfer coefficient
+    
+        PHI = mean(phi(end-M:end));
+        TEMP = mean(y(end-M:end));
+        h(i) = dataIn.sysData.takeResArea*PHI/(dataIn.sysData.takeArea*TEMP);    
+    
+        fprintf("\tFor %d dataset: h = %.1f WK/m²\n", i, h(i));
+    end
 
 end
 
