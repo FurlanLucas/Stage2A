@@ -10,6 +10,16 @@ function delay_corrFFT(dataIn, analysis, type)
     %   delay for a correlation and FFT analysis. Also, displays the time
     %   observation for which the delay can be deduced.
     %
+    % Inputs
+    %
+    %   dataIn: thermalData object with all datasets to be analysed;
+    %
+    %   analysis: struct with analysis' name, graph colors and output
+    %   directories;
+    %
+    %   type: switch between back temperature analysis for type=1 and 
+    %   front temperature analysis for type=2.
+    %
     % See also thermalData, Contents, AnalysisSettings.
 
     %% Inputs

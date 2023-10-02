@@ -13,6 +13,16 @@ function delay_matlabMethods(dataIn, analysis, type)
     %   back face model and if type==2 it will be done with respect to the 
     %   front face model.
     %
+    % Inputs
+    %
+    %   dataIn: thermalData object with all datasets to be analysed;
+    %
+    %   analysis: struct with analysis' name, graph colors and output
+    %   directories;
+    %   
+    %   type: switch between back temperature analysis for type=1 and 
+    %   front temperature analysis for type=2.
+    %
     % See also Contents, thermalData, analysisSettings.
 
     %% Main
