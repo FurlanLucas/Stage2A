@@ -9,7 +9,9 @@ function settings = analysisSettings(name, varargin)
     % Calls
     %
     %   analysisSettings(name): set the analysis parameters for the dataset
-    %   'name' in database.
+    %   'name' in database;
+    %
+    %   analysisSettings(__, options): take the optional arguments.
     %
     % Inputs
     %

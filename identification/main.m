@@ -27,11 +27,11 @@ validData = expData.getexp(setdiff(expData.isPRBS, identNumber));
 
 % Delay analysis
 disp("Delay analysis.");
-find_delay(expData, analysis); close all;
+%find_delay(expData, analysis); close all;
 
 % Steady-state
 disp("Steady-state analysis.");
-%steadyState(expData);
+steadyState(expData, analysis);
 
 % Analysis for the convergence of models
 disp("Convergence analysis.");
