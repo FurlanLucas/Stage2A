@@ -1,4 +1,4 @@
-function models = convergence(dataIn, maxOrder, delayOrders, varargin)
+function models = convergence(dataIn, analysis, maxOrder, delayOrders, varargin)
     %% convergence
     %
     % Function that verifies the model convergence for each noise structure
@@ -20,9 +20,12 @@ function models = convergence(dataIn, maxOrder, delayOrders, varargin)
     %   the field sysData. It is not possible also use a structure in this
     %   case;
     %
+    %   analysis: struct with analysis' name, graph colors and output
+    %   directories;
+    %
     %   maxOrder: integer to specify the maximum order for the models. It
     %   will use the same order for the numerator and denominator of both
-    %   system and noise's models.
+    %   system and noise's models;
     %
     %   delayOrders: vector of integer with all the delay values to be
     %   analysed.
@@ -44,41 +47,35 @@ function models = convergence(dataIn, maxOrder, delayOrders, varargin)
 
     %% Inputs
     
-    % Figure options
-    figDir = 'outFig';                     % Output figures directory
-    colors = ['r','g','b','y'];            % Figure colors
-    linSty = ["-"; "--"; "-."; ":"];       % Figure line styles
-
     % Defaults inputs
-    minOrder = 3;
+    minOrder = 2;
     type = 1;
+    finalOrder.OE = maxOrder;
+    finalOrder.ARX = maxOrder;
+    finalOrder.ARMAX = maxOrder;
+    finalOrder.BJ = maxOrder;
     
     % Optional inputs
-    if ~isempty(varargin)
-        for arg = 1:length(varargin)
-            switch varargin{arg,1}
-                case ("minOrder")
-                    if minOrder < maxOrder
-                        minOrder = varargin{arg, 2};
-                    else
-                        error("La valeur de l'ordre minimale doit être"+...
-                            "plus petite que celui pour l'ordre" + ...
-                            "maximale.");
-                    end
-                    break;
-                case ("type")
-                    type = varargin{arg, 2};
-                    break;
-            end
+    for i=1:2:length(varargin)        
+        switch varargin{i}
+            case 'minOrder'
+                if minOrder <= maxOrder
+                    minOrder = varargin{i+1};
+                else
+                    error("La valeur de l'ordre minimale doit être"+...
+                        "plus petite que celui pour l'ordre" + ...
+                        "maximale.");
+                end
+            case 'type'      
+                type = varargin{i+1};
+            case 'finalOrder'      
+                finalOrder = varargin{i+1};
+            otherwise
+                error("Option << " + varargin{i} + "is not available.");
         end
     end
     
     %% Directories verification and variables config
-
-    analysisName = dataIn.Name;
-    if not(isfolder(figDir + "\" + analysisName))
-        mkdir(figDir + "\" + analysisName);
-    end
     
     % Model parameters
     arxOpt = arxOptions('Focus', 'simulation');
@@ -97,17 +94,20 @@ function models = convergence(dataIn, maxOrder, delayOrders, varargin)
     %% Model orders convergence
     
     figLossFunc = figure;
-    figFPE = figure;
+    figBIC = figure;
     figAIC = figure;
     
     for i = 1:length(delayOrders)
         for order = minOrder:maxOrder
+
+            % Array position
+            pos = order-minOrder+1;
     
             % ARX model
             sysARX = arx(dataIn, [order, order+1, delayOrders(i)], arxOpt);
-            J_arx(order-minOrder+1, 1) = mag2db(sysARX.report.Fit.LossFcn);
-            J_arx(order-minOrder+1, 2) = sysARX.report.Fit.FPE;  
-            J_arx(order-minOrder+1, 3) = sysARX.report.Fit.AIC; 
+            J_arx(pos, 1) = mag2db(sysARX.report.Fit.LossFcn);
+            J_arx(pos, 2) = sysARX.report.Fit.BIC;  
+            J_arx(pos, 3) = sysARX.report.Fit.AIC; 
     
             % Init optimization (non linear)
             if order == minOrder
@@ -129,133 +129,155 @@ function models = convergence(dataIn, maxOrder, delayOrders, varargin)
             % OE model
             sys_init_oe.TimeUnit = 'milliseconds';
             sysOE = oe(dataIn, sys_init_oe);
-            J_oe(order-minOrder+1, 1) = mag2db(sysOE.report.Fit.LossFcn);
-            J_oe(order-minOrder+1, 2) = sysOE.report.Fit.FPE;  
-            J_oe(order-minOrder+1, 3) = sysOE.report.Fit.AIC; 
+            J_oe(pos, 1) = mag2db(sysOE.report.Fit.LossFcn);
+            J_oe(pos, 2) = sysOE.report.Fit.BIC;  
+            J_oe(pos, 3) = sysOE.report.Fit.AIC; 
     
             % ARMAX model
             sys_init_armax.TimeUnit = 'milliseconds';
             sysARMAX = armax(dataIn, sys_init_armax, armaxOpt);
-            J_armax(order-minOrder+1, 1) = ...
-                mag2db(sysARMAX.report.Fit.LossFcn);
-            J_armax(order-minOrder+1, 2) = sysARMAX.report.Fit.FPE;
-            J_armax(order-minOrder+1, 3) = sysARMAX.report.Fit.AIC;
+            J_armax(pos, 1) = mag2db(sysARMAX.report.Fit.LossFcn);
+            J_armax(pos, 2) = sysARMAX.report.Fit.BIC;
+            J_armax(pos, 3) = sysARMAX.report.Fit.AIC;
     
             % BJ model
             sys_init_bj.TimeUnit = 'milliseconds';
             sysBJ = bj(dataIn, sys_init_bj, bjOpt);
-            J_bj(order-minOrder+1, 1) = mag2db(sysBJ.report.Fit.LossFcn);
-            J_bj(order-minOrder+1, 2) = sysBJ.report.Fit.FPE;
-            J_bj(order-minOrder+1, 3) = sysBJ.report.Fit.AIC;
+            J_bj(pos, 1) = mag2db(sysBJ.report.Fit.LossFcn);
+            J_bj(pos, 2) = sysBJ.report.Fit.BIC;
+            J_bj(pos, 3) = sysBJ.report.Fit.AIC;
+
+            % Output
+            if i == ceil(length(delayOrders)/2)
+                if order == finalOrder.OE
+                    models.OE = sysOE;
+                end
+                if order == finalOrder.ARX
+                    models.ARX = sysARX;
+                end
+                if order == finalOrder.ARMAX
+                    models.ARMAX = sysARMAX;
+                end
+                if order == finalOrder.BJ
+                    models.BJ = sysBJ;
+                end
+            end
+
         end
     
         % Error criteria
         figure(figLossFunc);
         subplot(4, 1, 1);  hold on;
-        plot(minOrder:maxOrder,  J_oe(:, 1), colors(i), ...
-            LineStyle=linSty(i), LineWidth=1.4, DisplayName="$n_k = " + ...
-            num2str(delayOrders(i))+"$");
+        plot(minOrder:maxOrder,  J_arx(:, 1), analysis.colors(i), ...
+            LineStyle=analysis.linSty(i), LineWidth=1.4, ...
+            DisplayName="$n_k = " + num2str(delayOrders(i))+"$", ...
+            Marker=analysis.markers(i));
         subplot(4, 1, 2);  hold on;
-        plot(minOrder:maxOrder, J_arx(:, 1), colors(i), ...
-            LineStyle=linSty(i), LineWidth=1.4, HandleVisibility='off');
+        plot(minOrder:maxOrder, J_oe(:, 1), analysis.colors(i), ...
+            LineStyle=analysis.linSty(i), LineWidth=1.4, ...
+            HandleVisibility='off', Marker=analysis.markers(i));
         subplot(4, 1, 3);  hold on;
-        plot(minOrder:maxOrder, J_armax(:, 1), colors(i), ...
-            LineStyle=linSty(i), LineWidth=1.4, HandleVisibility='off');
+        plot(minOrder:maxOrder, J_armax(:, 1), analysis.colors(i), ...
+            LineStyle=analysis.linSty(i), LineWidth=1.4, ...
+            HandleVisibility='off', Marker=analysis.markers(i));
         subplot(4, 1, 4);  hold on;
-        plot(minOrder:maxOrder, J_bj(:, 1), colors(i), ...
-            LineStyle=linSty(i), LineWidth=1.4, HandleVisibility='off');
+        plot(minOrder:maxOrder, J_bj(:, 1), analysis.colors(i), ...
+            LineStyle=analysis.linSty(i), LineWidth=1.4, ...
+            HandleVisibility='off', Marker=analysis.markers(i));
     
-        % FPE criteria
-        figure(figFPE);
+        % BIC criteria
+        figure(figBIC);
         subplot(4, 1, 1);  hold on;
-        plot(minOrder:maxOrder,  J_oe(:, 2), colors(i), ...
-            LineStyle=linSty(i), LineWidth=1.4, DisplayName="$n_k = " + ...
-            num2str(delayOrders(i))+"$");
+        plot(minOrder:maxOrder,  J_arx(:, 2), analysis.colors(i), ...
+            LineStyle=analysis.linSty(i), LineWidth=1.4, ...
+            DisplayName="$n_k = " + num2str(delayOrders(i))+"$", ...
+            Marker=analysis.markers(i));
         subplot(4, 1, 2);  hold on;
-        plot(minOrder:maxOrder, J_arx(:, 2), colors(i), ...
-            LineStyle=linSty(i), LineWidth=1.4, HandleVisibility='off');
+        plot(minOrder:maxOrder, J_oe(:, 2), analysis.colors(i), ...
+            LineStyle=analysis.linSty(i), LineWidth=1.4, ...
+            HandleVisibility='off', Marker=analysis.markers(i));
         subplot(4, 1, 3);  hold on;
-        plot(minOrder:maxOrder, J_armax(:, 2), colors(i), ...
-            LineStyle=linSty(i), LineWidth=1.4, HandleVisibility='off');
+        plot(minOrder:maxOrder, J_armax(:, 2), analysis.colors(i), ...
+            LineStyle=analysis.linSty(i), LineWidth=1.4, ...
+            HandleVisibility='off', Marker=analysis.markers(i));
         subplot(4, 1, 4);  hold on;
-        plot(minOrder:maxOrder, J_bj(:, 2), colors(i), ...
-            LineStyle=linSty(i), LineWidth=1.4, HandleVisibility='off');
+        plot(minOrder:maxOrder, J_bj(:, 2), analysis.colors(i), ...
+            LineStyle=analysis.linSty(i), LineWidth=1.4, ...
+            HandleVisibility='off', Marker=analysis.markers(i));
     
         % AIC criteria
         figure(figAIC);
         subplot(4, 1, 1);  hold on;
-        plot(minOrder:maxOrder,  J_oe(:, 3), colors(i), ...LineStyle=linSty(i), ...
-            LineWidth=1.4, DisplayName="$n_k = " + ...
-            num2str(delayOrders(i))+"$");
+        plot(minOrder:maxOrder,  J_arx(:, 3), analysis.colors(i), ...
+            LineStyle=analysis.linSty(i),  LineWidth=1.4, ...
+            DisplayName="$n_k = " + num2str(delayOrders(i))+"$", ...
+            Marker=analysis.markers(i));
         subplot(4, 1, 2);  hold on;
-        plot(minOrder:maxOrder, J_arx(:, 3), colors(i), LineStyle=linSty(i), ...
-            LineWidth=1.4, HandleVisibility='off');
+        plot(minOrder:maxOrder, J_oe(:, 3), analysis.colors(i), ...
+            LineStyle=analysis.linSty(i), LineWidth=1.4, ...
+            HandleVisibility='off', Marker=analysis.markers(i));
         subplot(4, 1, 3);  hold on;
-        plot(minOrder:maxOrder, J_armax(:, 3), colors(i), LineStyle=linSty(i), ...
-            LineWidth=1.4, HandleVisibility='off');
+        plot(minOrder:maxOrder, J_armax(:, 3), analysis.colors(i), ...
+            LineStyle=analysis.linSty(i), LineWidth=1.4, ...
+            HandleVisibility='off', Marker=analysis.markers(i));
         subplot(4, 1, 4);  hold on;
-        plot(minOrder:maxOrder, J_bj(:, 3), colors(i), LineStyle=linSty(i), ...
-            LineWidth=1.4, HandleVisibility='off');
-
-        % Outputs
-        if i == ceil(length(delayOrders)/2)
-            models.ARX = sysARX;
-            models.ARMAX = sysARMAX;
-            models.BJ = sysBJ;
-            models.OE = sysOE;
-        end
-
+        plot(minOrder:maxOrder, J_bj(:, 3), analysis.colors(i), ...
+            LineStyle=analysis.linSty(i), LineWidth=1.4, ...
+            HandleVisibility='off', Marker=analysis.markers(i));
+        
     end
     
     % Figure for equation error (final configuration)
     figure(figLossFunc);
     subplot(4, 1, 1);  hold off; grid minor;
-    legend(Interpreter="latex", FontSize=17, Location="best");
-    ylabel({"Mod\`{e}le", "OE"}, Interpreter="latex", FontSize=17);
+    legend(Interpreter="latex", FontSize=17, Location="northeast", NumColumns=2);
+    ylabel("ARX", Interpreter="latex", FontSize=17);
     subplot(4, 1, 2);  hold off; grid minor;
-    ylabel({"Mod\`{e}le", "ARX"}, Interpreter="latex", FontSize=17);
+    ylabel("OE", Interpreter="latex", FontSize=17);
     subplot(4, 1, 3);  hold off; grid minor;
-    ylabel({"Mod\`{e}le", "ARMAX"}, Interpreter="latex", FontSize=17);
+    ylabel("ARMAX", Interpreter="latex", FontSize=17);
     subplot(4, 1, 4);  hold off; grid minor;
-    ylabel({"Mod\`{e}le", "BJ"}, Interpreter="latex", FontSize=17);
+    ylabel("BJ", Interpreter="latex", FontSize=17);
     xlabel("Ordre $n_a = n_b$", Interpreter="latex", FontSize=17);
     figLossFunc.Position = [305 52 759 615];
-    saveas(figLossFunc, figDir + "\" + analysisName + ...
-        "\orderIdent_polyLossFunc.eps");
+    saveas(figLossFunc, analysis.figDir + "\" + analysis.name + ...
+        "\orderIdent_polyLossFunc.eps", 'epsc');
     sgtitle("Analyse de convergence pour l'erreur d'\'{e}quation", ...
         Interpreter="latex", FontSize=20);
     
-    % Figure for FPE error (final configuration)
-    figure(figFPE)
+    % Figure for BIC error (final configuration)
+    figure(figBIC)
     subplot(4, 1, 1);  hold off; grid minor;
-    legend(Interpreter="latex", FontSize=17, Location="best");
-    ylabel({"Mod\`{e}le", "OE"}, Interpreter="latex", FontSize=17);
-    subplot(4, 1, 2);  hold off; grid minor;
+    legend(Interpreter="latex", FontSize=17, Location="northeast");
     ylabel({"Mod\`{e}le", "ARX"}, Interpreter="latex", FontSize=17);
+    subplot(4, 1, 2);  hold off; grid minor;
+    ylabel({"Mod\`{e}le", "OE"}, Interpreter="latex", FontSize=17);
     subplot(4, 1, 3);  hold off; grid minor;
     ylabel({"Mod\`{e}le", "ARMAX"}, Interpreter="latex", FontSize=17);
     subplot(4, 1, 4);  hold off; grid minor;
     ylabel({"Mod\`{e}le", "BJ"}, Interpreter="latex", FontSize=17);
     xlabel("Ordre $n_a = n_b$", Interpreter="latex", FontSize=17);
-    figFPE.Position = [305 52 759 615];
-    saveas(figFPE, figDir+"\"+analysisName+"\orderIdent_polyFPE.eps");
-    sgtitle("Analyse de convergence pour l'erreur FPE", ...
+    figBIC.Position = [305 52 759 615];
+    saveas(figBIC, analysis.figDir + "\" + analysis.name + ...
+        "\orderIdent_polyBIC.eps", 'epsc');
+    sgtitle("Analyse de convergence pour l'erreur BIC", ...
         Interpreter="latex", FontSize=20);
     
     % Figure for AIC error (final configuration)
     figure(figAIC);
     subplot(4, 1, 1);  hold off; grid minor;
-    legend(Interpreter="latex", FontSize=17, Location="best");
-    ylabel({"Mod\`{e}le", "OE"}, Interpreter="latex", FontSize=17);
-    subplot(4, 1, 2);  hold off; grid minor;
+    legend(Interpreter="latex", FontSize=17, Location="northeast");
     ylabel({"Mod\`{e}le", "ARX"}, Interpreter="latex", FontSize=17);
+    subplot(4, 1, 2);  hold off; grid minor;
+    ylabel({"Mod\`{e}le", "OE"}, Interpreter="latex", FontSize=17);
     subplot(4, 1, 3);  hold off; grid minor;
     ylabel({"Mod\`{e}le", "ARMAX"}, Interpreter="latex", FontSize=17);
     subplot(4, 1, 4);  hold off; grid minor;
     ylabel({"Mod\`{e}le", "BJ"}, Interpreter="latex", FontSize=17);
     xlabel("Ordre $n_a = n_b$", Interpreter="latex", FontSize=17);
     figAIC.Position = [305 52 759 615];
-    saveas(figAIC, figDir+"\"+analysisName+"\orderIdent_polyAIC.eps");
+    saveas(figAIC, analysis.figDir + "\" + analysis.name + ...
+        "\orderIdent_polyAIC.eps", 'epsc');
     sgtitle("Analyse de convergence pour l'erreur AIC", ...
         Interpreter="latex", FontSize=20);
 
