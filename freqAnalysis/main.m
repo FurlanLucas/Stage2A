@@ -3,7 +3,7 @@ clear; close all;
 figDir = 'outFig';            % Directory for output figures
 analysisName = 'sys1_resFlu'; % Analysis name
 expNumber = 1;                % Number for the experiment to be used
-orders = [1 4 6 7 9 10];            % Orders for Pade an Taylor approximations
+orders = [1 6 10];            % Orders for Pade an Taylor approximations
 h_comp = [7, 25];             % Values for h (compare)
 h = 17;                       % [W/m²K] Final value for h
 
@@ -30,8 +30,8 @@ disp("Comparison between Taylor and Pade.");
 comparePadeTaylor(expData.sysData, analysis, h);
 
 disp("Taylor and Pade table.");
-prec2table(expData.sysData, analysis, h, orders, 1);
-prec2table(expData.sysData, analysis, h, orders, 2);
+prec2table(expData.sysData, analysis, h, 2:10, 1);
+prec2table(expData.sysData, analysis, h, 2:10, 2);
 
 disp("Multidimentional analysis (comparison).");
 compare_1d2d(expData.sysData, analysis, h);

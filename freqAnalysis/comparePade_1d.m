@@ -1,4 +1,4 @@
-function comparePade_1d(sysData, analysis, h, orders)
+function comparePade_1d(sysData, analysis, h, orders, varargin)
     %% compairePade_1d
     %
     % Simulate a comparison for different order of a Pade approximation for
