@@ -20,6 +20,12 @@ function find_delay(dataIn, analysis)
     % analysisSettings.
 
     %% Inputs
+
+    if ~isfolder(analysis.figDir + "\" + analysis.name + "\delay")
+        mkdir(analysis.figDir + "\" + analysis.name + "\delay");
+    end
+
+    %% Main
     
     disp("Delay indentification for temperature in the rear face");
     delay_matlabMethods(dataIn, analysis, 1);

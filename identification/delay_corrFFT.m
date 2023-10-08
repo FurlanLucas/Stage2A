@@ -13,7 +13,7 @@ function delay_corrFFT(dataIn, analysis, type)
     % Inputs
     %
     %   dataIn: thermalData object with all datasets to be analysed;
-    %
+    %s
     %   analysis: struct with analysis' name, graph colors and output
     %   directories;
     %
@@ -30,10 +30,21 @@ function delay_corrFFT(dataIn, analysis, type)
     % Numerical inputs
     samp = 30;         % Number of saples to take the mean
     NbeforeMax = 1000; % Max samples to take before the input change
+
+    if type == 1
+        typeName = "flux";
+    elseif type == 2
+        typeName = "temp";
+    else
+        error("Type not valid.");
+    end
     
     %% Main
     
-    fig_all = figure; hold on;
+    if ~isempty(dataIn.isStep)
+        fig_all = figure; hold on;
+    end
+
     for i = 1:length(dataIn.isStep)
         % Main inputs
         inter = getexp(dataIn, dataIn.isStep(i));
@@ -78,7 +89,7 @@ function delay_corrFFT(dataIn, analysis, type)
             FontSize=17);
         yyaxis right; 
         plot(tM, uM, 'r', LineWidth=2.3, HandleVisibility='off');
-        ylabel("Input (V)", Interpreter='latex', FontSize=17);
+        ylabel("Input (W/m$^2$)", Interpreter='latex', FontSize=17);
         xlabel("Time (ms)", Interpreter='latex', FontSize=17);
         ylim(myylim*1.2/(myylim(2)-myylim(1)));
         xlim([-5000, 5000]);
@@ -90,18 +101,20 @@ function delay_corrFFT(dataIn, analysis, type)
         a = plot(new_tm, new_ym, '-g', LineWidth=1.7);
         legend({"Mean"}, Location='northwest', Interpreter="latex", ...
             FontSize=17);
-        saveas(fig, outDir + "\" + analysisName + "\stepZoom_" + ...
-            i + "_en.eps", 'epsc');
+        saveas(fig, outDir + "\" + analysisName + "\delay\stepZoom_" + ...
+            i + "_" + typeName + "_en.eps", 'epsc');
 
         % Main zoom figure in english
         set(a, 'DisplayName', 'Moyenne');
-        ylabel("Entr\'{e} (V)", Interpreter='latex', FontSize=17);
+        ylabel("Entr\'{e} (W/m$^2$)", Interpreter='latex', FontSize=17);
         xlabel("Temps (ms)", Interpreter='latex', FontSize=17);
         yyaxis left;
         ylabel("Temp\'{e}rature ($^\circ$C)", Interpreter='latex', ...
             FontSize=17);
-        saveas(fig, outDir + "\" + analysisName + "\stepZoom_" + ...
-            i + "_fr.eps", 'epsc');
+        saveas(fig, outDir + "\" + analysisName + "\delay\stepZoom_" + ...
+            i + "_" + typeName + "_fr.eps", 'epsc');
+        saveas(fig, outDir + "\" + analysisName + "\delay\stepZoom_" + ...
+            i + "_" + typeName + "_fr.fig");
 
         %% Autocorrelation and FFT
     
@@ -112,12 +125,14 @@ function delay_corrFFT(dataIn, analysis, type)
         plot(lag, R, 'b', LineWidth=1.7); grid minor;
         xlabel("Lag", Interpreter="latex", FontSize=17);
         ylabel("Autocorrelation", Interpreter="latex", FontSize=17);
-        saveas(fig, outDir + "\" + analysisName + "\delayCorr_en.eps", 'epsc');
+        saveas(fig, outDir + "\" + analysisName + "\delay" + ...
+            "\delayCorr_" + typeName + "_en.eps", 'epsc');
     
         % Figure in french
         xlabel("Lag", Interpreter="latex", FontSize=17);
         ylabel("Autocorr\'{e}lation", Interpreter="latex", FontSize=17);
-        saveas(fig, outDir + "\" + analysisName + "\delayCorr_fr.eps", 'epsc');
+        saveas(fig, outDir + "\" + analysisName + "\delay" + ...
+            "\delayCorr_" + typeName + "_fr.eps", 'epsc');
     
         [~, posMax] = max(R);   
         fprintf('Max pos autocorr: %d,\t', lag(posMax));
@@ -139,13 +154,18 @@ function delay_corrFFT(dataIn, analysis, type)
     ylabel("Temperature ($^\circ$C)", Interpreter='latex', ...
         FontSize=17);
     xlabel("Time (ms)", Interpreter='latex', FontSize=17);
-    saveas(fig, outDir + "\" + analysisName + "\stepAll_fr.eps", 'epsc');
+    saveas(fig_all, outDir + "\" + analysisName + "\delay" + ...
+        "\stepAll_" + typeName + "_en.eps", 'epsc');
 
     % Figure with all plots in french
     ylabel("Temp\'{e}rature ($^\circ$C)", Interpreter='latex', ...
         FontSize=17);
     xlabel("Temps (ms)", Interpreter='latex', FontSize=17);
-    saveas(fig, outDir + "\" + analysisName + "\stepAll_en.eps", 'epsc');
+    saveas(fig_all, outDir + "\" + analysisName + "\delay" + ...
+        "\stepAll_" + typeName + "_fr.eps", 'epsc');
+    title("Réponse indicielle");
+    saveas(fig_all, outDir + "\" + analysisName + "\delay" + ...
+        "\stepAll_" + typeName + "_fr.fig");
 
     %% Ending
 

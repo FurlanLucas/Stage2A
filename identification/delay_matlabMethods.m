@@ -25,8 +25,21 @@ function delay_matlabMethods(dataIn, analysis, type)
     %
     % See also Contents, thermalData, analysisSettings.
 
-    %% Main
+    %% Inputs
+    analysisName = analysis.name;
+    outDir = analysis.figDir;
+
     nk = zeros(dataIn.Ne, 1);
+
+    if type == 1
+        typeName = "flux";
+    elseif type == 2
+        typeName = "temp";
+    else
+        error("Type not valid.");
+    end
+
+    %% Main
 
     for i = 1:dataIn.Ne
 
@@ -41,7 +54,9 @@ function delay_matlabMethods(dataIn, analysis, type)
 
         % Graphics
         h = impulseest(data);
-        figure, showConfidence(impulseplot(h))
+        fig = figure; showConfidence(impulseplot(h));
+        saveas(fig, outDir + "\" + analysisName + "\delay" + ...
+            "\impulseEst_" + typeName + "_" + i + "_en.fig");
     end
     disp(' ');
 

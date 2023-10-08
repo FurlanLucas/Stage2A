@@ -32,6 +32,8 @@ function h = steadyState(dataIn, analysis, varargin)
     % See also thermalData.
 
     %% Inputs
+    name = analysis.name;
+    figDir = analysis.figDir;
     M = 100;  % Smaplings number for steady state
 
     % Verify the optional arguments
@@ -42,6 +44,10 @@ function h = steadyState(dataIn, analysis, varargin)
             otherwise
                 error("Option '" + varargin{i} + "' is not available.");
         end
+    end
+    
+    if ~isfolder(figDir + "\" + name + "\steadyState")
+        mkdir(figDir + "\" + name + "\steadyState");
     end
 
     n_data = length(dataIn.isSteady);
@@ -61,15 +67,18 @@ function h = steadyState(dataIn, analysis, varargin)
         ylabel("Temperature ($^\circ$C)", Interpreter="latex", ...
             FontSize=17);
         xlabel("Time (h)",Interpreter="latex",FontSize=17);
-        saveas(fig, analysis.figDir + "\" + analysis.name + "\" + ...
-            "steadyState_en.eps", 'epsc');    
+        saveas(fig, figDir + "\" + name + "\" + ...
+            "steadyState\mainFig_" + i + "_en.eps", 'epsc');    
     
         % Steady state figure in french
         ylabel("Temp\'{e}rature ($^\circ$C)", Interpreter="latex", ...
             FontSize=17);
         xlabel("Temps (h)",Interpreter="latex",FontSize=17);
-        saveas(fig, analysis.figDir + "\" + analysis.name + "\" + ...
-            "steadyState_fr.eps", 'epsc');    
+        saveas(fig, figDir + "\" + name + "\" + ...
+            "steadyState\mainFig_" + i + "_fr.eps", 'epsc');
+        title("Steady-state test",Interpreter="latex",FontSize=17);
+        saveas(fig, figDir + "\" + name + "\" + ...
+            "steadyState\mainFig_" + i + "_fr.fig");    
     
     
         %% Heat transfer coefficient

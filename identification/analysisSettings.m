@@ -30,9 +30,14 @@ function settings = analysisSettings(name, varargin)
     %% Default parameters
     settings = struct();
         settings.figDir = 'outFig';  % Directory output for fig.
-        settings.colors = ['r','b','g','m','c','y'];   % Graph colors
+        settings.colors = ['r','b','g','m','c','y'];    % Graph colors
+        settings.linSty = ["-"; "--"; "-."; ":"];       % Line styles
+        settings.markers = ["o", "square", "^", "x"];   % Marker styles
         settings.direct = false;     % Directory output for tex.
         settings.name = name;        % Analysis name
+        settings.probChi = 2.5758;   % Propability for 99 % xi² dist.
+        settings.probNorm = 2.32;    % Propability for 99 % N dist.
+        settings.Mksize = 3;         % Marker size
 
     %% Inputs
 
@@ -42,9 +47,17 @@ function settings = analysisSettings(name, varargin)
             case 'figDir' % Figure directory  
                 settings.figDir = varargin{i+1};          
             case 'colors' % Colors
-                settings.colors = varargin{i+1};  
+                settings.colors = varargin{i+1};          
+            case 'linSty' % Line styles
+                settings.linSty = varargin{i+1};          
+            case 'markers' % Markers
+                settings.markers = varargin{i+1};  
             case 'direct' % Close all figures
-                settings.direct = varargin{i+1};
+                settings.direct = varargin{i+1}; 
+            case 'probChi' % Prob xi² dist.
+                settings.probChi = varargin{i+1}; 
+            case 'probNorm' % Prob N dist.
+                settings.probNorm = varargin{i+1};
             otherwise
                 error("Option '" + varargin{i} + "' is not available.");
         end
