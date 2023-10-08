@@ -31,6 +31,10 @@ function compareh_1d(sysData, analysis, h_comp)
     analysisName = sysData.Name;
     figDir = analysis.figDir;
 
+    if ~isfolder(figDir + "\" + analysisName + "\analysis_1D")
+        mkdir(figDir + "\" + analysisName + "\analysis_1D");
+    end
+
     % Main simulation    
     results_1d1 = model_1d(sysData, h_comp(1), wmin=1e-5, wmax=1e-1);
     results_1d2 = model_1d(sysData, h_comp(2), wmin=1e-5, wmax=1e-1);
@@ -53,18 +57,20 @@ function compareh_1d(sysData, analysis, h_comp)
     ylabel("Phase (deg)", Interpreter='latex', FontSize=15);
     xlabel("Frequency (rad/s)", Interpreter='latex', FontSize=15);
     set(gca, 'XScale', 'log'); hold off; grid minor;
-    saveas(fig, figDir + "\" + analysisName + "\compare_h1d_flux_en.eps", ...
-        'epsc');
+    saveas(fig, figDir + "\" + analysisName + "\analysis_1D\" + ...
+        "compare_h1d_flux_en.eps", 'epsc');
     
     % Figure in french
     xlabel("Fr\'{e}quence (rad/s)", Interpreter='latex', FontSize=15);
     subplot(2,1,1); grid minor;
     ylabel("Module (dB)", Interpreter='latex', FontSize=15);
     set(gca, 'XScale', 'log'); hold off; grid minor;
-    saveas(fig, figDir + "\" + analysisName + "\compare_h1d_flux_fr.eps", ...
-        'epsc');
+    saveas(fig, figDir + "\" + analysisName + "\analysis_1D\" + ...
+        "\compare_h1d_flux_fr.eps", 'epsc');
     sgtitle("Fonction $G_\varphi(s)$ th\'{e}orique en 1D", ...
         'Interpreter', 'latex', Interpreter='latex', FontSize=20);
+    saveas(fig, figDir + "\" + analysisName + "\analysis_1D\" + ...
+        "compare_h1d_flux_fr.fig");
 
     %% Main code for temperature transfer function
 
@@ -84,7 +90,7 @@ function compareh_1d(sysData, analysis, h_comp)
     ylabel("Phase (deg)", Interpreter='latex', FontSize=15);
     xlabel("Frequency (rad/s)", Interpreter='latex', FontSize=15);
     set(gca, 'XScale', 'log'); hold off; grid minor;
-    saveas(fig, figDir + "\" + analysisName + ...
+    saveas(fig, figDir + "\" + analysisName + "\analysis_1D" + ...
         "\compare_h1d_temp_en.eps", 'epsc');
     
     % Figure in french
@@ -92,9 +98,11 @@ function compareh_1d(sysData, analysis, h_comp)
     subplot(2,1,1); grid minor;
     ylabel("Module (dB)", Interpreter='latex', FontSize=15);
     set(gca, 'XScale', 'log'); hold off; grid minor;
-    saveas(fig, figDir + "\" + analysisName + "\compare_h1d_temp_fr.eps", ...
-        'epsc');
+    saveas(fig, figDir + "\" + analysisName + "\analysis_1D" + ...
+        "\compare_h1d_temp_fr.eps", 'epsc');
     sgtitle("Fonction $G_\theta(s)$ th\'{e}orique en 1D",'Interpreter', ...
         'latex', Interpreter='latex', FontSize=20);
+    saveas(fig, figDir + "\" + analysisName + "\analysis_1D" + ...
+        "\compare_h1d_temp_fr.fig");
 
 end

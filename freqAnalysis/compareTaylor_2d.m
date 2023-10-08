@@ -44,6 +44,10 @@ function compareTaylor_2d(sysData, analysis, h, orders)
         error("Field 'Geometry' is not valid.");
     end
 
+    if ~isfolder(figDir + "\" + analysisName + "\analysis_2D")
+        mkdir(figDir + "\" + analysisName + "\analysis_2D");
+    end
+
     % Simulation
     results_multi = model_multi(sysData, h*ones(1, 5));
 
@@ -77,7 +81,7 @@ function compareTaylor_2d(sysData, analysis, h, orders)
         NumColumns=2); 
     leg.ItemTokenSize = [20, 18];
     ylabel("Magnitude (dB)", Interpreter='latex', FontSize=15);
-    saveas(fig, figDir + "\" + analysisName + ...
+    saveas(fig, figDir + "\" + analysisName + "\analysis_2D" + ...
         "\ordersTaylor_2d_rear_en.eps", 'epsc');
     
     % Figure in french
@@ -85,11 +89,13 @@ function compareTaylor_2d(sysData, analysis, h, orders)
     subplot(2,1,2);
     xlabel("Fr\'{e}quence (rad/s)", Interpreter='latex', FontSize=15);
     set(thPlot, 'displayName', "Th\'{e}orique");
-    saveas(fig, figDir + "\" + analysisName + ...
+    saveas(fig, figDir + "\" + analysisName + "\analysis_2D" + ...
         "\ordersTaylor_2d_rear_fr.eps", 'epsc');
     sgtitle({"Fonction $G_\varphi(s)$ avec", ...
         "l'approximation de Taylor en " + type}, ...
         Interpreter='latex', FontSize=20);
+    saveas(fig, figDir + "\" + analysisName + "\analysis_2D" + ...
+        "\ordersTaylor_2d_rear_fr.fig"); 
     
     %% Main code for temperature transfer function 
     
@@ -121,7 +127,7 @@ function compareTaylor_2d(sysData, analysis, h, orders)
         NumColumns=2); 
     leg.ItemTokenSize = [20, 18];
     ylabel("Magnitude (dB)", Interpreter='latex', FontSize=15);
-    saveas(fig, figDir + "\" + analysisName + ...
+    saveas(fig, figDir + "\" + analysisName + "\analysis_2D" + ...
         "\ordersTaylor_2d_front_en.eps", 'epsc');
 
     % Figure in french
@@ -129,10 +135,12 @@ function compareTaylor_2d(sysData, analysis, h, orders)
     subplot(2,1,2);
     xlabel("Fr\'{e}quence (rad/s)", Interpreter='latex', FontSize=15);
     set(thPlot, 'displayName', "Th\'{e}orique");
-    saveas(fig, figDir + "\" + analysisName + ...
+    saveas(fig, figDir + "\" + analysisName + "\analysis_2D" + ...
         "\ordersTaylor_2d_front_fr.eps", 'epsc');
     sgtitle({"Fonction $G_\theta(s)$ avec", ...
         "l'approximation de Taylor en" + type}, ...
         Interpreter='latex', FontSize=20);
+    saveas(fig, figDir + "\" + analysisName + "\analysis_2D" + ...
+        "\ordersTaylor_2d_front_fr.fig");
 
 end

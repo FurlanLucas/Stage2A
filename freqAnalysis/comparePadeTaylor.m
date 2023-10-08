@@ -28,6 +28,10 @@ function comparePadeTaylor(sysData, analysis, h)
     analysisName = sysData.Name;
     figDir = analysis.figDir;
 
+    if ~isfolder(figDir + "\" + analysisName + "\analysis_1D")
+        mkdir(figDir + "\" + analysisName + "\analysis_1D");
+    end
+
     % Simulation
     results_1d_th = model_1d(sysData, h); % Theoretical result
     results_1d1 = model_1d_taylor(sysData, h);
@@ -52,7 +56,7 @@ function comparePadeTaylor(sysData, analysis, h)
     ylabel("Phase (deg)", Interpreter='latex', FontSize=15);
     xlabel("Frequency (rad/s)", Interpreter='latex', FontSize=15);
     set(gca, 'XScale', 'log'); hold off; grid minor;
-    saveas(fig, figDir + "\" + analysisName + ...
+    saveas(fig, figDir + "\" + analysisName + "\analysis_1D" + ...
         "\compare_taylorpade_flux_en.eps", 'epsc');
     
     % Figure in french
@@ -61,10 +65,12 @@ function comparePadeTaylor(sysData, analysis, h)
     ylabel("Module (dB)", Interpreter='latex', FontSize=15);
     set(gca, 'XScale', 'log'); hold off; grid minor;
     set(thPlot, 'displayName', "Th\'{e}orique");
-    saveas(fig, figDir + "\" + analysisName + ...
+    saveas(fig, figDir + "\" + analysisName + "\analysis_1D" + ...
         "\compare_taylorpade_flux_fr.eps", 'epsc');
     sgtitle("Fonction $G_\varphi(s)$ th\'{e}orique en 1D",'Interpreter', ...
         'latex', Interpreter='latex', FontSize=20);
+    saveas(fig, figDir + "\" + analysisName + "\analysis_1D" + ...
+        "\compare_taylorpade_flux_fr.fig");
 
     %% Main code for temperature transfer function 
     
@@ -85,7 +91,7 @@ function comparePadeTaylor(sysData, analysis, h)
     ylabel("Phase (deg)", Interpreter='latex', FontSize=15);
     xlabel("Frequency (rad/s)", Interpreter='latex', FontSize=15);
     set(gca, 'XScale', 'log'); hold off; grid minor;
-    saveas(fig, figDir + "\" + analysisName + ...
+    saveas(fig, figDir + "\" + analysisName + "\analysis_1D" + ...
         "\compare_taylorpade_temp_en.eps", 'epsc');
     
     % Figure in french
@@ -94,9 +100,11 @@ function comparePadeTaylor(sysData, analysis, h)
     ylabel("Module (dB)", Interpreter='latex', FontSize=15);
     set(gca, 'XScale', 'log'); hold off; grid minor;
     set(thPlot, 'displayName', "Th\'{e}orique");
-    saveas(fig, figDir + "\" + analysisName + ...
+    saveas(fig, figDir + "\" + analysisName + "\analysis_1D" + ...
         "\compare_taylorpade_temp_fr.eps", 'epsc');
     sgtitle("Fonction $G_\theta(s)$ th\'{e}orique en 1D",'Interpreter', ...
         'latex', Interpreter='latex', FontSize=20);
+    saveas(fig, figDir + "\" + analysisName + "\analysis_1D" + ...
+        "\compare_taylorpade_temp_fr.fig");
 
 end

@@ -45,6 +45,10 @@ function comparePade_2d(sysData, analysis, h, orders)
         error("Field 'Geometry' is not valid.");
     end
 
+    if ~isfolder(figDir + "\" + analysisName + "\analysis_2D")
+        mkdir(figDir + "\" + analysisName + "\analysis_2D");
+    end
+
     % Simulation
     if length(h)==1
         results_multi = model_multi(sysData, h*ones(1,5));
@@ -82,17 +86,19 @@ function comparePade_2d(sysData, analysis, h, orders)
         NumColumns=2); 
     leg.ItemTokenSize = [20, 18];
     ylabel("Magnitude (dB)", Interpreter='latex', FontSize=15);
-    saveas(fig, figDir + "\" + analysisName + ...
+    saveas(fig, figDir + "\" + analysisName + "\analysis_2D" + ...
         "\ordersPade_2d_flux_en.eps", 'epsc');
     
     % Figure in french
     ylabel("Module (dB)", Interpreter='latex', FontSize=15);
-    saveas(fig, figDir + "\" + analysisName + ...
-        "\ordersPade_2d_flux_fr.eps", 'epsc');
     set(thPlot, 'displayName', "Th\'{e}orique");
+    saveas(fig, figDir + "\" + analysisName + "\analysis_2D" + ...
+        "\ordersPade_2d_flux_fr.eps", 'epsc');
     sgtitle({"Fonction $G_\varphi(s)$ avec", ...
         "l'approximation de Pade en " + type}, ...
         Interpreter='latex', FontSize=20);
+    saveas(fig, figDir + "\" + analysisName + "\analysis_2D" + ...
+        "\ordersPade_2d_flux_fr.fig");
     
     %% Main code for temperature transfer function 
 
@@ -124,7 +130,7 @@ function comparePade_2d(sysData, analysis, h, orders)
         NumColumns=2); 
     leg.ItemTokenSize = [20, 18];
     ylabel("Magnitude (dB)", Interpreter='latex', FontSize=15);
-    saveas(fig, figDir + "\" + analysisName + ...
+    saveas(fig, figDir + "\" + analysisName + "\analysis_2D" + ...
         "\ordersPade_2d_temp_en.eps", 'epsc');
     
     % Figure in french
@@ -132,9 +138,11 @@ function comparePade_2d(sysData, analysis, h, orders)
     subplot(2,1,2);
     xlabel("Fr\'{e}quence (rad/s)", Interpreter='latex', FontSize=15);
     set(thPlot, 'displayName', "Th\'{e}orique");
-    saveas(fig, figDir + "\" + analysisName + ...
+    saveas(fig, figDir + "\" + analysisName + "\analysis_2D" + ...
         "\ordersPade_2d_temp_fr.eps", 'epsc');
     sgtitle({"Fonction $G_\theta(s)$ avec","l'approximation de Pade en "...
         + type}, Interpreter='latex', FontSize=20);
+    saveas(fig, figDir + "\" + analysisName + "\analysis_2D" + ...
+        "\ordersPade_2d_temp_fr.fig");
 
 end

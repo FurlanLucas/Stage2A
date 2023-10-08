@@ -53,6 +53,10 @@ function compare_1d2d(sysData, analysis, h)
         error("Field 'Geometry' is not valid.");
     end
 
+    if ~isfolder(figDir + "\" + analysisName + "\analysis_1D2D")
+        mkdir(figDir + "\" + analysisName + "\analysis_1D2D");
+    end
+
     % Simulation
     results_1d = model_1d(sysData, h_1d, wmin=1e-5, wmax=1e-1);
     results_multi = model_multi(sysData, h_mult, seriesOrder, ...
@@ -74,7 +78,7 @@ function compare_1d2d(sysData, analysis, h)
     ylabel("Phase (deg)", Interpreter='latex', FontSize=15);
     xlabel("Frequency (rad/s)",Interpreter='latex', FontSize=15);
     set(gca, 'XScale', 'log'); hold off; grid minor;
-    saveas(fig, figDir + "\" + analysisName + ...
+    saveas(fig, figDir + "\" + analysisName + "\analysis_1D2D" + ...
         "\compaire_1d2d_flux_en.eps", 'epsc');
     
     % Figure in french
@@ -83,10 +87,12 @@ function compare_1d2d(sysData, analysis, h)
     set(th1Plot, 'displayName', "Mod\'{e}le 1D");
     set(th2Plot, 'displayName', "Mod\'{e}le " + type);
     xlabel("Fr\'{e}quence (rad/s)", Interpreter='latex', FontSize=15);
-    saveas(fig, figDir + "\" + analysisName + ...
+    saveas(fig, figDir + "\" + analysisName + "\analysis_1D2D" + ...
         "\compaire_1d2d_flux_fr.eps", 'epsc');
     sgtitle("Fonction $G_\varphi(s)$ en 1D et 2D", ...
         Interpreter='latex', FontSize=20);
+    saveas(fig, figDir + "\" + analysisName + "\analysis_1D2D" + ...
+        "\compaire_1d2d_flux_fr.fig");
 
     %% Main code for temperature function
 
@@ -104,7 +110,7 @@ function compare_1d2d(sysData, analysis, h)
     ylabel("Phase (deg)", Interpreter='latex', FontSize=15);
     xlabel("Frequency (rad/s)",Interpreter='latex', FontSize=15);
     set(gca, 'XScale', 'log'); hold off; grid minor;
-    saveas(fig, figDir + "\" + analysisName + ...
+    saveas(fig, figDir + "\" + analysisName + "\analysis_1D2D" + ...
         "\compaire_1d2d_temp_en.eps", 'epsc');
     
     % Figure in french
@@ -113,9 +119,11 @@ function compare_1d2d(sysData, analysis, h)
     set(th1Plot, 'displayName', "Mod\'{e}le 1D");
     set(th2Plot, 'displayName', "Mod\'{e}le " + type);
     xlabel("Fr\'{e}quence (rad/s)", Interpreter='latex', FontSize=15);
-    saveas(fig, figDir + "\" + analysisName + ...
+    saveas(fig, figDir + "\" + analysisName + "\analysis_1D2D" + ...
         "\compaire_1d2d_temp_fr.eps", 'epsc');
     sgtitle("Fonction $G_\theta(s)$ en 1D et 2D", ...
         Interpreter='latex', FontSize=20);
+    saveas(fig, figDir + "\" + analysisName + "\analysis_1D2D" + ...
+        "\compaire_1d2d_temp_fr.fig");
 
 end

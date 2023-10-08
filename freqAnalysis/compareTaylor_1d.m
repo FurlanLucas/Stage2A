@@ -34,6 +34,10 @@ function compareTaylor_1d(sysData, analysis, h, orders)
     figDir = analysis.figDir;
     colors = analysis.colors;
 
+    if ~isfolder(figDir + "\" + analysisName + "\analysis_1D")
+        mkdir(figDir + "\" + analysisName + "\analysis_1D");
+    end
+
     % Simulation
     results_1d_th = model_1d(sysData, h); % Theoretical result
 
@@ -62,7 +66,7 @@ function compareTaylor_1d(sysData, analysis, h, orders)
         NumColumns=2); 
     leg.ItemTokenSize = [20, 18];
     ylabel("Magnitude (dB)", Interpreter='latex', FontSize=15);
-    saveas(fig, figDir + "\" + analysisName + ...
+    saveas(fig, figDir + "\" + analysisName + "\analysis_1D" + ...
         "\ordersTaylor_1d_flux_en.eps", 'epsc');
     
     % Figure in french
@@ -70,10 +74,12 @@ function compareTaylor_1d(sysData, analysis, h, orders)
     subplot(2,1,2);
     xlabel("Fr\'{e}quence (rad/s)", Interpreter='latex', FontSize=15);
     set(thPlot, 'displayName', "Th\'{e}orique");
-    saveas(fig, figDir + "\" + analysisName + ...
+    saveas(fig, figDir + "\" + analysisName + "\analysis_1D" + ...
         "\ordersTaylor_1d_flux_fr.eps", 'epsc');
     sgtitle({"Fonction $G_\varphi(s)$ avec", "l'approximation de Taylor en 1D"},...
         Interpreter='latex', FontSize=20);
+    saveas(fig, figDir + "\" + analysisName + "\analysis_1D" + ...
+        "\ordersTaylor_1d_flux_fr.fig");
     
     %% Main code for temperature transfer function 
 
@@ -100,7 +106,7 @@ function compareTaylor_1d(sysData, analysis, h, orders)
         NumColumns=2); 
     leg.ItemTokenSize = [20, 18];
     ylabel("Magnitude (dB)", Interpreter='latex', FontSize=15);
-    saveas(fig, figDir + "\" + analysisName + ...
+    saveas(fig, figDir + "\" + analysisName + "\analysis_1D" + ...
         "\ordersTaylor_1d_temp_en.eps", 'epsc');
     
     % Figure in french
@@ -108,10 +114,12 @@ function compareTaylor_1d(sysData, analysis, h, orders)
     subplot(2,1,2);
     xlabel("Fr\'{e}quence (rad/s)", Interpreter='latex', FontSize=15);
     set(thPlot, 'displayName', "Th\'{e}orique");
-    saveas(fig, figDir + "\" + analysisName + ...
+    saveas(fig, figDir + "\" + analysisName + "\analysis_1D" + ...
         "\ordersTaylor_1d_temp_fr.eps", 'epsc');
     sgtitle({"Fonction $G_\theta(s)$ avec", ...
         "l'approximation de Taylor en 1D"}, interpreter='latex', ...
         FontSize=20);
+    saveas(fig, figDir + "\" + analysisName + "\analysis_1D" + ...
+        "\ordersTaylor_1d_temp_fr.fig");
 
 end
