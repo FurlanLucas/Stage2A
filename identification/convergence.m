@@ -75,6 +75,16 @@ function models = convergence(dataIn, analysis, maxOrder, delayOrders, varargin)
         end
     end
     
+    if ~isfolder(analysis.figDir + "\" + analysis.name + "\convergence")
+        mkdir(analysis.figDir + "\" + analysis.name + "\convergence");
+    end
+    
+    if type == 1
+        typeName = 'Flux';
+    elseif type == 2
+        typeName = 'Temp';
+    end
+
     %% Directories verification and variables config
     
     % Model parameters
@@ -240,10 +250,12 @@ function models = convergence(dataIn, analysis, maxOrder, delayOrders, varargin)
     ylabel("BJ", Interpreter="latex", FontSize=17);
     xlabel("Ordre $n_a = n_b$", Interpreter="latex", FontSize=17);
     figLossFunc.Position = [305 52 759 615];
-    saveas(figLossFunc, analysis.figDir + "\" + analysis.name + ...
-        "\orderIdent_polyLossFunc.eps", 'epsc');
+    saveas(figLossFunc, analysis.figDir+"\"+analysis.name+"\convergence" + ...
+        "\orderIdent_" + typeName + "_polyLossFunc.eps", 'epsc');
     sgtitle("Analyse de convergence pour l'erreur d'\'{e}quation", ...
         Interpreter="latex", FontSize=20);
+    saveas(figLossFunc, analysis.figDir+"\"+analysis.name+"\convergence" + ...
+        "\orderIdent_" + typeName + "_polyLossFunc.fig");
     
     % Figure for BIC error (final configuration)
     figure(figBIC)
@@ -258,10 +270,12 @@ function models = convergence(dataIn, analysis, maxOrder, delayOrders, varargin)
     ylabel({"Mod\`{e}le", "BJ"}, Interpreter="latex", FontSize=17);
     xlabel("Ordre $n_a = n_b$", Interpreter="latex", FontSize=17);
     figBIC.Position = [305 52 759 615];
-    saveas(figBIC, analysis.figDir + "\" + analysis.name + ...
-        "\orderIdent_polyBIC.eps", 'epsc');
+    saveas(figBIC, analysis.figDir+"\"+analysis.name+"\convergence" + ...
+        "\orderIdent_" + typeName + "_polyBIC.eps", 'epsc');
     sgtitle("Analyse de convergence pour l'erreur BIC", ...
         Interpreter="latex", FontSize=20);
+    saveas(figBIC, analysis.figDir+"\"+analysis.name+"\convergence" + ...
+        "\orderIdent_" + typeName + "_polyBIC.fig");
     
     % Figure for AIC error (final configuration)
     figure(figAIC);
@@ -276,9 +290,11 @@ function models = convergence(dataIn, analysis, maxOrder, delayOrders, varargin)
     ylabel({"Mod\`{e}le", "BJ"}, Interpreter="latex", FontSize=17);
     xlabel("Ordre $n_a = n_b$", Interpreter="latex", FontSize=17);
     figAIC.Position = [305 52 759 615];
-    saveas(figAIC, analysis.figDir + "\" + analysis.name + ...
-        "\orderIdent_polyAIC.eps", 'epsc');
+    saveas(figAIC,  analysis.figDir+"\"+analysis.name+"\convergence" + ...
+        "\orderIdent_" + typeName + "_polyAIC.eps", 'epsc');
     sgtitle("Analyse de convergence pour l'erreur AIC", ...
         Interpreter="latex", FontSize=20);
+    saveas(figAIC, analysis.figDir+"\"+analysis.name+"\convergence" + ...
+        "\orderIdent_" + typeName + "_polyAIC.fig");
 
 end
