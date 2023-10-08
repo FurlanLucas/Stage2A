@@ -7,7 +7,7 @@ function sys2tex(expData, analysis)
 
     %% Inputs
 
-    dirOut = analysis.figDir;
+    dirOut = analysis.texDir;
 
     %% System data
 
