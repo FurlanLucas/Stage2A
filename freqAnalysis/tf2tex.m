@@ -34,9 +34,11 @@ function tf2tex(tf, analysis, variable, name, factorPower)
     % See also Contents, analysisSettings.
 
     %% Inputs
+    analysisName = analysis.name;
     dirOut = analysis.texDir;
 
-    fileHandle = fopen(dirOut + "\" + name + ".tex", 'w');
+    fileHandle = fopen(dirOut + "\" + analysisName + "\" + ...
+        name + ".tex", 'w');
     n_num = length(tf.Numerator{1});
     n_dem = length(tf.Denominator{1});
     var = tf.Variable;

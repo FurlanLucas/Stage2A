@@ -5,6 +5,7 @@ function prec2table(sysData, analysis, h, orders, type)
     % builds a table in tex style.
 
     %% Inputs
+    analysisName = analysis.name;
     texDir = analysis.texDir;    
     
     maxMag = 3;
@@ -22,9 +23,11 @@ function prec2table(sysData, analysis, h, orders, type)
     %% Main
 
     if type == 1
-        fileHandle = fopen(texDir + "\precTableFlux.tex", "w");
+        fileHandle = fopen(texDir + "\" + analysisName + ...
+            "\precTableFlux.tex", "w");
     else
-        fileHandle = fopen(texDir + "\precTableTemp.tex", "w");
+        fileHandle = fopen(texDir + "\" + analysisName + ...
+            "\precTableTemp.tex", "w");
     end
     
     % Table

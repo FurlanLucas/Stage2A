@@ -55,8 +55,8 @@ function settings = analysisSettings(name, varargin)
         mkdir(settings.figDir + "\" + name);
     end
 
-    if ~isfolder(settings.texDir)
-        mkdir(settings.texDir);
+    if ~isfolder(settings.texDir + "\" + name)
+        mkdir(settings.texDir + "\" + name);
     end
 
     %% Add paths

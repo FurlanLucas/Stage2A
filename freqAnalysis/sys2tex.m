@@ -6,12 +6,13 @@ function sys2tex(expData, analysis)
     %   See also sysDataType.
 
     %% Inputs
-
+    analysisName = analysis.name;
     dirOut = analysis.texDir;
 
     %% System data
 
-    fileHandle = fopen(dirOut + "\freqAnalysis_sysData.tex", "w");
+    fileHandle = fopen(dirOut + "\" + analysisName + ...
+        "\freqAnalysis_sysData.tex", "w");
 
     % Table
     fprintf(fileHandle, "\\begin{table}" + ...
