@@ -11,6 +11,9 @@ function resid = validation(dataIn, analysis, models, varargin)
     %   structure models, using the data avaiable in dataIn. It will be
     %   used all the datasets except for the first one;
     %
+    %   analysis: struct with analysis' name, graph colors and output
+    %   directories;
+    %
     %   resid = validation(__, options): take the optional arguments.
     %
     % Inputs

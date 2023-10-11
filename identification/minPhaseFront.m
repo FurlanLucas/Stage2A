@@ -1,18 +1,15 @@
-function [temp, t_out] = minPhaseFront(dataIn, analysis, model, G_inv, varargin)
-    %% inversion
+function [temp, t_out] = minPhaseFront(dataIn, analysis, model, G_inv)
+    %% minPhaseFront
     %
     % Function to invert the model and validate it with reentry data. The
-    % input will be tha last experiment available in dataIn, giving the
-    % resid as a result.
+    % input will be tha last experiment available in dataIn as a reentry
+    % data. The inversion is done by minimum phase approximation.
     %
     % Calls
     %
-    %   resid = validation(dataIn, models): validate the models in the
-    %   structure models, using the data avaiable in dataIn. It will be
-    %   used all the datasets except for the first one;
-    %
-    %   resid = validation(dataIn, models)(__, options): take the optional 
-    %   arguments.
+    %   [phi, t_out] = minPhaseBack(dataIn, analysis, model, G_inv):
+    %   estimate the heat flux phi during the time t_out by using the
+    %   minimum phase approximation.
     %
     % Inputs
     %
@@ -21,18 +18,20 @@ function [temp, t_out] = minPhaseFront(dataIn, analysis, model, G_inv, varargin)
     %   the field sysData. It is not possible also use a structure in this
     %   case;
     %
-    %   models: struct with the models to be validated. For instance, with
-    %   the filds named: ARMAX, ARMAX, ARMAX and BJ.
+    %   analysis: struct with analysis' name, graph colors and output
+    %   directories;
+    %
+    %   model: model to be inverted (will be a front model, with respect to
+    %   the temperature measured in front face);
+    %
+    %   G_inv: inverse system's transfer function (with respect to the heat
+    %   flux).
     %
     % Outputs
     %
-    %   resid: residue from the analysis.
+    %   phi: vector of estimated heat flux;
     %
-    % Aditional options
-    %
-    %   setExp: set the number of experiments to be used in the validation
-    %   analysis. The result of validation(dataIn, models, setExp=[1,2]) is
-    %   the same of validation(getexp(dataIn, [1,2]), models).
+    %   t_out: output time.
     %
     % See convergence, iddata, sysDataType, thermalData.
 

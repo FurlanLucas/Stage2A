@@ -1,17 +1,18 @@
 function [phi, t_out, Gm_inv] = minPhaseBack(dataIn, analysis, model, varargin)
-    %% inversion
+    %% minPhaseBack
     %
     % Function to invert the model and validate it with reentry data. The
-    % input will be tha last experiment available in dataIn, giving the
-    % resid as a result.
+    % input will be tha last experiment available in dataIn as a reentry
+    % data. The inversion is done by minimum phase approximation.
     %
     % Calls
     %
-    %   resid = validation(dataIn, models): validate the models in the
-    %   structure models, using the data avaiable in dataIn. It will be
-    %   used all the datasets except for the first one;
+    %   [phi, t_out, Gm_inv] = minPhaseBack(dataIn, analysis, model):
+    %   estimate the heat flux phi during the time t_out by using the
+    %   minimum phase approximation. It also returns the inverse transfer
+    %   function G_inv;
     %
-    %   resid = validation(dataIn, models)(__, options): take the optional 
+    %   [phi, t_out, Gm_inv] = minPhaseBack(__, options): take the optional 
     %   arguments.
     %
     % Inputs
@@ -21,18 +22,27 @@ function [phi, t_out, Gm_inv] = minPhaseBack(dataIn, analysis, model, varargin)
     %   the field sysData. It is not possible also use a structure in this
     %   case;
     %
-    %   models: struct with the models to be validated. For instance, with
-    %   the filds named: ARMAX, ARMAX, ARMAX and BJ.
+    %   analysis: struct with analysis' name, graph colors and output
+    %   directories;
+    %
+    %   model: model to be inverted (will be a back model, with respect to
+    %   the heat flux in front face).
     %
     % Outputs
     %
-    %   resid: residue from the analysis.
+    %   phi: vector of estimated heat flux;
+    %
+    %   t_out: output time ;
+    %
+    %   G_inv: inverse system's transfer function.
     %
     % Aditional options
+    %   
+    %   wmax: minimum frequency to be used in rad/s;
     %
-    %   setExp: set the number of experiments to be used in the validation
-    %   analysis. The result of validation(dataIn, models, setExp=[1,2]) is
-    %   the same of validation(getexp(dataIn, [1,2]), models).
+    %   wmax: maximum frequency to be used in rad/s;
+    %
+    %   wpoints: number of frequency points.
     %
     % See convergence, iddata, sysDataType, thermalData.
 

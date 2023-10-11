@@ -1,8 +1,40 @@
 function [temp, t_out] = impulseInverseFront(dataIn, analysis, model, ...
     phi_)
-    %% impulseInverse
+    %% impulseInverseFront
     %
-    % 
+    % Function to invert the model and validate it with reentry data. The
+    % input will be tha last experiment available in dataIn as a reentry
+    % data. The inversion is done by simple convolution with the future
+    % time steps results.
+    %
+    % Calls
+    %
+    %   [temp, t_out] = impulseInverseFront(dataIn, analysis, model,
+    %   phi_): estimate the temperature during the time t_out by using a
+    %   convolution with the future time steps results.
+    %
+    % Inputs
+    %
+    %   dataIn: thermalData variable with all the information for the
+    %   system that will be simulated. The thermal coefficients are within
+    %   the field sysData. It is not possible also use a structure in this
+    %   case;
+    %
+    %   analysis: struct with analysis' name, graph colors and output
+    %   directories;
+    %
+    %   model: model to be inverted (will be a front model, with respect to
+    %   the temperature in front face);
+    %
+    %   phi_: estimated heat flux.
+    %
+    % Outputs
+    %
+    %   temp: vector of estimated temperature;
+    %
+    %   t_out: output time.
+    %
+    % See convergence, iddata, sysDataType, thermalData.
 
     %% Inputs
     figDir = analysis.figDir;      % Output figures directory

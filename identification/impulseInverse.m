@@ -1,7 +1,36 @@
 function [phi, t_out] = impulseInverse(expData, analysis, model)
     %% impulseInverse
     %
-    % 
+    % Function to invert the model and validate it with reentry data. The
+    % input will be tha last experiment available in dataIn as a reentry
+    % data. The inversion is done by future time steps algorithm.
+    %
+    % Calls
+    %
+    %   [phi, t_out] = impulseInverse(expData, analysis, model): estimate 
+    %   the heat flux phi during the time t_out by using the future time 
+    %   steps algorithm minimum phase approximation.
+    %
+    % Inputs
+    %
+    %   dataIn: thermalData variable with all the information for the
+    %   system that will be simulated. The thermal coefficients are within
+    %   the field sysData. It is not possible also use a structure in this
+    %   case;
+    %
+    %   analysis: struct with analysis' name, graph colors and output
+    %   directories;
+    %
+    %   model: model to be inverted (will be a back model, with respect to
+    %   the heat flux in front face).
+    %
+    % Outputs
+    %
+    %   phi: vector of estimated heat flux;
+    %
+    %   t_out: output time.
+    %
+    % See convergence, iddata, sysDataType, thermalData.
 
     %% Inputs
     figDir = analysis.figDir;  % Output figures directory
