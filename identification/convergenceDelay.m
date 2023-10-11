@@ -168,4 +168,11 @@ function all = convergenceDelay(dataIn, analysis, delayOrders, models, varargin)
     saveas(figLossFunc, figDir + "\" + analysisName + "\convergence" + ...
         "\orderIdent_polyLossFunc.fig");
  
+
+    %% Outputs
+    if ~analysis.direct
+        msg = 'Press enter to continue...';
+        input(msg);
+        fprintf(repmat('\b', 1, length(msg)+1));
+    end
 end

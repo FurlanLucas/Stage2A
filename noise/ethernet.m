@@ -29,13 +29,21 @@ grid minor; subplot(3, 1, 2);
 plot(t_eth(1:sampplot)/1e3, y_b_eth(1:sampplot)*1e3, 'b', LineWidth=0.8);
 ylabel({"Ethernet", "cable"}, Interpreter='latex', ...
     FontSize=17);
-grid minor; subplot(3, 1, 3);
+myylim = ylim(); grid minor; subplot(3, 1, 3);
 plot(t_without(1:sampplot)/1e3, y_b_without(1:sampplot)*1e3, 'g', LineWidth=0.8);
 ylabel("Nothing", Interpreter='latex', ...
     FontSize=17);
 xlabel("Time (s)", Interpreter='latex', FontSize=17); 
-grid minor; fig.Position = [680 321 727 557];
+ylim(myylim); grid minor; fig.Position = [680 321 727 557];
 saveas(fig, figDir + "\noiseTime_en.eps", 'epsc');
+
+% French figure
+subplot(3, 1, 2);
+ylabel({"Ordinateur", "connecté"}, Interpreter='latex', ...
+    FontSize=17);
+subplot(3, 1, 3);
+ylabel({"Rien", "connecté"}, Interpreter='latex', ...
+    FontSize=17);
 
 %% Plot autocorrelation
 

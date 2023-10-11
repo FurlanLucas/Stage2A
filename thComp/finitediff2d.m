@@ -59,8 +59,11 @@ function [y, timeOut] = finitediff2d(dataIn, timeIn, phiIn, h, Mx, Mr, N)
     phi = interp1(timeIn, phiIn, timeOut).* (r' <= r0); % New heat flux vector
 
     % Heat transfer coefficient
-    hr = h(1);
-    hx = h(2);
+    if length(h) == 1
+        hr = h; hx = h;
+    else
+        hr = h(1); hx = h(2);
+    end
 
     %% Matrices A and B
 
