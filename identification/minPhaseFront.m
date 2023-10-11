@@ -97,7 +97,7 @@ function [temp, t_out] = minPhaseFront(dataIn, analysis, model, G_inv)
     ylabel("Heat flux (W/m$^2$)", Interpreter='latex', FontSize=17);
     legend(h, Location='southeast', Interpreter='latex', FontSize=17);
     saveas(fig, figDir + "\" + analysisName + ...
-        "\inversion\ARMAX_time_reentry_invPlus_en.eps", 'epsc');
+        "\inversion\ARMAX_time_reentry_invPlusTemp_en.eps", 'epsc');
 
     % Time comparison for reentry data french
     xlabel("Temps (min)", Interpreter='latex', FontSize=17);
@@ -105,7 +105,7 @@ function [temp, t_out] = minPhaseFront(dataIn, analysis, model, G_inv)
     set(h(1), "DisplayName", "Mod\`{e}le identifi\'{e}");
     set(h(2), "DisplayName", "Donn\'{e}es exp\'{e}rimentales");
     saveas(fig, figDir + "\" + analysisName + ...
-        "\inversion\ARMAX_time_reentry_invPlus_fr.eps", 'epsc');
+        "\inversion\ARMAX_time_reentry_invPlusTemp_fr.eps", 'epsc');
 
     % Output
     temp = temp_ARMAX_inv;
