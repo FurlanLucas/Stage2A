@@ -62,7 +62,8 @@ function [temp, t_out] = impulseInverseFront(dataIn, analysis, model, ...
     xlabel('Time (min)', Interpreter="latex", FontSize=17);
     ylabel("Temp\'{e}rature ($^\circ$C)", Interpreter="latex", FontSize=17);
     grid minor;
-    saveas(fig, figDir+"\"+analysisName+"\ImpulseResponse.eps", 'epsc');
+    saveas(fig, figDir + "\" + analysisName + ...
+        "\inversion\ImpulseResponse.eps", 'epsc');
 
     fig = figure; hold on;
     y_ = dt*conv(g, phi_);
@@ -71,7 +72,8 @@ function [temp, t_out] = impulseInverseFront(dataIn, analysis, model, ...
     grid minor;
     xlabel('Time (min)', Interpreter="latex", FontSize=17);
     ylabel('Temperature ($^\circ$C)', Interpreter="latex", FontSize=17);
-    saveas(fig, figDir+"\"+analysisName+"\ImpulseTempInv.eps", 'epsc');
+    saveas(fig, figDir + "\" + analysisName + ...
+        "\inversion\ImpulseTempInv.eps", 'epsc');
 
     %% Output
     temp = y_(1:length(t));

@@ -173,6 +173,8 @@ function [phi, t_out, Gm_inv] = minPhaseBack(dataIn, analysis, model, varargin)
         "\inversion\ARMAX_time_reentry_fr.fig");
     
     %% Inverse model (valid)
+
+    % TF
     Gm_inv = 1/Gm;
     Gm_inv.TimeUnit = model.TimeUnit;
     Gm_inv.Ts = model.Ts;
@@ -182,7 +184,11 @@ function [phi, t_out, Gm_inv] = minPhaseBack(dataIn, analysis, model, varargin)
     [phi_ARMAX_inv, t_ARMAX_inv] = lsim(Gm_inv, y_back{validPos}, ...
         dataIn.t{validPos});
     phi_ARMAX_inv = medfilt1(lowpass(phi_ARMAX_inv(1:end-50), 1e-2), 5);
-    t_ARMAX_inv = t_ARMAX_inv(1:end-50);
+
+    % delay
+    nk = sum(model.B == 0);
+    ts = t_ARMAX_inv(2) - t_ARMAX_inv(1);
+    t_ARMAX_inv = t_ARMAX_inv(1:end-50) - ts*nk;
 
     % Time comparison for last valid data english
     fig = figure; hold on; clear h;
@@ -244,6 +250,7 @@ function [phi, t_out, Gm_inv] = minPhaseBack(dataIn, analysis, model, varargin)
     y_back = lowpass(dataIn.y_back{reentryPos}, 1e-3);
     [phi_ARMAX_inv, t_ARMAX_inv] = lsim(Gm_inv, y_back, ...
         dataIn.t{reentryPos});
+    t_ARMAX_inv = t_ARMAX_inv - ts*nk;
 
     % Time comparison for reentry data english
     fig = figure; hold on; clear h;
