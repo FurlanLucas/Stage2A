@@ -23,6 +23,7 @@ end
 disp("Loading variables.");
 addpath('..\freqAnalysis'); % For the class definitions
 addpath('..\dataBase'); % For the database
+addpath('..\myClasses')
 load("..\database\convertedData\" + analysisName + ".mat");
 
 % Identification data
