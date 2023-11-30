@@ -1,7 +1,7 @@
 %clear; close all;
 %% Inputs and definitions
 figDir = 'outFig';            % Directory for output figures
-analysisName = 'sys1_isoBas'; % Analysis name
+analysisName = 'sys1_resFlu'; % Analysis name
 analysisNumber = 2;           % Number for the experiment to be used
 delayOrders = [0 20 10];      % Delay orders value
 Tmin = 10;                    % [s] Minimum period present in the signal
@@ -15,7 +15,7 @@ end
 
 % Take the data
 disp("Loading variables.");
-addpath('..\freqAnalysis'); % For the class definitions
+addpath('..\myClasses'); % For the class definitions
 addpath('..\dataBase'); % For the database
 load("..\database\convertedData\" + analysisName + ".mat");
 
@@ -50,7 +50,7 @@ h3 = plot(freq, pow2db(power_th), 'k', LineWidth=1.2, ...
 xlabel("Frequency (Hz)", Interpreter="latex", FontSize=17);
 ylabel("Power Spectral (dB/Hz)", Interpreter="latex", FontSize=17);
 legend(Location="northeast", Interpreter="latex", FontSize=17);
-grid minor; xlim([0, 4*(1/Tmin)]);
+grid minor; xlim([0, 4*(1/Tmin)]); ylim([-10 60]);
 saveas(fig, figDir + "\" + analysisName + "\" + "PRBS_power_en.eps", ...
     'epsc');
 

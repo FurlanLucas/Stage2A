@@ -59,7 +59,7 @@ function inversion(dataIn, analysis, modelsBack, modelsFront)
     % Comparison image FR
     set(myplot1, 'DisplayName', "Phase minimale");
     set(myplot2, 'DisplayName', "Min. pas futur");
-    set(myplot3, 'DisplayName', "Donn\'{e}es exp\'{e}perimentales");
+    set(myplot3, 'DisplayName', "Donn\'{e}es exp\'{e}rimentales");
     xlabel('Temps (min)', Interpreter="latex", FontSize=17);
     ylabel("Flux de chaleur (W/m$^2$)", Interpreter='latex', FontSize=17);
     saveas(fig, figDir + "\" + analysisName + "\inversion" + ...
