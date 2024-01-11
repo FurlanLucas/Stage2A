@@ -68,6 +68,7 @@ classdef thermalData
         isStep = [];              % [bool] Step data control
         isReentry = [];           % [bool] Reentry data control
         isSteady = [];            % [bool] Steady-state data control
+        sysData = sysDataType;    % [-] System data
     end 
 
     % Read only
@@ -78,7 +79,6 @@ classdef thermalData
         v = {};                   % [V] Input tension
         y_front = {};             % [°C] Temperature in the front face
         y_back = {};              % [°C] Température in the rear fece
-        sysData = sysDataType;    % [-] System data
     end
 
     %% Methods --------------------------------------------------------------------

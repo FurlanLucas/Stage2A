@@ -121,7 +121,7 @@ function compare_results(dataIn, varargin)
     t = dataIn.t{analysisNumber}/1e3; % Time vector
 
     % Mass factor
-    %ell = dataIn.sysData.ell;
+    ell = dataIn.sysData.ell;
     mfac = pi*(dataIn.sysData.Size^2 - dataIn.sysData.rH^2) * ...
         dataIn.sysData.ell2 / dataIn.sysData.takeArea;
 
@@ -144,7 +144,7 @@ function compare_results(dataIn, varargin)
 
     % Simulation for Pade in 1D
     fprintf("\tSimulation for Pade model in 1D.\n");
-    %dataIn.sysData.ell = ell + mfac;
+    dataIn.sysData.ell = ell + mfac;
     [~, Fs1d_pade] = model_1d_pade(dataIn, hx2, padeOrder);
     y1d_pade{1} = lsim(Fs1d_pade{1}, phi1D, t); % Rear surface
     y1d_pade{2} = lsim(Fs1d_pade{2}, phi1D, t); % Front surface
@@ -191,7 +191,7 @@ function compare_results(dataIn, varargin)
         phimultiD, [hx2 hr2], 11, 60, 1e5);
 
     % Simulation with finite difference in 2D v2
-    %dataIn.sysData.ell = ell;
+    dataIn.sysData.ell = ell;
     fprintf("\tFinites diffences in 2D (V2).\n");
     [y_findif2d_v2, t_findif2d_v2]  = finitediff2d_v2(dataIn.sysData, t, ...
         phimultiD, [hx2 hr2], 20, 70, 1e5);
