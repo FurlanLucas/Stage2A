@@ -35,7 +35,7 @@ steadyState(expData, analysis);
 
 % Analysis for the convergence of models
 disp("Convergence analysis.");
-modelsBack = convergence(identData, maxOrderConv, delayOrders, type=1, ...
+modelsBack = convergence(identData, analysis, maxOrderConv, delayOrders, type=1, ...
     finalOrder=4);
 %convergenceDelay(identData, [3 10], modelsBack, type=1);
 % convergenceDelay(identData, [7 12], modelsBack, type=1);

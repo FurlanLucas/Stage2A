@@ -71,7 +71,7 @@ function models = convergence(dataIn, analysis, maxOrder, delayOrders, varargin)
             case 'finalOrder'      
                 finalOrder = varargin{i+1};
             otherwise
-                error("Option << " + varargin{i} + "is not available.");
+                error("Option << " + varargin{i} + " >> is not available.");
         end
     end
     
