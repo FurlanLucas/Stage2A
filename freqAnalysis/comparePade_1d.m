@@ -40,7 +40,7 @@ function comparePade_1d(sysData, analysis, h, orders, varargin)
     end
 
     % Simulation
-    results_1d_th = model_1d(sysData, h); % Theoretical result
+    results_1d_th = model_1d(sysData, h); % Analitico result
 
     %% Main code for heat flux transfer function    
     
@@ -58,31 +58,18 @@ function comparePade_1d(sysData, analysis, h, orders, varargin)
     end
     semilogx(results_1d_th.w, results_1d_th.phase{1}*180/pi, 'k', ...
         LineWidth=1.4);
-    ylabel("Phase (deg)", Interpreter='latex', FontSize=15);
-    xlabel("Frequency (rad/s)", Interpreter='latex', FontSize=15);
+    ylabel("Fase (deg)", Interpreter='latex', FontSize=15);
+    xlabel("Frequ\^{e}ncia (rad/s)", Interpreter='latex', FontSize=15);
     set(gca, 'XScale', 'log'); grid minor;
     subplot(2,1,1); grid minor; set(gca, 'XScale', 'log');
     thPlot = semilogx(results_1d_th.w, mag2db(results_1d_th.mag{1}), ...
-        'k', LineWidth=1.4, DisplayName="Theoretical");  
+        'k', LineWidth=1.4, DisplayName="Analitico");  
     leg = legend(Location='southwest', Interpreter='latex', FontSize=15,...
         NumColumns=2); 
     leg.ItemTokenSize = [20, 18];
     ylabel("Magnitude (dB)", Interpreter='latex', FontSize=15);
     saveas(fig, figDir + "\" + analysisName + "\analysis_1D" + ...
-        "\ordersPade_1d_flux_en.eps", 'epsc');
-    
-    % Figure in french
-    ylabel("Module (dB)", Interpreter='latex', FontSize=15);
-    subplot(2,1,2);
-    xlabel("Fr\'{e}quence (rad/s)", Interpreter='latex', FontSize=15);
-    set(thPlot, 'displayName', "Th\'{e}orique");
-    saveas(fig, figDir + "\" + analysisName + "\analysis_1D" + ...
-        "\ordersPade_1d_flux_fr.eps", 'epsc');
-    sgtitle({"Fonction $G_\varphi(s)$ avec", ...
-        "l'approximation de Pade en 1D"}, ...
-        Interpreter='latex', FontSize=20);
-    saveas(fig, figDir + "\" + analysisName + "\analysis_1D" + ...
-        "\ordersPade_1d_flux_fr.fig");
+        "\ordersPade_1d_flux_pt.eps", 'epsc');
     
     %% Main code for temperature transfer function   
 
@@ -100,30 +87,17 @@ function comparePade_1d(sysData, analysis, h, orders, varargin)
     end
     semilogx(results_1d_th.w, results_1d_th.phase{2}*180/pi, 'k', ...
         LineWidth=1.4);
-    ylabel("Phase (deg)", Interpreter='latex', FontSize=15);
-    xlabel("Frequency (rad/s)", Interpreter='latex', FontSize=15);
+    ylabel("Fase (deg)", Interpreter='latex', FontSize=15);
+    xlabel("Frequ\^{e}ncia (rad/s)", Interpreter='latex', FontSize=15);
     set(gca, 'XScale', 'log'); grid minor;
     subplot(2,1,1); grid minor; set(gca, 'XScale', 'log');
     thPlot = semilogx(results_1d_th.w, mag2db(results_1d_th.mag{2}), ...
-        'k', LineWidth=1.4, DisplayName="Theoretical");  
+        'k', LineWidth=1.4, DisplayName="Analitico");  
     leg = legend(Location='southwest', Interpreter='latex', FontSize=15, ...
         NumColumns=2); 
     leg.ItemTokenSize = [20, 18];
     ylabel("Magnitude (dB)", Interpreter='latex', FontSize=15);
     saveas(fig, figDir + "\" + analysisName + "\analysis_1D" + ...
-        "\ordersPade_1d_temp_en.eps", 'epsc');
-    
-    % Figure in french
-    ylabel("Module (dB)", Interpreter='latex', FontSize=15);
-    subplot(2,1,2);
-    xlabel("Fr\'{e}quence (rad/s)", Interpreter='latex', FontSize=15);
-    set(thPlot, 'displayName', "Th\'{e}orique");
-    saveas(fig, figDir + "\" + analysisName +  "\analysis_1D" + ...
-        "\ordersPade_1d_temp_fr.eps", 'epsc');
-    sgtitle({"Fonction $G_\theta(s)$ avec", ...
-        "l'approximation de Pade en 1D"},...
-        Interpreter='latex', FontSize=20);
-    saveas(fig, figDir + "\" + analysisName +  "\analysis_1D" + ...
-        "\ordersPade_1d_temp_fr.fig");
+        "\ordersPade_1d_temp_pt.eps", 'epsc');
 
 end

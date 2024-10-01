@@ -54,23 +54,11 @@ function compareh_1d(sysData, analysis, h_comp)
         LineWidth=1.4); 
     plot(results_1d2.w, results_1d2.phase{1}*180/pi, '--r', ...
         LineWidth=1.4); 
-    ylabel("Phase (deg)", Interpreter='latex', FontSize=15);
-    xlabel("Frequency (rad/s)", Interpreter='latex', FontSize=15);
+    ylabel("Fase (deg)", Interpreter='latex', FontSize=15);
+    xlabel("Frequ\^{e}ncia (rad/s)", Interpreter='latex', FontSize=15);
     set(gca, 'XScale', 'log'); hold off; grid minor;
     saveas(fig, figDir + "\" + analysisName + "\analysis_1D\" + ...
-        "compare_h1d_flux_en.eps", 'epsc');
-    
-    % Figure in french
-    xlabel("Fr\'{e}quence (rad/s)", Interpreter='latex', FontSize=15);
-    subplot(2,1,1); grid minor;
-    ylabel("Module (dB)", Interpreter='latex', FontSize=15);
-    set(gca, 'XScale', 'log'); hold off; grid minor;
-    saveas(fig, figDir + "\" + analysisName + "\analysis_1D\" + ...
-        "\compare_h1d_flux_fr.eps", 'epsc');
-    sgtitle("Fonction $G_\varphi(s)$ th\'{e}orique en 1D", ...
-        'Interpreter', 'latex', Interpreter='latex', FontSize=20);
-    saveas(fig, figDir + "\" + analysisName + "\analysis_1D\" + ...
-        "compare_h1d_flux_fr.fig");
+        "compare_h1d_flux_pt.eps", 'epsc');
 
     %% Main code for temperature transfer function
 
@@ -87,22 +75,10 @@ function compareh_1d(sysData, analysis, h_comp)
         LineWidth=1.4); 
     plot(results_1d2.w, results_1d2.phase{2}*180/pi, '--r', ...
         LineWidth=1.4); 
-    ylabel("Phase (deg)", Interpreter='latex', FontSize=15);
-    xlabel("Frequency (rad/s)", Interpreter='latex', FontSize=15);
+    ylabel("Fase (deg)", Interpreter='latex', FontSize=15);
+    xlabel("Frequ\^{e}ncia (rad/s)", Interpreter='latex', FontSize=15);
     set(gca, 'XScale', 'log'); hold off; grid minor;
     saveas(fig, figDir + "\" + analysisName + "\analysis_1D" + ...
-        "\compare_h1d_temp_en.eps", 'epsc');
-    
-    % Figure in french
-    xlabel("Fr\'{e}quence (rad/s)", Interpreter='latex', FontSize=15);
-    subplot(2,1,1); grid minor;
-    ylabel("Module (dB)", Interpreter='latex', FontSize=15);
-    set(gca, 'XScale', 'log'); hold off; grid minor;
-    saveas(fig, figDir + "\" + analysisName + "\analysis_1D" + ...
-        "\compare_h1d_temp_fr.eps", 'epsc');
-    sgtitle("Fonction $G_\theta(s)$ th\'{e}orique en 1D",'Interpreter', ...
-        'latex', Interpreter='latex', FontSize=20);
-    saveas(fig, figDir + "\" + analysisName + "\analysis_1D" + ...
-        "\compare_h1d_temp_fr.fig");
+        "\compare_h1d_temp_pt.eps", 'epsc');
 
 end
