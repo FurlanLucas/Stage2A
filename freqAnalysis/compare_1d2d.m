@@ -79,7 +79,7 @@ function compare_1d2d(sysData, analysis, h)
     xlabel("Frequ\^{e}ncia (rad/s)",Interpreter='latex', FontSize=15);
     set(gca, 'XScale', 'log'); hold off; grid minor;
     saveas(fig, figDir + "\" + analysisName + "\analysis_1D2D" + ...
-        "\compaire_1d2d_flux_en.eps", 'epsc');
+        "\compaire_1d2d_flux_pt.eps", 'epsc');
 
     %% Main code for temperature function
 
@@ -98,6 +98,6 @@ function compare_1d2d(sysData, analysis, h)
     xlabel("Frequ\^{e}ncia (rad/s)",Interpreter='latex', FontSize=15);
     set(gca, 'XScale', 'log'); hold off; grid minor;
     saveas(fig, figDir + "\" + analysisName + "\analysis_1D2D" + ...
-        "\compaire_1d2d_temp_en.eps", 'epsc');
+        "\compaire_1d2d_temp_pt.eps", 'epsc');
 
 end

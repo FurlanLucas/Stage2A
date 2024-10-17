@@ -162,10 +162,14 @@ function [bodeOut, Fs_pade] = model_2d_pade(sysData, h, padeOrder, ...
     end
 
     Malpha = (besselj(0, alpha*Rmax) .^ 2).*((Rmax * alpha).^2 + ...
-        (Rmax * hr2 / lambda_r)^2)./(2*(alpha.^2));
+        (Rmax * hr2 / lambda_r)^2)./(2*(alpha.^2)); 
 
     % Take the integral for converting to the actual tf.
     int_R = (R0./alpha) .* besselj(1, alpha*R0);
+    % int_R2 = Rmax*(hr2./(lambda*alpha.^2)) besselj(0, alpha*Rmax)
+
+    tt = 2*(Rmax/R0/R0)*(besselj(0, alpha*Rmax)./(besselj(0, alpha*R0).^2)) ./ ...
+        (lambda_r*(alpha.^2)/hr2 + hr2/lambda_r)
 
     %% Pade approximation for the 2D rear face model 
 
